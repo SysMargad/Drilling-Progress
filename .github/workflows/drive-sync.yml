@@ -1,0 +1,88 @@
+name: Sync drilling data from Google Drive
+
+on:
+  schedule:
+    # Same daily timing as Drone Track: 08:00 Asia/Shanghai.
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: drive-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check Drive authentication
+        id: credentials
+        env:
+          GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON }}
+        shell: bash
+        run: |
+          if [[ -n "$GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON" ]]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            echo '::notice::Configure GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON and folder access to enable Drive sync.'
+          fi
+      - name: Install Drive authentication dependency
+        if: steps.credentials.outputs.ready == 'true'
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+      - name: Read and validate Drive workbooks
+        if: steps.credentials.outputs.ready == 'true'
+        env:
+          GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python -B drilling_sync.py --source drive
+          python -B validate_data.py
+          python -B -m unittest test_drilling_sync -v
+      - name: Commit changed data
+        id: commit
+        if: steps.credentials.outputs.ready == 'true'
+        shell: bash
+        run: |
+          if git diff --quiet -- dist/data.json; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- dist/data.json
+            git commit -m 'Sync validated drilling data from Drive'
+            git push origin HEAD:main
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy refreshed data
+        id: deployment
+        uses: actions/deploy-pages@v4

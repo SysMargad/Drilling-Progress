@@ -1,0 +1,1020 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-14",
+  "updatedAt": "2026-10-14T16:01:25+08:00",
+  "period": "2026-10-01 – 2026-10-13",
+  "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
+  "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
+  "collar": [
+    {
+      "id": "DTDH2602",
+      "site": "Дорнын төмөр",
+      "e": 686452.0,
+      "n": 5452250.0,
+      "z": 970.0,
+      "az": 90.0,
+      "dip": 60.0,
+      "plan": 300.0,
+      "collarDepth": 305.0,
+      "start": "2026-10-04",
+      "finish": "2026-10-10",
+      "recovery": null,
+      "boxes": null
+    },
+    {
+      "id": "DTDH2603",
+      "site": "Дорнын төмөр",
+      "e": 686385.076,
+      "n": 5452435.888,
+      "z": 958.76,
+      "az": 89.0,
+      "dip": 60.0,
+      "plan": 280.0,
+      "collarDepth": null,
+      "start": "2026-10-10",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    },
+    {
+      "id": "DTDH2601",
+      "site": "Дорнын төмөр",
+      "e": 686451.796,
+      "n": 5452041.372,
+      "z": 973.84,
+      "az": 88.0,
+      "dip": 60.0,
+      "plan": 200.0,
+      "collarDepth": null,
+      "start": "2026-10-10",
+      "finish": "2026-10-14",
+      "recovery": null,
+      "boxes": null
+    },
+    {
+      "id": "ZHDH2601",
+      "site": "Замт хөндий",
+      "e": 685523.957,
+      "n": 5452508.086,
+      "z": 892.071,
+      "az": 225.0,
+      "dip": 60.0,
+      "plan": 360.0,
+      "collarDepth": 377.0,
+      "start": "2026-09-27",
+      "finish": "2026-10-10",
+      "recovery": 98.0,
+      "boxes": 107.0
+    },
+    {
+      "id": "DTDH2605",
+      "site": "Дорнын төмөр",
+      "e": null,
+      "n": null,
+      "z": null,
+      "az": 109.0,
+      "dip": 60.0,
+      "plan": 200.0,
+      "collarDepth": null,
+      "start": "",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    },
+    {
+      "id": "ZHDH2612",
+      "site": "Замт хөндий",
+      "e": null,
+      "n": null,
+      "z": null,
+      "az": null,
+      "dip": null,
+      "plan": null,
+      "collarDepth": null,
+      "start": "",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    }
+  ],
+  "shifts": [
+    {
+      "rig": "C-1800",
+      "source": "20261001_n",
+      "date": "2026-10-01",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 15.0,
+      "to": 45.0,
+      "meters": 30.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "OT – өрмийн үзлэг."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261001_d",
+      "date": "2026-10-01",
+      "shift": "Өдөр",
+      "driller": "Д. Энхбаяр",
+      "hole": "ZHDH2601",
+      "from": 0.0,
+      "to": 15.0,
+      "meters": 15.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 6.5,
+      "hours": 12.0,
+      "notes": "Шинэ цооног руу нүүж, өрөм бэлтгэв (HQ STD)."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261002_n",
+      "date": "2026-10-02",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 54.0,
+      "to": 71.0,
+      "meters": 17.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.5,
+      "hours": 12.0,
+      "notes": "Шавар зуурав. 66–71 м шавартай, бутарсан маш муу чулуулаг."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261002_d",
+      "date": "2026-10-02",
+      "shift": "Өдөр",
+      "driller": "Д. Энхбаяр",
+      "hole": "ZHDH2601",
+      "from": 45.0,
+      "to": 54.0,
+      "meters": 9.0,
+      "st": 0.0,
+      "rt": 7.0,
+      "dt": 2.0,
+      "hours": 12.0,
+      "notes": "9 м өрөмдөв. HQ багана сугалж, PQ хамгаалалтын хоолойг өргөсгөн 39 м хүртэл суулгав."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261003_n",
+      "date": "2026-10-03",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 71.0,
+      "to": 71.0,
+      "meters": 0.0,
+      "st": 0.0,
+      "rt": 11.5,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "PCD болон PQ битээр 21 м-ээс доош өргөсгөв (дуусах гүн маягтад засвартай)."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261003_d",
+      "date": "2026-10-03",
+      "shift": "Өдөр",
+      "driller": "Д. Энхбаяр",
+      "hole": "ZHDH2601",
+      "from": 71.0,
+      "to": 71.0,
+      "meters": 0.0,
+      "st": 0.0,
+      "rt": 9.0,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "Цооног нурсан; HQ шавраар өрөмдөх оролдлого хийв. HQ багана сугалж, PCD битээр 0–21 м өргөсгөв. Маягтад DT 4 цагийг «PQ REAM» гэж тэмдэглэсэн тул RT-д ангилав."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261004_n",
+      "date": "2026-10-04",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 71.0,
+      "to": 74.0,
+      "meters": 3.0,
+      "st": 0.0,
+      "rt": 6.0,
+      "dt": 2.0,
+      "hours": 12.0,
+      "notes": "PQ хоолойг 71 м хүртэл суулгав; 71–74 м маш муу чулуулагт өрөмдөв; HQ багана сугалж, PQ хоолой 3 м нэмэв."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261004_d",
+      "date": "2026-10-04",
+      "shift": "Өдөр",
+      "driller": "Д. Энхбаяр",
+      "hole": "ZHDH2601",
+      "from": 71.0,
+      "to": 71.0,
+      "meters": 0.0,
+      "st": 0.0,
+      "rt": 11.5,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "PQ битээр 54–71 м өргөсгөв."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261005_n",
+      "date": "2026-10-05",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 107.0,
+      "to": 143.0,
+      "meters": 36.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261005_d",
+      "date": "2026-10-05",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "ZHDH2601",
+      "from": 74.0,
+      "to": 107.0,
+      "meters": 33.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.5,
+      "hours": 12.0,
+      "notes": "Бит солив."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261005_n",
+      "date": "2026-10-05",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2602",
+      "from": 1.4,
+      "to": 26.4,
+      "meters": 25.0,
+      "st": 2.0,
+      "rt": 0.0,
+      "dt": 9.0,
+      "hours": 12.0,
+      "notes": "Хамгаалалтын хоолой 0–3.00 м."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261005_d",
+      "date": "2026-10-05",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2602",
+      "from": 0.0,
+      "to": 1.4,
+      "meters": 1.4,
+      "st": 7.0,
+      "rt": 0.0,
+      "dt": 1.0,
+      "hours": 12.0,
+      "notes": "Талбай янзлав (7 цагийг маягтад ST кодоор бүртгэсэн)."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261006_n",
+      "date": "2026-10-06",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 182.0,
+      "to": 212.0,
+      "meters": 30.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.0,
+      "hours": 12.0,
+      "notes": "Бит солив; хатуу чулуулаг."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261006_d",
+      "date": "2026-10-06",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "ZHDH2601",
+      "from": 143.0,
+      "to": 182.0,
+      "meters": 39.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261006_n",
+      "date": "2026-10-06",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2602",
+      "from": 77.4,
+      "to": 110.4,
+      "meters": 33.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261006_d",
+      "date": "2026-10-06",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2602",
+      "from": 26.4,
+      "to": 77.4,
+      "meters": 51.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261007_n",
+      "date": "2026-10-07",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 251.0,
+      "to": 281.0,
+      "meters": 30.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн. Маягтад нийт цаг, захиалагч бичигдээгүй."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261007_d",
+      "date": "2026-10-07",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "ZHDH2601",
+      "from": 212.0,
+      "to": 251.0,
+      "meters": 39.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261007_n",
+      "date": "2026-10-07",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2602",
+      "from": 140.4,
+      "to": 179.4,
+      "meters": 39.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.0,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261007_d",
+      "date": "2026-10-07",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2602",
+      "from": 110.4,
+      "to": 140.4,
+      "meters": 30.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": "Маягтад өрмийг «CSD-1800» гэж засвартай бичсэн."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261008_n",
+      "date": "2026-10-08",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 323.0,
+      "to": 359.0,
+      "meters": 36.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261008_d",
+      "date": "2026-10-08",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "ZHDH2601",
+      "from": 281.0,
+      "to": 323.0,
+      "meters": 42.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн. Полимер 1."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261008_n",
+      "date": "2026-10-08",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2602",
+      "from": 215.4,
+      "to": 248.4,
+      "meters": 33.0,
+      "st": 3.0,
+      "rt": 0.0,
+      "dt": 8.0,
+      "hours": 12.0,
+      "notes": "Ус хүлээж зогсов."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261008_d",
+      "date": "2026-10-08",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2602",
+      "from": 179.4,
+      "to": 215.4,
+      "meters": 36.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261009_n",
+      "date": "2026-10-09",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "ZHDH2601",
+      "from": 374.0,
+      "to": 374.0,
+      "meters": 0.0,
+      "st": 12.0,
+      "rt": 0.0,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "Өрмийн тохиргоо хийх механик хүлээж зогсов."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261009_d",
+      "date": "2026-10-09",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "ZHDH2601",
+      "from": 359.0,
+      "to": 374.0,
+      "meters": 15.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн. Полимер 1, багана тос 1."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261009_n",
+      "date": "2026-10-09",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2602",
+      "from": 269.4,
+      "to": 293.4,
+      "meters": 24.0,
+      "st": 3.0,
+      "rt": 0.0,
+      "dt": 8.0,
+      "hours": 12.0,
+      "notes": "Ус хүлээж зогсов."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261009_d",
+      "date": "2026-10-09",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2602",
+      "from": 248.4,
+      "to": 269.4,
+      "meters": 21.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261010_n",
+      "date": "2026-10-10",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "DTDH2603",
+      "from": 0.0,
+      "to": 11.0,
+      "meters": 11.0,
+      "st": 0.0,
+      "rt": 1.5,
+      "dt": 8.5,
+      "hours": 12.0,
+      "notes": "Шинэ цооног эхлэв. PQ хоолой 0–3 м. Эвдрэл ихтэй муу чулуулаг."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261010_d",
+      "date": "2026-10-10",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "ZHDH2601",
+      "from": 374.0,
+      "to": 374.0,
+      "meters": 0.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "Механикчид өрмийн тохиргоо хийв (OT 6). Бүх HQ багана, PQ хоолойг сугалж, цооногийг 374.00 м-т хаав (EOH); шинэ цооног руу нүүв."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261010_n",
+      "date": "2026-10-10",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2601",
+      "from": 0.0,
+      "to": 14.4,
+      "meters": 14.4,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 4.0,
+      "hours": 12.0,
+      "notes": "Шинэ цооног руу нүүж, өрөм байрлуулав. Хамгаалалтын хоолой 0–9.00 м."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261010_d",
+      "date": "2026-10-10",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2602",
+      "from": 293.4,
+      "to": 305.4,
+      "meters": 12.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 8.5,
+      "hours": 12.0,
+      "notes": "Цооногийг 305.40 м-т хааж (EOH), багана сугалав."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261011_n",
+      "date": "2026-10-11",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "DTDH2603",
+      "from": 34.0,
+      "to": 56.0,
+      "meters": 22.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 9.0,
+      "hours": 12.0,
+      "notes": "Бит солив; өрөмдлөг хэвийн. Бит 1, полимер 1."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261011_d",
+      "date": "2026-10-11",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "DTDH2603",
+      "from": 11.0,
+      "to": 34.0,
+      "meters": 23.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Хагарал ихтэй чулуулаг. Полимер 1."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261011_n",
+      "date": "2026-10-11",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2601",
+      "from": 44.4,
+      "to": 86.4,
+      "meters": 42.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": ""
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261011_d",
+      "date": "2026-10-11",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2601",
+      "from": 14.4,
+      "to": 44.4,
+      "meters": 30.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.0,
+      "hours": 12.0,
+      "notes": "PQ хоолой 9.00–15.00 м."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261012_n",
+      "date": "2026-10-12",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "DTDH2603",
+      "from": 89.0,
+      "to": 131.0,
+      "meters": 42.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261012_d",
+      "date": "2026-10-12",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "DTDH2603",
+      "from": 56.0,
+      "to": 89.0,
+      "meters": 33.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 9.5,
+      "hours": 12.0,
+      "notes": "Бит солив; бутарсан, хагарал ихтэй чулуулаг. Бит 1, полимер 1."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261012_n",
+      "date": "2026-10-12",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2601",
+      "from": 113.4,
+      "to": 149.4,
+      "meters": 36.0,
+      "st": 1.5,
+      "rt": 0.0,
+      "dt": 9.0,
+      "hours": 12.0,
+      "notes": "Ус хүлээж зогсов."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261012_d",
+      "date": "2026-10-12",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2601",
+      "from": 86.4,
+      "to": 113.4,
+      "meters": 27.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 8.5,
+      "hours": 12.0,
+      "notes": "86.40 м-т бит солив; өрмийн сервис хийв."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261013_n",
+      "date": "2026-10-13",
+      "shift": "Шөнө",
+      "driller": "Батшаргал",
+      "hole": "DTDH2603",
+      "from": 170.0,
+      "to": 203.0,
+      "meters": 33.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг хэвийн. Полимер 1."
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261013_d",
+      "date": "2026-10-13",
+      "shift": "Өдөр",
+      "driller": "Анхболд",
+      "hole": "DTDH2603",
+      "from": 131.0,
+      "to": 170.0,
+      "meters": 39.0,
+      "st": 3.0,
+      "rt": 0.0,
+      "dt": 8.5,
+      "hours": 12.0,
+      "notes": "Ус хүлээж зогсов."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261013_n",
+      "date": "2026-10-13",
+      "shift": "Шөнө",
+      "driller": "Д. Энхбаяр",
+      "hole": "DTDH2601",
+      "from": 179.4,
+      "to": 221.4,
+      "meters": 42.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 10.5,
+      "hours": 12.0,
+      "notes": "221.4 м хүртэл өрөмдөв."
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261013_d",
+      "date": "2026-10-13",
+      "shift": "Өдөр",
+      "driller": "Д. Мөнхтөр",
+      "hole": "DTDH2601",
+      "from": 149.4,
+      "to": 179.4,
+      "meters": 30.0,
+      "st": 0.0,
+      "rt": 0.0,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": "Маягтад огноо, өрөм, талбай, захиалагч бичигдээгүй (огноог файлын нэрээс авав); гарын үсэг огт зураагүй. «HQ»-г хоолойн Size баганад бичсэн."
+    }
+  ],
+  "folderMap": {
+    "DTDH2603": {
+      "url": "https://drive.google.com/drive/folders/1VunxKCTlI8kiUMYmCS5F9UrnGRh_paXW",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1mPxAUtoYfuE9UuBDLpicrisGDEr4hHKx"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1d_81TL_JfueIxHHPNLR4AU5H6uCg4TfK"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/17WwExY4ZcrFibwkpNJUwE14KoK_uW0rT"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1QYhgTOrRy0NyWnAtWoVxdjjptWL7xvuG"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1BOiN2axYCjf588ogITn4sremMRDv-Xm2"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1GPdIlAzau9L1F_MsvUuOh6wC_xAOILmF"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/18hg1dVAW9RU3huxNrVdk8nSoVulrfiyq"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1PSENjaNnWOteZvHLhyJ9rhA6Ctf68R9Q"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1wsWYat5mRpp_CX0RjRvD70N905e8OvwN"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1SZVT091hLtIQf4W7Q5-o5tN2d7f4GkTe"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1-3NKLw7uTi49mcQS8TEJbimfNjBQ21M4"
+        }
+      ]
+    },
+    "DTDH2601": {
+      "url": "https://drive.google.com/drive/folders/11kvkAXEFNUDGKlDfFU-O7i-5xyMOPxPh",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1S6fTyFWiQIvFwQAuWsbK9K4l4f6UQflC"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1CCnHiodo8rwDOO-nkPxIclDsZAQy_-vy"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/15NJYGDmBQB9JPtOQy1OqDlQBufPkHmAX"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/19Yy1DJBgawItdtduClyMn2_rjUWR5znq"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1N_Arrr68KFKQS1X1fZ7JCoNcmRCrO1aP"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1eEtC-OHK1OJGFiGQPYDE1M6ZlqvWomxN"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1NDWaLDHJI-YZ1KzVJF-5r4uQh1W6oowc"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1wIXpiybdouXun5gqRp3TUSbNRDgA16OL"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/12NEDcOBUy4vL7dPLeAhg7pyBfkRu5sD1"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1kCrVhpz4XpAAkN1Nd0CvLU9iQm69tIin"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1A14IK9DgIfsLILzkNfb_CqQ0fxgMjrfi"
+        }
+      ]
+    },
+    "DTDH2602": {
+      "url": "https://drive.google.com/drive/folders/1sA6H0x7dgj7D_EVeYJl_UpJwHDmCpXgH",
+      "folders": [
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1u9173f1BInjiB6MRo0ewtw7vCjvk4opv"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1WZbq9oE_IKEphFZkyqZNQgilVC9Ky9Oq"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/1_3ylmfArRfyaQ-1IO0tYB9TPUmhY1-p0"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1HqeYy_d9jCKrt5fw-_SSFGJAC3We0jWB"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/16_sTowDYL2UuaNNkP74GsOUgUST7sssz"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1E_OgVs90q403CoOcvpvUO9y7sQMLA-td"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/17IF9EDFAxb1MuCtWA5nfQR5QCjbF-mMb"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1hknnoeFi1pLZwquXGtkhs_LspJnMwe8H"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1LBMacx-EDVf2jLCuEjoz8-OE9NbOxr1s"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1tO6cAaYafm6kH9X0xYExUV1yRr0IaUEJ"
+        }
+      ]
+    },
+    "ZHDH2601": {
+      "url": "https://drive.google.com/drive/folders/1UwL78kLxq53N_vy4xg4PskOyEQz0Tdrf",
+      "folders": [
+        {
+          "name": "99.Archive",
+          "url": "https://drive.google.com/drive/folders/1fenlxQWvDFmr9zxAxDjEjac_2kTHtInq"
+        },
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/12U3b_55gH_69xMxtggTV-VpBrKmZDOdA"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/10Wq2xhbkUHB9QK2_LNlqomlTKM6ey7Jz"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/1FvVV9bNyrSAVqoaMzetXTBI1Wb2PSMKr"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1GQVICZIUwVuISBKpEoG3CykOKfdl4y9l"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1hJ5ZfuKW0-FSv_kOamsY4vjskmockKER"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1CHTC7rN-eo3QwgcthACGLRkvDOfAtDW9"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1qo0jV_fVsWEVQXEEG5-gqXzNwSTTE5zS"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1NaQq3lnpt6zrNeyENofUwrup9LxaiArg"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1BOxFYKc9FieVr7FQbCk87LX1ypciggN8"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/17hDmidXlnOw0CFGJmfM5r2uSCQN4-iVH"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1RLnvLSdRMHeieXLA8eiF-tPOf9EHniHw"
+        }
+      ]
+    }
+  },
+  "syncWarnings": [],
+  "sources": [
+    {
+      "name": "shift_report.csv",
+      "url": "",
+      "collarRows": 0,
+      "shiftRows": 44
+    },
+    {
+      "name": "collar.csv",
+      "url": "",
+      "collarRows": 9,
+      "shiftRows": 0
+    }
+  ]
+}

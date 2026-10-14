@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+credentials*.json
+*service-account*.json
+token*.json
+*.log
+.drilling-*.tmp
+.openai/
+website/
+preview.mjs
+build-worker.mjs
