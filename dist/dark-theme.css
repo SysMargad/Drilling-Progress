@@ -1,45 +1,66 @@
 :root {
   color-scheme: dark;
-  --ink: #e4ecef;
-  --muted: #9aabb3;
-  --teal: #35b99c;
-  --orange: #f0a04e;
-  --line: #2b3b42;
+  --ink: #f5f5f7;
+  --muted: #a0a0a5;
+  --teal: #d0d0d4;
+  --orange: #85858b;
+  --line: #38383a;
 }
 
 body {
-  background: #0b1216;
+  background: #000;
   color: var(--ink);
 }
 
 aside {
-  background: #101d22;
-  border-right: 1px solid #25363d;
+  background: #000;
+  border-right: 1px solid #252527;
 }
 
 main {
-  background: #0b1216;
+  background: #000;
 }
 
 .toolbar,
 .kpi,
 .panel {
-  background: #131f24;
-  border-color: #2b3b42;
+  background: #1c1c1e;
+  border-color: #38383a;
 }
 
 .button,
 select,
 input,
 .chart-periods {
-  background: #1b2a30;
-  border-color: #34474f;
+  background: #242426;
+  border-color: #3a3a3c;
   color: var(--ink);
 }
 
 select option {
-  background: #1b2a30;
+  background: #242426;
   color: var(--ink);
+}
+
+.brand .mark {
+  background: #3a3a3c;
+  color: #fff;
+}
+
+nav button {
+  color: #b0b0b5;
+}
+
+nav button.active {
+  background: #242426;
+  color: #fff;
+  box-shadow: inset 3px 0 #d0d0d4;
+}
+
+nav button:hover,
+.button:hover,
+.kpi:hover {
+  background-color: #29292b;
 }
 
 .kpi .value,
@@ -49,54 +70,59 @@ select option {
 }
 
 th {
-  background: #1a282e;
-  border-color: #304148;
+  background: #262628;
+  border-color: #38383a;
 }
 
 td {
-  border-color: #26363d;
+  border-color: #303032;
 }
 
 .source-row,
 .detail-grid div,
 .folder-links a {
-  background: #18262c;
-  border-color: #304148;
+  background: #242426;
+  border-color: #38383a;
 }
 
 .track,
 .cost-bar {
-  background: #26373d;
+  background: #353538;
+}
+
+.track span,
+.cost-bar span {
+  background: #a5a5aa;
 }
 
 .alert {
-  background: #2c281c;
-  border-color: #594b2d;
-  color: #e1c37b;
+  background: #29292b;
+  border-color: #444446;
+  color: #d0d0d4;
 }
 
 .alert strong {
-  color: #f0d79a;
+  color: #f5f5f7;
 }
 
 .badge {
-  background: #19372f;
-  color: #8cddc2;
+  background: #303033;
+  color: #dedee2;
 }
 
 .badge.active {
-  background: #1c2d3b;
-  color: #a9c8e7;
+  background: #29292b;
+  color: #dedee2;
 }
 
 .badge.planned {
-  background: #273238;
-  color: #b3c0c4;
+  background: #303033;
+  color: #bcbcc1;
 }
 
 .badge.warn {
-  background: #3b3020;
-  color: #f0cf83;
+  background: #353538;
+  color: #dedee2;
 }
 
 .chart-period-button {
@@ -111,8 +137,8 @@ td {
 }
 
 .chart-period-button.active {
-  background: #29433f;
-  color: #d8fff3;
+  background: #414144;
+  color: #fff;
 }
 
 .chart-period-button:hover {
@@ -133,11 +159,11 @@ td {
 }
 
 .cost-change.up {
-  color: #50d49b;
+  color: #39d98a;
 }
 
 .cost-change.down {
-  color: #ff7777;
+  color: #ff5c5c;
 }
 
 .cost-change.flat {
@@ -148,30 +174,36 @@ td {
   margin: 20px 0 0;
   border-top: 1px solid var(--line);
   padding-top: 12px;
-  color: #f0cf83;
+  color: #c6c6cb;
   font-size: 12px;
 }
 
 .financial-panel svg line {
-  stroke: #2e4047;
+  stroke: #3b3b3e;
 }
 
 svg text {
-  fill: #a6b5bb;
+  fill: #b0b0b5;
 }
 
 dialog {
-  background: #131f24;
-  border-color: #34474f;
+  background: #1c1c1e;
+  border-color: #3a3a3c;
   color: var(--ink);
 }
 
 dialog::backdrop {
-  background: #030809c9;
+  background: #000c;
 }
 
 footer {
   border-color: var(--line);
+}
+
+.hole-link,
+.source-link,
+.folder-links a {
+  color: #d0d0d4;
 }
 
 @media (max-width: 700px) {
