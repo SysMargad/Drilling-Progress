@@ -271,32 +271,67 @@ def local_sources(directory):
     return sorted(records, key=lambda x: (x["suffix"] == ".xlsx", x["modified"]), reverse=True)
 
 
+def report_metadata(file, hole, rig, folder_url):
+    name = file.get("name", "")
+    match = re.search(r"(20\d{2})(\d{2})(\d{2})[_\s-]([dn])(?:[.\s_-]|$)", name, re.I)
+    if not hole or rig not in RIGS or not match or not file.get("mimeType", "").startswith("image/"):
+        return None
+    report_date = f"{match[1]}-{match[2]}-{match[3]}"
+    try:
+        datetime.strptime(report_date, "%Y-%m-%d")
+    except ValueError:
+        return None
+    return {"hole": hole, "rig": rig, "date": report_date,
+            "shift": "Өдөр" if match[4].lower() == "d" else "Шөнө", "name": name,
+            "url": file.get("webViewLink") or f"https://drive.google.com/file/d/{file['id']}/view",
+            "fileId": file["id"], "folderUrl": folder_url}
+
+
+def attach_reports(rows, reports):
+    index = {}
+    for report in reports:
+        key = (report["hole"], report["rig"], report["date"], report["shift"])
+        group = index.setdefault(key, [])
+        if not any(old["url"] == report["url"] for old in group):
+            group.append(report)
+    for row in rows:
+        row["reports"] = index.get((row["hole"], row["rig"], row["date"], row["shift"]), [])
+
+
 def drive_sources(folder, credentials_path):
     drive = Drive(credentials_path)
-    pending, seen, records, folders = [(folder, None)], set(), [], {}
+    pending, seen, records, folders, reports = [(folder, None, None, False)], set(), [], {}, []
     while pending:
-        fid, hole = pending.pop()
+        fid, hole, rig, daily = pending.pop()
         if fid in seen:
             continue
         seen.add(fid)
         children = drive.files(fid)
-        if hole and hole not in folders:
+        if hole and hole not in folders and not daily and not rig:
             folders[hole] = {"url": f"https://drive.google.com/drive/folders/{fid}",
                              "folders": [{"name": f["name"], "url": f"https://drive.google.com/drive/folders/{f['id']}"}
                                          for f in children if f["mimeType"] == "application/vnd.google-apps.folder"]}
         for f in children:
             if f["mimeType"] == "application/vnd.google-apps.folder":
-                pending.append((f["id"], hole_id(f["name"])))
+                if re.search(r"duplicat|archive|to_delete", f["name"], re.I):
+                    continue
+                pending.append((f["id"], hole_id(f["name"]) or hole,
+                                f["name"] if f["name"] in RIGS else rig,
+                                daily or f["name"].startswith("02.")))
             elif "collar" in f["name"].lower() or "shift report" in f["name"].lower():
                 if f["mimeType"] in {"application/vnd.google-apps.spreadsheet",
                                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}:
                     records.append({"name": f["name"], "url": f.get("webViewLink", ""),
                                     "modified": f.get("modifiedTime", ""),
                                     "content": drive.download(f), "suffix": ".xlsx"})
-    return sorted(records, key=lambda x: x["modified"], reverse=True), folders
+            elif daily:
+                report = report_metadata(f, hole, rig, f"https://drive.google.com/drive/folders/{fid}")
+                if report:
+                    reports.append(report)
+    return sorted(records, key=lambda x: x["modified"], reverse=True), folders, reports
 
 
-def assemble(records, seed, folders=None):
+def assemble(records, seed, folders=None, report_index=None):
     collar, shifts, warnings, provenance = {}, {}, [], []
     collar_url, shift_url = seed.get("collarUrl", ""), seed.get("shiftUrl", "")
     for source in records:
@@ -329,6 +364,9 @@ def assemble(records, seed, folders=None):
     unknown = {s["hole"] for s in shifts.values()} - set(collar)
     if unknown:
         raise ValueError("Shift holes missing from collar: " + ", ".join(sorted(unknown)))
+    if report_index is None:
+        report_index = [report for row in seed.get("shifts", []) for report in row.get("reports", [])]
+    attach_reports(list(shifts.values()), report_index)
     now = datetime.now(TZ)
     dates = sorted(s["date"] for s in shifts.values())
     return {"schemaVersion": 1, "asOf": now.date().isoformat(), "updatedAt": now.isoformat(timespec="seconds"),
@@ -427,10 +465,12 @@ def main():
             try:
                 seed = load_json(args.output if args.output.exists() else ROOT / "dist" / "data.json")
                 if args.source == "drive":
-                    records, folders = drive_sources(args.folder_id, args.credentials)
+                    records, folders, report_index = drive_sources(args.folder_id, args.credentials)
                 else:
                     records, folders = local_sources(args.input), None
-                data = assemble(records, seed, folders)
+                    report_file = args.input / "report-index.json"
+                    report_index = load_json(report_file) if report_file.exists() else None
+                data = assemble(records, seed, folders, report_index)
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.

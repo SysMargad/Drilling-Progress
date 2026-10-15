@@ -5,11 +5,45 @@ from unittest.mock import patch
 from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
-from drilling_sync import append_data_log, assemble, load_json, local_sources, parse_shifts, publish, signature, workbook_rows
+from drilling_sync import append_data_log, assemble, load_json, local_sources, parse_shifts, publish, signature, workbook_rows, report_metadata, attach_reports, drive_sources
 
 ROOT = Path(__file__).resolve().parent
 
 class PipelineTests(unittest.TestCase):
+    def test_drive_report_folder_traversal(self):
+        def folder(id,name):
+            return {'id':id,'name':name,'mimeType':'application/vnd.google-apps.folder'}
+        tree={'root':[folder('hole','DTDH2603')], 'hole':[folder('daily','02. Daily report')],
+              'daily':[folder('rig','C-1800'),folder('skip','Duplicates_To_Delete')],
+              'rig':[{'id':'photo','name':'Daily_report_20261015_n.JPG','mimeType':'image/jpeg'}]}
+        with patch('drilling_sync.Drive') as drive:
+            drive.return_value.files.side_effect=lambda id:tree[id]
+            records,folders,reports=drive_sources('root',None)
+        self.assertEqual(records,[])
+        self.assertIn('DTDH2603',folders)
+        self.assertEqual([(r['hole'],r['rig'],r['date'],r['shift']) for r in reports],
+                         [('DTDH2603','C-1800','2026-10-15','Шөнө')])
+
+    def test_report_matching_and_provenance(self):
+        image={'id':'photo','name':'DTDH2603_Daily_report_20261015_n.JPG.jpg','mimeType':'image/jpeg'}
+        report=report_metadata(image,'DTDH2603','C-1800','https://drive.google.com/drive/folders/test')
+        self.assertEqual((report['date'],report['shift']),('2026-10-15','Шөнө'))
+        self.assertEqual(report_metadata({**image,'name':'Daily_report_20261014_d'},'DTDH2603','C-1800','')['shift'],'Өдөр')
+        self.assertIsNone(report_metadata({**image,'name':'20261399_d.JPG'},'DTDH2603','C-1800',''))
+        self.assertIsNone(report_metadata({**image,'mimeType':'text/plain'},'DTDH2603','C-1800',''))
+        self.assertIsNone(report_metadata(image,'DTDH2603','unknown',''))
+        rows=[{k:report[k] for k in ('date','shift','rig','hole')}]
+        rows += [{**rows[0],'rig':'CSD-1300'},{**rows[0],'hole':'OTHER'},{**rows[0],'shift':'Өдөр'}]
+        attach_reports(rows,[report,report])
+        self.assertEqual([len(r['reports']) for r in rows],[1,0,0,0])
+
+    def test_all_current_shifts_have_exact_report(self):
+        data=assemble(self.records,self.seed,report_index=load_json(ROOT/'input'/'report-index.json'))
+        self.assertEqual(len(data['shifts']),44)
+        for row in data['shifts']:
+            self.assertEqual(len(row['reports']),1)
+            self.assertTrue(all(row[k]==row['reports'][0][k] for k in ('hole','rig','date','shift')))
+
     def setUp(self):
         self.records = local_sources(ROOT / 'input')
         self.seed = load_json(ROOT / 'dist' / 'data.json')

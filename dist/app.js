@@ -1,5 +1,5 @@
 'use strict';
-let D,tab='overview',query='',grain='day',dataLog=[],logError='',selectedHole=null;
+let D,tab='overview',query='',grain='day',dataLog=[],logError='',selectedHole=null,chartBars=[];
 const $=selector=>document.querySelector(selector);
 const fmt=(n,d=1)=>n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -14,7 +14,32 @@ function kpis(){
   const cards=[['Тайлант хугацаанд өрөмдсөн',fmt(sum(rows,'meters')),'м','overview'],['Бүртгэлтэй цооног',holes().length,'ш','holes'],['Өрөмдлөгийн ашиглалт',hours?fmt(dt/hours*100):'—','%','utilization'],['Дундаж хурд · ROP',dt?fmt(sum(rows,'meters')/dt,2):'—','м/ц','rop']];
   return '<div class="kpis">'+cards.map(([label,value,unit,target])=>`<button class="kpi ${tab===target?'selected':''}" data-go="${target}" aria-pressed="${tab===target}"><span class="label">${label}</span><span class="value">${value} <small>${unit}</small></span></button>`).join('')+'</div>';
 }
+function barPeriod(bar){return (bar.group.start===bar.group.end?bar.group.start:bar.group.start+' – '+bar.group.end)+(grain==='shift'?' · '+(bar.group.secondary==='Ө'?'Өдөр':'Шөнө'):'');}
+function barDifference(bar){const difference=bar.meters-bar.target;return difference<0?'Нормоос дутуу: '+fmt(-difference)+' м':difference>0?'Нормоос давсан: '+fmt(difference)+' м':'Норм биелсэн';}
+function barSummary(bar){return `${barPeriod(bar)} · ${bar.rig}. Өрөмдсөн: ${fmt(bar.meters)} м. Норм: ${fmt(bar.target)} м. ${barDifference(bar)}.`;}
+function hideBarTooltip(){const tooltip=$('#bar-tooltip');if(tooltip)tooltip.hidden=true;}
+function showBarTooltip(element,event){
+  const bar=chartBars[Number(element.dataset.barIndex)];if(!bar)return;
+  const tooltip=$('#bar-tooltip'),notes=[...new Set(bar.rows.map(row=>row.notes).filter(Boolean))];
+  tooltip.innerHTML=`<strong>${esc(barPeriod(bar))} · ${esc(bar.rig)}</strong><span>Өрөмдсөн: <b>${fmt(bar.meters)} м</b></span><span>Норм: ${fmt(bar.target)} м</span><span>${barDifference(bar)}</span>${bar.meters<bar.target&&notes.length?`<p>${notes.map(esc).join('<br>')}</p>`:''}<small>${bar.reports.length?'Тайлангийн зураг үзэх ↗':'Тайлангийн зураг холбогдоогүй'}</small>`;
+  tooltip.hidden=false;const bounds=element.getBoundingClientRect(),x=event?.clientX??bounds.right,y=event?.clientY??bounds.top;
+  tooltip.style.left=Math.max(8,Math.min(x+14,innerWidth-tooltip.offsetWidth-8))+'px';
+  tooltip.style.top=Math.max(8,Math.min(y+14,innerHeight-tooltip.offsetHeight-8))+'px';
+}
+function openBarReports(bar){
+  hideBarTooltip();
+  $('#detail-body').innerHTML=`<h2>${esc(barPeriod(bar))} · ${esc(bar.rig)}</h2><p>Өрөмдсөн ${fmt(bar.meters)} м · ${barDifference(bar)}</p><div class="report-list">${bar.rows.map(row=>`<section><h3>${esc(row.date)} · ${esc(row.shift)} · ${esc(row.hole)} · ${fmt(row.meters)} м</h3>${row.reports?.length?row.reports.map(report=>`<a href="${esc(report.url)}" target="_blank" rel="noopener">Тайлангийн зураг ↗</a>`).join(''):'<span>Тайлангийн зураг холбогдоогүй.</span>'}</section>`).join('')}</div>`;
+  $('#detail').showModal();
+}
+document.addEventListener('pointermove',event=>{const bar=event.target.closest('[data-bar-index]');if(bar)showBarTooltip(bar,event);else hideBarTooltip();});
+document.addEventListener('focusin',event=>{const bar=event.target.closest('[data-bar-index]');if(bar)showBarTooltip(bar);else hideBarTooltip();});
+document.addEventListener('focusout',hideBarTooltip);
+document.addEventListener('pointerout',event=>{if(!event.relatedTarget)hideBarTooltip();});
+document.addEventListener('scroll',hideBarTooltip,true);
+window.addEventListener('blur',hideBarTooltip);
+document.addEventListener('keydown',event=>{const bar=event.target.closest('g[data-bar-index]');if(bar&&['Enter',' '].includes(event.key)){event.preventDefault();openBarReports(chartBars[Number(bar.dataset.barIndex)]);}});
 function chart(){
+  hideBarTooltip();chartBars=[];
   const rows=shifts(),groups=DrillingChart.aggregate(rows,grain),rigs=$('#rig').value?[$('#rig').value]:['C-1800','CSD-1300'];
   const controls=`<div class="chart-periods" role="group" aria-label="Графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button data-grain="${value}" aria-pressed="${grain===value}">${label}</button>`).join('')}</div>`;
   const targetLabels={shift:'30 м / ээлж / өрөм',day:'60 м / өдөр / өрөм',week:'420 м / 7 хоног / өрөм',month:'60 м × сарын хоног / өрөм'};
@@ -23,14 +48,22 @@ function chart(){
   const W=Math.max(600,groups.length*(grain==='shift'?44:48)+90),H=280,left=45,right=18,top=30,bottom=grain==='shift'?58:40,plotH=H-top-bottom,step=(W-left-right)/groups.length;
   const high=Math.max(...groups.map(g=>Math.max(g.target,...Object.values(g.amounts)))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
   const y=value=>top+plotH-value/max*plotH;
-  let svg=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px" role="img" aria-label="Гүйцэтгэл, ${targetLabels[grain]}"><text x="6" y="14">м</text>`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px" role="group" aria-label="Гүйцэтгэл, ${targetLabels[grain]}"><text x="6" y="14">м</text>`;
   const tick=Math.max(unit,Math.ceil(max/5/unit)*unit);
   for(let n=0;n<=max;n+=tick)svg+=`<line x1="${left}" x2="${W-right}" y1="${y(n)}" y2="${y(n)}" stroke="#e8eded"/><text x="${left-8}" y="${y(n)+4}" text-anchor="end">${fmt(n,0)}</text>`;
   const barWidth=Math.min(17,(step-14)/rigs.length),colors={'C-1800':'#dc8a3b','CSD-1300':'#128875'};
   groups.forEach((group,i)=>{
     const x=left+(i+0.5)*step;
     rigs.forEach((rig,j)=>{const value=group.amounts[rig]||0,recorded=group.counts[rig]||0,bx=x+(j-rigs.length/2)*barWidth;
-      svg+=`<rect x="${bx}" y="${y(value)}" width="${barWidth-2}" height="${value/max*plotH}" rx="2" fill="${colors[rig]}"><title>${esc(group.start===group.end?group.start:group.start+' – '+group.end)}${grain==='shift'?' · '+(group.secondary==='Ө'?'Өдөр':'Шөнө'):''} · ${rig}: ${recorded?fmt(value)+' м':'Бүртгэлгүй'} · норм ${fmt(group.target)} м</title></rect>`;
+      if(!recorded)return;
+      const records=group.rows.filter(row=>row.rig===rig).sort((a,b)=>a.date.localeCompare(b.date)||(a.shift==='Өдөр'?0:1)-(b.shift==='Өдөр'?0:1)),reports=[...new Map(records.flatMap(row=>row.reports||[]).map(report=>[report.url,report])).values()];
+      const bar={rig,group,rows:records,reports,meters:value,target:group.target},index=chartBars.push(bar)-1;
+      const label=barSummary(bar),single=reports.length===1&&records.every(row=>row.reports?.length);
+      const attrs=`data-bar-index="${index}" aria-label="${esc(label)}" aria-describedby="bar-tooltip"`;
+      svg+=single?`<a ${attrs} href="${esc(reports[0].url)}" target="_blank" rel="noopener">`:`<g ${attrs} role="button" tabindex="0" aria-haspopup="dialog">`;
+      const height=Math.max(value/max*plotH,3);
+      svg+=`<rect x="${bx-2}" y="${y(value)-3}" width="${barWidth+2}" height="${Math.max(height+6,12)}" fill="transparent"/><rect class="bar-fill" x="${bx}" y="${y(0)-height}" width="${barWidth-2}" height="${height}" rx="2" fill="${colors[rig]}"/>`;
+      svg+=single?'</a>':'</g>';
     });
     svg+=`<text x="${x}" y="${H-bottom+22}" text-anchor="middle">${group.label}</text>`;
     if(group.secondary)svg+=`<text x="${x}" y="${H-bottom+39}" text-anchor="middle">${group.secondary}</text>`;
@@ -76,6 +109,7 @@ function logTable(){
 }
 function sources(){return `<section class="panel"><h2>Өгөгдлийн эх сурвалж</h2><div class="source-list"><div class="source-row"><a class="source-link" href="${esc(D.collarUrl)}" target="_blank" rel="noopener">Collar бүртгэл ↗</a></div><div class="source-row"><a class="source-link" href="${esc(D.shiftUrl)}" target="_blank" rel="noopener">Ээлжийн тайлан ↗</a></div></div></section><section class="panel"><h2>Тооцоолол</h2><p>Ашиглалт = DT / нийт цаг. ROP = өрөмдсөн метр / DT. Цооногийн ахиц = сүүлийн ээлжийн гүн / төлөвлөсөн гүн.</p><p>Нормыг өрөм тус бүрээр 30 м/ээлж, 60 м/өдөр, 420 м/7 хоног гэж тооцно. Сарын норм = 60 м × тухайн сарын календарийн хоног. Дутуу тайлант 7 хоног, сарыг бүтэн календарийн үеийн нормтой харьцуулна.</p></section>`;}
 function render(){
+  hideBarTooltip();
   if(!D)return;let content=kpis();
   if(tab==='overview')content+='<div class="grid"><section class="panel" id="chart-panel">'+chart()+'</section><section class="panel"><h2>Өрмийн гүйцэтгэл</h2>'+rigs()+'</section></div>';
   if(tab==='holes')content+='<section class="panel"><div class="panel-head"><h2>Цооногийн ахиц</h2><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="'+esc(query)+'"></div><div id="table">'+holeTable()+'</div></section>';
@@ -86,6 +120,7 @@ function render(){
 }
 function openHole(id){const h=D.collar.find(x=>x.id===id),folder=D.folderMap?.[id],state=status(h);$('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(h.id)}</h2><p>${SITE} · ${esc(areaOf(h))} · <span class="badge ${state[1]}">${state[0]}</span></p><div class="detail-grid">${[['Төлөвлөсөн гүн',fmt(h.plan)+' м'],['Ээлжийн сүүлийн гүн',fmt(depth(id))+' м'],['Collar эцсийн гүн',fmt(h.collarDepth)+' м'],['Эхэлсэн / дууссан',`${h.start||'—'} / ${h.finish||'—'}`],['E / N / Z',`${fmt(h.e,3)} / ${fmt(h.n,3)} / ${fmt(h.z,3)}`],['Азимут / хазайлт',`${fmt(h.az)}° / ${fmt(h.dip)}°`],['Керний гарц',h.recovery==null?'—':fmt(h.recovery)+'%'],['Керний хайрцаг',fmt(h.boxes,0)]].map(([label,value])=>`<div><small>${label}</small><strong>${esc(value)}</strong></div>`).join('')}</div><h3>Эх баримтууд</h3><div class="folder-links">${folder?folder.folders.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)} ↗</a>`).join(''):'Энэ цооногийн хавтас олдоогүй.'}</div>`;$('#detail').showModal();}
 document.addEventListener('click',e=>{
+  const bar=e.target.closest('g[data-bar-index]');if(bar)openBarReports(chartBars[Number(bar.dataset.barIndex)]);
   const target=e.target.closest('[data-tab],[data-go]');if(target){e.preventDefault();tab=target.dataset.tab||target.dataset.go;query='';render();}
   const period=e.target.closest('[data-grain]');if(period){grain=period.dataset.grain;$('#chart-panel').innerHTML=chart();}
   const depthButton=e.target.closest('[data-depth-hole]');if(depthButton){selectedHole=selectedHole===depthButton.dataset.depthHole?null:depthButton.dataset.depthHole;$('#table').innerHTML=holeTable();}
@@ -96,7 +131,7 @@ $('#detail').addEventListener('click',e=>{if(e.target===$('#detail')){const r=e.
 $('#export').addEventListener('click',()=>{
   const records=tab==='data-log'?dataLog:tab==='shifts'?shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())):holes().filter(x=>x.id.toLowerCase().includes(query.toLowerCase())).map(h=>({...h,site:SITE,shiftDepth:depth(h.id),status:status(h)[0]}));
   if(!records.length){alert('Татах бүртгэл байхгүй.');return;}
-  const keys=[...new Set(records.flatMap(r=>Object.keys(r)))],cell=value=>'"'+String(value??'').replace(/"/g,'""')+'"',csv='\uFEFF'+[keys,...records.map(r=>keys.map(k=>r[k]))].map(r=>r.map(cell).join(',')).join('\r\n'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
+  const keys=[...new Set(records.flatMap(r=>Object.keys(r)))],cell=value=>'"'+String(value??'').replace(/"/g,'""')+'"',csv='\uFEFF'+[keys,...records.map(r=>keys.map(k=>k==='reports'?(r[k]||[]).map(report=>report.url).join(' | '):r[k]))].map(r=>r.map(cell).join(',')).join('\r\n'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
   a.href=url;a.download=`drilling-${tab}-${D.asOf}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 async function refreshLog(){try{const r=await fetch('data-log.json',{cache:'no-store'});if(!r.ok)throw Error();const log=await r.json();dataLog=log.entries||[];logError='';}catch{logError='Дата татсан түүхийг ачаалж чадсангүй.';}if(D&&tab==='data-log')render();}

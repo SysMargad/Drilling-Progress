@@ -119,7 +119,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "OT – өрмийн үзлэг."
+      "notes": "OT – өрмийн үзлэг.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-01",
+          "shift": "Шөнө",
+          "name": "Daily report_20261001_n.JPG",
+          "url": "https://drive.google.com/file/d/1R-dfKNnA4He1WHfCymqKRkJxsogAR0dO/view?usp=drivesdk",
+          "fileId": "1R-dfKNnA4He1WHfCymqKRkJxsogAR0dO",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -135,7 +147,19 @@
       "rt": 0,
       "dt": 6.5,
       "hours": 12,
-      "notes": "Шинэ цооног руу нүүж, өрөм бэлтгэв (HQ STD)."
+      "notes": "Шинэ цооног руу нүүж, өрөм бэлтгэв (HQ STD).",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-01",
+          "shift": "Өдөр",
+          "name": "Daily report_20261001_d.JPG",
+          "url": "https://drive.google.com/file/d/1_bBuLFlWgDHfeybLlWMqLQ6x2uXfuvGt/view?usp=drivesdk",
+          "fileId": "1_bBuLFlWgDHfeybLlWMqLQ6x2uXfuvGt",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -151,7 +175,19 @@
       "rt": 0,
       "dt": 10.5,
       "hours": 12,
-      "notes": "Шавар зуурав. 66–71 м шавартай, бутарсан маш муу чулуулаг."
+      "notes": "Шавар зуурав. 66–71 м шавартай, бутарсан маш муу чулуулаг.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-02",
+          "shift": "Шөнө",
+          "name": "Daily report_20261002_n.JPG",
+          "url": "https://drive.google.com/file/d/1es0rFva5x869pBTf5iXf5rkpQeJ2npNu/view?usp=drivesdk",
+          "fileId": "1es0rFva5x869pBTf5iXf5rkpQeJ2npNu",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -167,7 +203,19 @@
       "rt": 7,
       "dt": 2,
       "hours": 12,
-      "notes": "9 м өрөмдөв. HQ багана сугалж, PQ хамгаалалтын хоолойг өргөсгөн 39 м хүртэл суулгав."
+      "notes": "9 м өрөмдөв. HQ багана сугалж, PQ хамгаалалтын хоолойг өргөсгөн 39 м хүртэл суулгав.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-02",
+          "shift": "Өдөр",
+          "name": "Daily report_20261002_d.JPG",
+          "url": "https://drive.google.com/file/d/1_dlHNxS9TSQHwE7BsaxTxauPb7hWfM-y/view?usp=drivesdk",
+          "fileId": "1_dlHNxS9TSQHwE7BsaxTxauPb7hWfM-y",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -183,7 +231,19 @@
       "rt": 11.5,
       "dt": 0,
       "hours": 12,
-      "notes": "PCD болон PQ битээр 21 м-ээс доош өргөсгөв (дуусах гүн маягтад засвартай)."
+      "notes": "PCD болон PQ битээр 21 м-ээс доош өргөсгөв (дуусах гүн маягтад засвартай).",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-03",
+          "shift": "Шөнө",
+          "name": "Daily report_20261003_n.JPG",
+          "url": "https://drive.google.com/file/d/1J32NSWLAv60VSUQknaNSn_GvYP38ukcp/view?usp=drivesdk",
+          "fileId": "1J32NSWLAv60VSUQknaNSn_GvYP38ukcp",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -199,7 +259,19 @@
       "rt": 9,
       "dt": 0,
       "hours": 12,
-      "notes": "Цооног нурсан; HQ шавраар өрөмдөх оролдлого хийв. HQ багана сугалж, PCD битээр 0–21 м өргөсгөв. Маягтад DT 4 цагийг «PQ REAM» гэж тэмдэглэсэн тул RT-д ангилав."
+      "notes": "Цооног нурсан; HQ шавраар өрөмдөх оролдлого хийв. HQ багана сугалж, PCD битээр 0–21 м өргөсгөв. Маягтад DT 4 цагийг «PQ REAM» гэж тэмдэглэсэн тул RT-д ангилав.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-03",
+          "shift": "Өдөр",
+          "name": "Daily report_20261003_d.JPG",
+          "url": "https://drive.google.com/file/d/1uJbt-rspmCPfW5N0LeMXeu1q8VkbL8QG/view?usp=drivesdk",
+          "fileId": "1uJbt-rspmCPfW5N0LeMXeu1q8VkbL8QG",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -215,7 +287,19 @@
       "rt": 6,
       "dt": 2,
       "hours": 12,
-      "notes": "PQ хоолойг 71 м хүртэл суулгав; 71–74 м маш муу чулуулагт өрөмдөв; HQ багана сугалж, PQ хоолой 3 м нэмэв."
+      "notes": "PQ хоолойг 71 м хүртэл суулгав; 71–74 м маш муу чулуулагт өрөмдөв; HQ багана сугалж, PQ хоолой 3 м нэмэв.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-04",
+          "shift": "Шөнө",
+          "name": "Daily report_20261004_n.JPG",
+          "url": "https://drive.google.com/file/d/1O1hS494Vx_LuaiFis5VBUWPr2ASJmebd/view?usp=drivesdk",
+          "fileId": "1O1hS494Vx_LuaiFis5VBUWPr2ASJmebd",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -231,7 +315,19 @@
       "rt": 11.5,
       "dt": 0,
       "hours": 12,
-      "notes": "PQ битээр 54–71 м өргөсгөв."
+      "notes": "PQ битээр 54–71 м өргөсгөв.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-04",
+          "shift": "Өдөр",
+          "name": "Daily report_20261004_d.JPG",
+          "url": "https://drive.google.com/file/d/1kLCtwghwYEtj8wnOlQifupsMscmUx7i9/view?usp=drivesdk",
+          "fileId": "1kLCtwghwYEtj8wnOlQifupsMscmUx7i9",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -247,7 +343,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-05",
+          "shift": "Шөнө",
+          "name": "Daily report_20261005_n.JPG",
+          "url": "https://drive.google.com/file/d/1OkoFix-RzJEpak6jZ-Xg2Pp4jEZIuOxQ/view?usp=drivesdk",
+          "fileId": "1OkoFix-RzJEpak6jZ-Xg2Pp4jEZIuOxQ",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -263,7 +371,19 @@
       "rt": 0,
       "dt": 10.5,
       "hours": 12,
-      "notes": "Бит солив."
+      "notes": "Бит солив.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-05",
+          "shift": "Өдөр",
+          "name": "Daily report_20261005_d.JPG",
+          "url": "https://drive.google.com/file/d/1m_0T3dv8532Ff5SFerCDBBad2rsnMkfD/view?usp=drivesdk",
+          "fileId": "1m_0T3dv8532Ff5SFerCDBBad2rsnMkfD",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -279,7 +399,19 @@
       "rt": 0,
       "dt": 9,
       "hours": 12,
-      "notes": "Хамгаалалтын хоолой 0–3.00 м."
+      "notes": "Хамгаалалтын хоолой 0–3.00 м.",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-05",
+          "shift": "Шөнө",
+          "name": "Daily report_20261005_n.JPG",
+          "url": "https://drive.google.com/file/d/1JZOeJNoDzhFhh-I5zKPb6F5Wy8UTZIks/view?usp=drivesdk",
+          "fileId": "1JZOeJNoDzhFhh-I5zKPb6F5Wy8UTZIks",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -295,7 +427,19 @@
       "rt": 0,
       "dt": 1,
       "hours": 12,
-      "notes": "Талбай янзлав (7 цагийг маягтад ST кодоор бүртгэсэн)."
+      "notes": "Талбай янзлав (7 цагийг маягтад ST кодоор бүртгэсэн).",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-05",
+          "shift": "Өдөр",
+          "name": "Daily report_20261005_d.JPG",
+          "url": "https://drive.google.com/file/d/1g99_P958MKspcu5zW4nIe6D-Skul3StC/view?usp=drivesdk",
+          "fileId": "1g99_P958MKspcu5zW4nIe6D-Skul3StC",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -311,7 +455,19 @@
       "rt": 0,
       "dt": 10,
       "hours": 12,
-      "notes": "Бит солив; хатуу чулуулаг."
+      "notes": "Бит солив; хатуу чулуулаг.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-06",
+          "shift": "Шөнө",
+          "name": "Daily report_20261006_n.JPG",
+          "url": "https://drive.google.com/file/d/1c_Dt-DhB4uPVqVlG-dcjo3FztN_C2fXz/view?usp=drivesdk",
+          "fileId": "1c_Dt-DhB4uPVqVlG-dcjo3FztN_C2fXz",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -327,7 +483,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн."
+      "notes": "Өрөмдлөг хэвийн.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-06",
+          "shift": "Өдөр",
+          "name": "Daily report_20261006_d.JPG",
+          "url": "https://drive.google.com/file/d/1cM1kw2NQd_qZoUXNZMOefXnYxwqYgTCb/view?usp=drivesdk",
+          "fileId": "1cM1kw2NQd_qZoUXNZMOefXnYxwqYgTCb",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -343,7 +511,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-06",
+          "shift": "Шөнө",
+          "name": "Daily report_20261006_n.JPG",
+          "url": "https://drive.google.com/file/d/1hCgjvQ5XslJICWP0JRsi-1TNi19rMVYF/view?usp=drivesdk",
+          "fileId": "1hCgjvQ5XslJICWP0JRsi-1TNi19rMVYF",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -359,7 +539,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-06",
+          "shift": "Өдөр",
+          "name": "Daily report_20261006_d.JPG",
+          "url": "https://drive.google.com/file/d/1Zbq9eSnBHzhva_uA6zGkXZRr6f6MSbsk/view?usp=drivesdk",
+          "fileId": "1Zbq9eSnBHzhva_uA6zGkXZRr6f6MSbsk",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -375,7 +567,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн. Маягтад нийт цаг, захиалагч бичигдээгүй."
+      "notes": "Өрөмдлөг хэвийн. Маягтад нийт цаг, захиалагч бичигдээгүй.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-07",
+          "shift": "Шөнө",
+          "name": "Daily report_20261007_n.JPG",
+          "url": "https://drive.google.com/file/d/1CnzBsRUeEkxzxKapAYmJMbMGGd4CLg8y/view?usp=drivesdk",
+          "fileId": "1CnzBsRUeEkxzxKapAYmJMbMGGd4CLg8y",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -391,7 +595,19 @@
       "rt": 0,
       "dt": 10.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн."
+      "notes": "Өрөмдлөг хэвийн.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-07",
+          "shift": "Өдөр",
+          "name": "Daily report_20261007_d.JPG",
+          "url": "https://drive.google.com/file/d/1ejmfpAXI76htVmOaf9buyt_qzIDaXCFJ/view?usp=drivesdk",
+          "fileId": "1ejmfpAXI76htVmOaf9buyt_qzIDaXCFJ",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -407,7 +623,19 @@
       "rt": 0,
       "dt": 10,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-07",
+          "shift": "Шөнө",
+          "name": "Daily report_20261007_n.JPG",
+          "url": "https://drive.google.com/file/d/1T5BEsrL1nvH7Rs3BVhjDC888dnSSNXx-/view?usp=drivesdk",
+          "fileId": "1T5BEsrL1nvH7Rs3BVhjDC888dnSSNXx-",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -423,7 +651,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": "Маягтад өрмийг «CSD-1800» гэж засвартай бичсэн."
+      "notes": "Маягтад өрмийг «CSD-1800» гэж засвартай бичсэн.",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-07",
+          "shift": "Өдөр",
+          "name": "Daily report_20261007_d.JPG",
+          "url": "https://drive.google.com/file/d/1QGtgwMln2mNpWQAgzeGEGr4ads4iDAkv/view?usp=drivesdk",
+          "fileId": "1QGtgwMln2mNpWQAgzeGEGr4ads4iDAkv",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -439,7 +679,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн."
+      "notes": "Өрөмдлөг хэвийн.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-08",
+          "shift": "Шөнө",
+          "name": "Daily report_20261008_n.JPG",
+          "url": "https://drive.google.com/file/d/1sCFOyMtZA2BtmMimxY10vaesHudWLtH3/view?usp=drivesdk",
+          "fileId": "1sCFOyMtZA2BtmMimxY10vaesHudWLtH3",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -455,7 +707,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн. Полимер 1."
+      "notes": "Өрөмдлөг хэвийн. Полимер 1.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-08",
+          "shift": "Өдөр",
+          "name": "Daily report_20261008_d.JPG",
+          "url": "https://drive.google.com/file/d/1gF0_TpKvBYWboIH-qrBfGDGKCwl499xh/view?usp=drivesdk",
+          "fileId": "1gF0_TpKvBYWboIH-qrBfGDGKCwl499xh",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -471,7 +735,19 @@
       "rt": 0,
       "dt": 8,
       "hours": 12,
-      "notes": "Ус хүлээж зогсов."
+      "notes": "Ус хүлээж зогсов.",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-08",
+          "shift": "Шөнө",
+          "name": "Daily report_20261008_n.JPG",
+          "url": "https://drive.google.com/file/d/1U51Rgf5Wy9CRkHVZoIWXNCraJgIwXcKq/view?usp=drivesdk",
+          "fileId": "1U51Rgf5Wy9CRkHVZoIWXNCraJgIwXcKq",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -487,7 +763,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-08",
+          "shift": "Өдөр",
+          "name": "Daily report_20261008_d.JPG",
+          "url": "https://drive.google.com/file/d/1ufIcLnX5fHSS3gOW9KeRWUp15DPjB7ZI/view?usp=drivesdk",
+          "fileId": "1ufIcLnX5fHSS3gOW9KeRWUp15DPjB7ZI",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -503,7 +791,19 @@
       "rt": 0,
       "dt": 0,
       "hours": 12,
-      "notes": "Өрмийн тохиргоо хийх механик хүлээж зогсов."
+      "notes": "Өрмийн тохиргоо хийх механик хүлээж зогсов.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-09",
+          "shift": "Шөнө",
+          "name": "Daily report_20261009_n.JPG",
+          "url": "https://drive.google.com/file/d/1jtwKM-xIItEk9ToDdT4zbU8g5Ln9Z0wg/view?usp=drivesdk",
+          "fileId": "1jtwKM-xIItEk9ToDdT4zbU8g5Ln9Z0wg",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -519,7 +819,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн. Полимер 1, багана тос 1."
+      "notes": "Өрөмдлөг хэвийн. Полимер 1, багана тос 1.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-09",
+          "shift": "Өдөр",
+          "name": "Daily report_20261009_d.JPG",
+          "url": "https://drive.google.com/file/d/1Ucsh--EVqYX9V_cSaSuL54Yz1mDhAsLh/view?usp=drivesdk",
+          "fileId": "1Ucsh--EVqYX9V_cSaSuL54Yz1mDhAsLh",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -535,7 +847,19 @@
       "rt": 0,
       "dt": 8,
       "hours": 12,
-      "notes": "Ус хүлээж зогсов."
+      "notes": "Ус хүлээж зогсов.",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-09",
+          "shift": "Шөнө",
+          "name": "Daily report_20261009_n.JPG",
+          "url": "https://drive.google.com/file/d/1hNcVpDhISTj1uXxqrVcDdPPUoc63OBTK/view?usp=drivesdk",
+          "fileId": "1hNcVpDhISTj1uXxqrVcDdPPUoc63OBTK",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -551,7 +875,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-09",
+          "shift": "Өдөр",
+          "name": "Daily report_20261009_d.JPG",
+          "url": "https://drive.google.com/file/d/11sWLbX1KBpjMrrtZN9g2KBnLKuFmautb/view?usp=drivesdk",
+          "fileId": "11sWLbX1KBpjMrrtZN9g2KBnLKuFmautb",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -567,7 +903,19 @@
       "rt": 1.5,
       "dt": 8.5,
       "hours": 12,
-      "notes": "Шинэ цооног эхлэв. PQ хоолой 0–3 м. Эвдрэл ихтэй муу чулуулаг."
+      "notes": "Шинэ цооног эхлэв. PQ хоолой 0–3 м. Эвдрэл ихтэй муу чулуулаг.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-10",
+          "shift": "Шөнө",
+          "name": "Daily report_20261010_n.JPG",
+          "url": "https://drive.google.com/file/d/1BPULhp3fzlaj_5qaDTxPgkimdCNtE6DZ/view?usp=drivesdk",
+          "fileId": "1BPULhp3fzlaj_5qaDTxPgkimdCNtE6DZ",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -583,7 +931,19 @@
       "rt": 0,
       "dt": 0,
       "hours": 12,
-      "notes": "Механикчид өрмийн тохиргоо хийв (OT 6). Бүх HQ багана, PQ хоолойг сугалж, цооногийг 374.00 м-т хаав (EOH); шинэ цооног руу нүүв."
+      "notes": "Механикчид өрмийн тохиргоо хийв (OT 6). Бүх HQ багана, PQ хоолойг сугалж, цооногийг 374.00 м-т хаав (EOH); шинэ цооног руу нүүв.",
+      "reports": [
+        {
+          "hole": "ZHDH2601",
+          "rig": "C-1800",
+          "date": "2026-10-10",
+          "shift": "Өдөр",
+          "name": "Daily report_20261010_d.JPG",
+          "url": "https://drive.google.com/file/d/1WntoFWxwba6x--t57upJvAkwarniZ9Yw/view?usp=drivesdk",
+          "fileId": "1WntoFWxwba6x--t57upJvAkwarniZ9Yw",
+          "folderUrl": "https://drive.google.com/drive/folders/1VdgHb6CgP8cBSMtzV2F8IFoeVzQjZcm9"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -599,7 +959,19 @@
       "rt": 0,
       "dt": 4,
       "hours": 12,
-      "notes": "Шинэ цооног руу нүүж, өрөм байрлуулав. Хамгаалалтын хоолой 0–9.00 м."
+      "notes": "Шинэ цооног руу нүүж, өрөм байрлуулав. Хамгаалалтын хоолой 0–9.00 м.",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-10",
+          "shift": "Шөнө",
+          "name": "Daily report_20261010_n.JPG",
+          "url": "https://drive.google.com/file/d/1LB1FktOKR4_jhb5ujo-QTHTJy-_tB6wQ/view?usp=drivesdk",
+          "fileId": "1LB1FktOKR4_jhb5ujo-QTHTJy-_tB6wQ",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -615,7 +987,19 @@
       "rt": 0,
       "dt": 8.5,
       "hours": 12,
-      "notes": "Цооногийг 305.40 м-т хааж (EOH), багана сугалав."
+      "notes": "Цооногийг 305.40 м-т хааж (EOH), багана сугалав.",
+      "reports": [
+        {
+          "hole": "DTDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-10-10",
+          "shift": "Өдөр",
+          "name": "Daily report_20261010_d.JPG",
+          "url": "https://drive.google.com/file/d/1nE3hZjcCzSom4htilwrC_ZOGUZ7yIDfp/view?usp=drivesdk",
+          "fileId": "1nE3hZjcCzSom4htilwrC_ZOGUZ7yIDfp",
+          "folderUrl": "https://drive.google.com/drive/folders/1CBVSdaMLVm-xjRCVqtuX7SkxZ-xi0VWj"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -631,7 +1015,19 @@
       "rt": 0,
       "dt": 9,
       "hours": 12,
-      "notes": "Бит солив; өрөмдлөг хэвийн. Бит 1, полимер 1."
+      "notes": "Бит солив; өрөмдлөг хэвийн. Бит 1, полимер 1.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-11",
+          "shift": "Шөнө",
+          "name": "Daily report_20261011_n.JPG",
+          "url": "https://drive.google.com/file/d/1ansY4JyTtTNkcYIkn2YuNTfMvIAjFJTm/view?usp=drivesdk",
+          "fileId": "1ansY4JyTtTNkcYIkn2YuNTfMvIAjFJTm",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -647,7 +1043,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Хагарал ихтэй чулуулаг. Полимер 1."
+      "notes": "Хагарал ихтэй чулуулаг. Полимер 1.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-11",
+          "shift": "Өдөр",
+          "name": "Daily report_20261011_d.JPG",
+          "url": "https://drive.google.com/file/d/1wsxMZ9IysFXsI-Ng-CO-ig1hAoYP9ImP/view?usp=drivesdk",
+          "fileId": "1wsxMZ9IysFXsI-Ng-CO-ig1hAoYP9ImP",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -663,7 +1071,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": ""
+      "notes": "",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-11",
+          "shift": "Шөнө",
+          "name": "Daily report_20261011_n.JPG",
+          "url": "https://drive.google.com/file/d/1W-0HXt0zRHw-Ynw1KUYiUeMOvQcjxhsr/view?usp=drivesdk",
+          "fileId": "1W-0HXt0zRHw-Ynw1KUYiUeMOvQcjxhsr",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -679,7 +1099,19 @@
       "rt": 0,
       "dt": 10,
       "hours": 12,
-      "notes": "PQ хоолой 9.00–15.00 м."
+      "notes": "PQ хоолой 9.00–15.00 м.",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-11",
+          "shift": "Өдөр",
+          "name": "Daily report_20261011_d.JPG",
+          "url": "https://drive.google.com/file/d/1JkiH7YDUTByWhZq-SLJDh9fiBSH_YMr2/view?usp=drivesdk",
+          "fileId": "1JkiH7YDUTByWhZq-SLJDh9fiBSH_YMr2",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -695,7 +1127,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн."
+      "notes": "Өрөмдлөг хэвийн.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-12",
+          "shift": "Шөнө",
+          "name": "Daily report_20261012_n.JPG",
+          "url": "https://drive.google.com/file/d/1ljwRwOk4zzcW5_SAxMdq2xUB0yz-Q1Fw/view?usp=drivesdk",
+          "fileId": "1ljwRwOk4zzcW5_SAxMdq2xUB0yz-Q1Fw",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -711,7 +1155,19 @@
       "rt": 0,
       "dt": 9.5,
       "hours": 12,
-      "notes": "Бит солив; бутарсан, хагарал ихтэй чулуулаг. Бит 1, полимер 1."
+      "notes": "Бит солив; бутарсан, хагарал ихтэй чулуулаг. Бит 1, полимер 1.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-12",
+          "shift": "Өдөр",
+          "name": "Daily report_20261012_d.JPG",
+          "url": "https://drive.google.com/file/d/18CoXcMS5HLL1WHTMD9zejcAInIiUWz9w/view?usp=drivesdk",
+          "fileId": "18CoXcMS5HLL1WHTMD9zejcAInIiUWz9w",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -727,7 +1183,19 @@
       "rt": 0,
       "dt": 9,
       "hours": 12,
-      "notes": "Ус хүлээж зогсов."
+      "notes": "Ус хүлээж зогсов.",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-12",
+          "shift": "Шөнө",
+          "name": "Daily report_20261012_n.JPG",
+          "url": "https://drive.google.com/file/d/1hXYC_KFqRTHCn6Czh3YgzHN4cC7zkMkL/view?usp=drivesdk",
+          "fileId": "1hXYC_KFqRTHCn6Czh3YgzHN4cC7zkMkL",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -743,7 +1211,19 @@
       "rt": 0,
       "dt": 8.5,
       "hours": 12,
-      "notes": "86.40 м-т бит солив; өрмийн сервис хийв."
+      "notes": "86.40 м-т бит солив; өрмийн сервис хийв.",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-12",
+          "shift": "Өдөр",
+          "name": "Daily report_20261012_d.JPG",
+          "url": "https://drive.google.com/file/d/10cakD2AeZaUVLtA6uQAEXPp9FyN9ZoM7/view?usp=drivesdk",
+          "fileId": "10cakD2AeZaUVLtA6uQAEXPp9FyN9ZoM7",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -759,7 +1239,19 @@
       "rt": 0,
       "dt": 11.5,
       "hours": 12,
-      "notes": "Өрөмдлөг хэвийн. Полимер 1."
+      "notes": "Өрөмдлөг хэвийн. Полимер 1.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-13",
+          "shift": "Шөнө",
+          "name": "Daily report_20261013_n.JPG",
+          "url": "https://drive.google.com/file/d/177wyVAd6BIlowhk9chFbAWytfTUz5BJM/view?usp=drivesdk",
+          "fileId": "177wyVAd6BIlowhk9chFbAWytfTUz5BJM",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "C-1800",
@@ -775,7 +1267,19 @@
       "rt": 0,
       "dt": 8.5,
       "hours": 12,
-      "notes": "Ус хүлээж зогсов."
+      "notes": "Ус хүлээж зогсов.",
+      "reports": [
+        {
+          "hole": "DTDH2603",
+          "rig": "C-1800",
+          "date": "2026-10-13",
+          "shift": "Өдөр",
+          "name": "Daily report_20261013_d.JPG",
+          "url": "https://drive.google.com/file/d/1QW7rsU6hcU1tpf4g6zV3V3Ow5qgYUXSA/view?usp=drivesdk",
+          "fileId": "1QW7rsU6hcU1tpf4g6zV3V3Ow5qgYUXSA",
+          "folderUrl": "https://drive.google.com/drive/folders/1ST12jeGoiMs0YM0jvTNO-GhsdT1PnJPU"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -791,7 +1295,19 @@
       "rt": 0,
       "dt": 10.5,
       "hours": 12,
-      "notes": "221.4 м хүртэл өрөмдөв."
+      "notes": "221.4 м хүртэл өрөмдөв.",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-13",
+          "shift": "Шөнө",
+          "name": "Daily report_20261013_n.JPG",
+          "url": "https://drive.google.com/file/d/1_7sOtxJgCiR27erOWxXpGoN0k6nPAkAj/view?usp=drivesdk",
+          "fileId": "1_7sOtxJgCiR27erOWxXpGoN0k6nPAkAj",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -807,7 +1323,19 @@
       "rt": 0,
       "dt": 11,
       "hours": 12,
-      "notes": "Маягтад огноо, өрөм, талбай, захиалагч бичигдээгүй (огноог файлын нэрээс авав); гарын үсэг огт зураагүй. «HQ»-г хоолойн Size баганад бичсэн."
+      "notes": "Маягтад огноо, өрөм, талбай, захиалагч бичигдээгүй (огноог файлын нэрээс авав); гарын үсэг огт зураагүй. «HQ»-г хоолойн Size баганад бичсэн.",
+      "reports": [
+        {
+          "hole": "DTDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-13",
+          "shift": "Өдөр",
+          "name": "Daily report_20261013_d.JPG.jpg",
+          "url": "https://drive.google.com/file/d/1PWsOjsJjIc-AnrZagki2mv_SRXLQ9_gm/view?usp=drivesdk",
+          "fileId": "1PWsOjsJjIc-AnrZagki2mv_SRXLQ9_gm",
+          "folderUrl": "https://drive.google.com/drive/folders/134wjPSTICJDlRxRkT7vgjVAIbnbzq6Vp"
+        }
+      ]
     }
   ],
   "folderMap": {

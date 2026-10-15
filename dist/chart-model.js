@@ -9,8 +9,9 @@
       if(grain==='shift'){key+='|'+(row.shift==='Өдөр'?'0':'1');secondary=row.shift==='Өдөр'?'Ө':'Ш';}
       if(grain==='week'){start=add(start,-((start.getUTCDay()+6)%7));end=add(start,6);key=iso(start);label=iso(start).slice(8)+'–'+iso(end).slice(8);}
       if(grain==='month'){start=new Date(Date.UTC(start.getUTCFullYear(),start.getUTCMonth(),1));end=new Date(Date.UTC(start.getUTCFullYear(),start.getUTCMonth()+1,0));key=iso(start);label=String(start.getUTCMonth()+1).padStart(2,'0');}
-      if(!groups.has(key))groups.set(key,{key,label,secondary,start:iso(start),end:iso(end),target:grain==='shift'?30:60*(Math.round((end-start)/DAY)+1),amounts:{},counts:{}});
+      if(!groups.has(key))groups.set(key,{key,label,secondary,start:iso(start),end:iso(end),target:grain==='shift'?30:60*(Math.round((end-start)/DAY)+1),amounts:{},counts:{},rows:[]});
       const group=groups.get(key);group.amounts[row.rig]=(group.amounts[row.rig]||0)+row.meters;group.counts[row.rig]=(group.counts[row.rig]||0)+1;
+      group.rows.push(row);
     }
     return [...groups.values()].sort((a,b)=>a.key.localeCompare(b.key));
   }

@@ -28,6 +28,12 @@ def validate(data):
             raise ValueError('Duplicate shift or unknown hole')
         seen.add(key)
         date.fromisoformat(s['date'])
+        for report in s.get('reports', []):
+            url = urlparse(report['url'])
+            if url.scheme != 'https' or url.hostname != 'drive.google.com' or not url.path.startswith('/file/d/'):
+                raise ValueError('Unexpected report URL')
+            if any(report.get(k) != s[k] for k in ('hole', 'rig', 'date', 'shift')):
+                raise ValueError('Report provenance does not match shift')
         for key in ('from', 'to', 'meters', 'dt', 'st', 'rt', 'hours'):
             if not isinstance(s[key], (int, float)) or not math.isfinite(s[key]) or s[key] < 0:
                 raise ValueError('Invalid shift number')

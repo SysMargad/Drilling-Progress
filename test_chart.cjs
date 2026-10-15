@@ -37,3 +37,12 @@ assert.equal(depthSeries(connected,'X').length,1);
 assert.deepEqual(depthSeries(connected,'X')[0].map(p=>p.depth),[-0,-20,-40]);
 console.log('Chart verified: totals, 4 periods, per-rig norms, year/week boundary, leap-year month, filters.');
 console.log('Depth profile verified: negative depths, shift order, missing holes and unreported intervals.');
+for(const grain of ['shift','day','week','month']){
+ const groups=aggregate(real.shifts,grain);
+ assert.equal(groups.flatMap(g=>g.rows).length,real.shifts.length);
+ for(const group of groups)for(const row of group.rows){
+  assert.ok(row.date>=group.start&&row.date<=group.end);
+  assert.ok(row.reports.every(r=>r.rig===row.rig&&r.hole===row.hole&&r.date===row.date&&r.shift===row.shift));
+ }
+}
+console.log('Report provenance preserved across all aggregation periods.');
