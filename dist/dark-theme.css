@@ -141,6 +141,11 @@ td {
   color: #fff;
 }
 
+.financial-panel .chart-periods button.chart-period-button.active {
+  background: #414144;
+  color: #fff;
+}
+
 .chart-period-button:hover {
   color: #fff;
 }
@@ -180,6 +185,19 @@ td {
 
 .financial-panel svg line {
   stroke: #3b3b3e;
+}
+
+.financial-panel svg {
+  max-height: none;
+  min-height: 300px;
+}
+
+.legend .rig-orange {
+  background: #dc8a3b;
+}
+
+.legend .rig-green {
+  background: #128875;
 }
 
 svg text {
