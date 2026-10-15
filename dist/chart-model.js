@@ -15,5 +15,17 @@
     return [...groups.values()].sort((a,b)=>a.key.localeCompare(b.key));
   }
   function title(groups){if(!groups.length)return 'Гүйцэтгэл';const first=groups[0].start.slice(0,7),last=groups.at(-1).end.slice(0,7);return first===last?'Гүйцэтгэл · '+first.slice(0,4)+' оны '+Number(first.slice(5))+'-р сар':'Гүйцэтгэл · '+first.replace('-','.')+' – '+last.replace('-','.');}
-  const api={aggregate,title};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.DrillingChart=api;
+  function depthSeries(rows,hole){
+    const list=rows.filter(row=>row.hole===hole).slice().sort((a,b)=>a.date.localeCompare(b.date)||(a.shift==='Өдөр'?0:1)-(b.shift==='Өдөр'?0:1)||a.rig.localeCompare(b.rig));
+    const segments=[];
+    for(const row of list){
+      const start=utc(row.date).getTime()+(row.shift==='Шөнө'?DAY/2:0),end=start+DAY/2;
+      const point=(time,depth,edge)=>({time,depth:-depth,date:row.date,shift:row.shift,edge,rig:row.rig});
+      const previous=segments.at(-1),last=previous?.at(-1);
+      if(last&&last.time===start&&Math.abs(last.depth+row.from)<0.01)previous.push(point(end,row.to,'finish'));
+      else segments.push([point(start,row.from,'start'),point(end,row.to,'finish')]);
+    }
+    return segments;
+  }
+  const api={aggregate,title,depthSeries};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.DrillingChart=api;
 })(globalThis);

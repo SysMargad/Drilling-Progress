@@ -12,6 +12,8 @@ def validate(data):
     for h in data['collar']:
         if h.get('site') != 'Нэргүй Өндөр':
             raise ValueError('All holes must belong to Нэргүй Өндөр')
+        if h.get('targetArea') not in {'Дорнын Төмөр', 'Замт Хөндий'}:
+            raise ValueError('Unknown drilling area')
         if h['id'] in ids:
             raise ValueError('Duplicate hole ID')
         ids.add(h['id'])

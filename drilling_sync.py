@@ -150,7 +150,7 @@ def parse_collar(rows):
         if not h:
             continue
         output.append({"id": h, "site": "Нэргүй Өндөр",
-                       "targetArea": "Дорнын төмөр" if h.startswith("DT") else "Замт хөндий",
+                       "targetArea": "Дорнын Төмөр" if h.startswith("DT") else "Замт Хөндий",
                        "e": number(get(lambda x: x == "e")),
                        "n": number(get(lambda x: x == "n")),
                        "z": number(get(lambda x: x == "z")),

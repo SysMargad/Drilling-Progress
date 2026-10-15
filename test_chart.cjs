@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {aggregate,title}=require('./dist/chart-model.js');
+const {aggregate,title,depthSeries}=require('./dist/chart-model.js');
 const real=require('./dist/data.json');
 for(const grain of ['shift','day','week','month']){
   const groups=aggregate(real.shifts,grain);
@@ -23,4 +23,17 @@ assert.equal(multi.amounts['C-1800'],40);assert.equal(multi.amounts['CSD-1300'],
 assert.equal(aggregate(rows.filter(r=>r.rig==='C-1800'),'day')[0].amounts['CSD-1300'],undefined);
 assert.deepEqual(aggregate([],'day'),[]);
 assert.throws(()=>aggregate(rows,'year'));
+const hole=real.collar.find(h=>real.shifts.some(s=>s.hole===h.id));
+const actualRows=real.shifts.filter(s=>s.hole===hole.id);
+const profile=depthSeries(real.shifts,hole.id).flat();
+assert.ok(profile.every(p=>p.depth<=0));
+assert.equal(profile.at(-1).depth,-actualRows.sort((a,b)=>a.date.localeCompare(b.date)||(a.shift==='Өдөр'?0:1)-(b.shift==='Өдөр'?0:1)).at(-1).to);
+assert.deepEqual(depthSeries(real.shifts,'UNKNOWN'),[]);
+assert.deepEqual(depthSeries([...real.shifts].reverse(),hole.id),depthSeries(real.shifts,hole.id));
+const gaps=[{hole:'X',rig:'C-1800',date:'2026-10-01',shift:'Өдөр',from:0,to:20},{hole:'X',rig:'C-1800',date:'2026-10-03',shift:'Өдөр',from:20,to:40}];
+assert.equal(depthSeries(gaps,'X').length,2);
+const connected=[gaps[0],{...gaps[1],date:'2026-10-01',shift:'Шөнө'}];
+assert.equal(depthSeries(connected,'X').length,1);
+assert.deepEqual(depthSeries(connected,'X')[0].map(p=>p.depth),[-0,-20,-40]);
 console.log('Chart verified: totals, 4 periods, per-rig norms, year/week boundary, leap-year month, filters.');
+console.log('Depth profile verified: negative depths, shift order, missing holes and unreported intervals.');

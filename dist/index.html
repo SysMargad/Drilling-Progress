@@ -4,7 +4,7 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Нэргүй Өндөр өрөмдлөгийн явц, цооног болон ээлжийн гүйцэтгэлийн хяналт">
   <title>Өрөмдлөгийн явц · Нэргүй Өндөр</title>
-  <link rel="stylesheet" href="style.css?v=20261015">
+  <link rel="stylesheet" href="style.css?v=20261015.2">
 </head>
 <body>
   <aside>
@@ -15,12 +15,12 @@
       <button data-tab="data-log">◷ <span>Data Log</span></button>
       <button data-tab="sources">▤ <span>Эх сурвалж & хяналт</span></button>
     </nav>
-    <div class="aside-bottom">Нэргүй Өндөр</div>
   </aside>
   <main>
     <header><h1>Өрөмдлөгийн явц</h1></header>
     <div class="toolbar">
-      <div class="filter"><span class="filter-label">Талбай</span><strong class="site-name">Нэргүй Өндөр</strong></div>
+      <div class="filter"><label for="site">Талбай</label><select id="site"><option>Нэргүй Өндөр</option></select></div>
+      <div class="filter"><label for="area">Участик</label><select id="area"><option value="">Бүх участик</option><option>Дорнын Төмөр</option><option>Замт Хөндий</option></select></div>
       <div class="filter"><label for="rig">Өрөм</label><select id="rig"><option value="">Бүх өрөм</option><option>C-1800</option><option>CSD-1300</option></select></div>
       <div class="period">Тайлант хугацаа <strong>—</strong></div>
       <button id="export" class="button">CSV татах ↓</button>
@@ -29,6 +29,6 @@
     <div id="app" aria-live="polite"><div class="empty">Өгөгдөл ачаалж байна…</div></div>
   </main>
   <dialog id="detail"><button class="close" aria-label="Хаах">×</button><div id="detail-body"></div></dialog>
-  <script src="chart-model.js?v=20261015"></script><script src="app.js?v=20261015"></script>
+  <script src="chart-model.js?v=20261015.2"></script><script src="app.js?v=20261015.2"></script>
 </body>
 </html>

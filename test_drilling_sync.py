@@ -22,6 +22,7 @@ class PipelineTests(unittest.TestCase):
         self.assertAlmostEqual(sum(s['dt'] for s in data['shifts']), 366)
         self.assertEqual(sum(s['hours'] for s in data['shifts']), 528)
         self.assertEqual({h['site'] for h in data['collar']}, {'Нэргүй Өндөр'})
+        self.assertEqual({h['targetArea'] for h in data['collar']}, {'Дорнын Төмөр', 'Замт Хөндий'})
         h = next(h for h in data['collar'] if h['id'] == 'DTDH2603')
         self.assertIsNone(h['collarDepth'])
         self.assertEqual(max(s['to'] for s in data['shifts'] if s['hole'] == h['id']), 203)
