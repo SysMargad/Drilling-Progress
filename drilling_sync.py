@@ -22,6 +22,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+import uuid
 from datetime import datetime, timedelta, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -148,7 +149,8 @@ def parse_collar(rows):
         h = hole_id(get(lambda x: x == "hole id"))
         if not h:
             continue
-        output.append({"id": h, "site": "Дорнын төмөр" if h.startswith("DT") else "Замт хөндий",
+        output.append({"id": h, "site": "Нэргүй Өндөр",
+                       "targetArea": "Дорнын төмөр" if h.startswith("DT") else "Замт хөндий",
                        "e": number(get(lambda x: x == "e")),
                        "n": number(get(lambda x: x == "n")),
                        "z": number(get(lambda x: x == "z")),
@@ -351,8 +353,15 @@ def signature(data):
     return hashlib.sha256(json.dumps(canonical(data), sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest()
 
 
+def append_data_log(path, event):
+    """Keep actual collection attempts, including failures, across sync runs."""
+    history = load_json(path) if Path(path).exists() else {"schemaVersion": 1, "entries": []}
+    history["entries"] = (history.get("entries", []) + [event])[-500:]
+    atomic_json(path, history)
+
+
 def publish(data, repository):
-    """Commit only validated data.json and push; Pages deploys from main."""
+    """Commit only validated data and its collection history; Pages deploys main."""
     repository = Path(repository).resolve()
     def git(*args, allow=(0,)):
         result = subprocess.run(["git", "-C", str(repository), *args],
@@ -369,12 +378,14 @@ def publish(data, repository):
     if remote not in {"https://github.com/SysMargad/Drilling-Progress.git", "git@github.com:SysMargad/Drilling-Progress.git"}:
         raise RuntimeError("origin must be SysMargad/Drilling-Progress")
     staged = git("diff", "--cached", "--name-only").stdout.splitlines()
-    if any(path != "dist/data.json" for path in staged):
+    paths = ["dist/data.json", "dist/data-log.json"]
+    if any(path not in paths for path in staged):
         raise RuntimeError("Other staged files exist; automatic data commit aborted")
-    changed = git("diff", "--quiet", "HEAD", "--", "dist/data.json", allow=(0, 1)).returncode == 1
+    changed = git("diff", "--quiet", "HEAD", "--", *paths, allow=(0, 1)).returncode == 1
+    changed = changed or bool(git("ls-files", "--others", "--exclude-standard", "--", *paths).stdout.strip())
     if changed:
-        git("add", "--", "dist/data.json")
-        git("commit", "-m", "Update validated drilling progress data", "--", "dist/data.json")
+        git("add", "--", *paths)
+        git("commit", "-m", "Update drilling data and collection log", "--", *paths)
     # Retry an earlier unpushed data commit even when the current data is unchanged.
     git("push", "origin", "HEAD:main")
     LOG.info("GitHub data push completed; GitHub Pages deploys the validated commit")
@@ -409,6 +420,10 @@ def main():
         LOG.info("Local dashboard: http://127.0.0.1:4318")
     try:
         while True:
+            event = {"id": str(uuid.uuid4()), "source": args.source,
+                     "startedAt": datetime.now(TZ).isoformat(timespec="seconds")}
+            recorded = False
+            log_path = args.output.parent / "data-log.json"
             try:
                 seed = load_json(args.output if args.output.exists() else ROOT / "dist" / "data.json")
                 if args.source == "drive":
@@ -416,18 +431,31 @@ def main():
                 else:
                     records, folders = local_sources(args.input), None
                 data = assemble(records, seed, folders)
-                if signature(seed) == signature(data):
+                changed = signature(seed) != signature(data)
+                if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.
                 else:
                     atomic_json(args.output, data)
                 LOG.info("Prepared %d holes, %d shifts, %.2f m; %d source conflicts",
                          len(data["collar"]), len(data["shifts"]),
                          sum(s["meters"] for s in data["shifts"]), len(data["syncWarnings"]))
+                event.update({"status": "updated" if changed else "unchanged",
+                              "completedAt": datetime.now(TZ).isoformat(timespec="seconds"),
+                              "files": len(records), "holes": len(data["collar"]),
+                              "shifts": len(data["shifts"]),
+                              "meters": round(sum(s["meters"] for s in data["shifts"]), 3),
+                              "note": f"{len(data['syncWarnings'])} source conflicts" if data["syncWarnings"] else ""})
+                append_data_log(log_path, event)
+                recorded = True
                 if args.publish:
                     if args.output.resolve() != (ROOT / "dist" / "data.json").resolve():
                         raise ValueError("--publish requires the default dist/data.json output")
                     publish(data, ROOT)
             except Exception as e:
+                if not recorded:
+                    event.update({"status": "failed", "completedAt": datetime.now(TZ).isoformat(timespec="seconds"),
+                                  "error": f"HTTP {e.code}" if isinstance(e, urllib.error.HTTPError) else type(e).__name__})
+                    append_data_log(log_path, event)
                 # Credentials and request URLs are intentionally excluded from logs.
                 LOG.error("Update failed (%s): %s", type(e).__name__,
                           str(e) if not isinstance(e, urllib.error.HTTPError) else f"HTTP {e.code}")

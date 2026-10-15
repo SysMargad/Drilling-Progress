@@ -43,24 +43,32 @@ jobs:
         if: steps.credentials.outputs.ready == 'true'
         run: python -m pip install --disable-pip-version-check -r requirements.txt
       - name: Read and validate Drive workbooks
+        id: collection
+        continue-on-error: true
         if: steps.credentials.outputs.ready == 'true'
         env:
           GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON }}
+        run: python -B drilling_sync.py --source drive
+      - name: Validate dashboard and collection history
+        if: steps.credentials.outputs.ready == 'true'
         run: |
-          python -B drilling_sync.py --source drive
           python -B validate_data.py
           python -B -m unittest test_drilling_sync -v
+          node test_chart.cjs
+      - name: Report collection failure
+        if: steps.collection.outcome == 'failure'
+        run: echo '::warning::Drive collection failed. Previous valid data and the failed attempt log are preserved.'
       - name: Commit changed data
         id: commit
         if: steps.credentials.outputs.ready == 'true'
         shell: bash
         run: |
-          if git diff --quiet -- dist/data.json; then
+          if git diff --quiet -- dist/data.json dist/data-log.json; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
           else
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -- dist/data.json
+            git add -- dist/data.json dist/data-log.json
             git commit -m 'Sync validated drilling data from Drive'
             git push origin HEAD:main
             echo 'changed=true' >> "$GITHUB_OUTPUT"

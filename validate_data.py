@@ -10,6 +10,8 @@ def validate(data):
         raise ValueError('Collar and shift records are required')
     ids = set()
     for h in data['collar']:
+        if h.get('site') != 'Нэргүй Өндөр':
+            raise ValueError('All holes must belong to Нэргүй Өндөр')
         if h['id'] in ids:
             raise ValueError('Duplicate hole ID')
         ids.add(h['id'])

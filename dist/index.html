@@ -1,5 +1,34 @@
 <!doctype html>
-<html lang="mn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="NGM өрөмдлөгийн явц, цооног болон ээлжийн гүйцэтгэлийн хяналт"><title>Drilling Progress | NGM</title><link rel="stylesheet" href="style.css"></head>
-<body><aside><div class="brand"><span class="mark">N</span><div>NGM<span>EXPLORATION</span></div></div><div class="nav-label">DRILLING / 2026</div><nav><button class="active" data-tab="overview">◫ <span>Ерөнхий тойм</span></button><button data-tab="holes">⊙ <span>Цооногийн бүртгэл</span></button><button data-tab="shifts">≋ <span>Ээлжийн тайлан</span></button><button data-tab="sources">▤ <span>Эх сурвалж & хяналт</span></button></nav><div class="aside-bottom"><span class="dot"></span> Өгөгдлийн хувилбар<br><small>Python sync</small><p>Баян-дун · Монгол</p></div></aside>
-<main><header><div><small>NGM / DRILLING OPERATIONS</small><h1>Өрөмдлөгийн явц<span>Drilling Progress</span></h1></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a href="https://github.com/SysMargad/Drilling-Progress" target="_blank" rel="noopener" class="button">GitHub ↗</a><a id="drive" target="_blank" rel="noopener" class="button">Drive хавтас ↗</a></div></header><div class="toolbar"><div class="filter"><label for="site">Талбай</label><select id="site"><option value="">Бүх талбай</option><option>Дорнын төмөр</option><option>Замт хөндий</option></select></div><div class="filter"><label for="rig">Өрөм</label><select id="rig"><option value="">Бүх өрөм</option><option>C-1800</option><option>CSD-1300</option></select></div><div class="period">Тайлант хугацаа <strong>2026.10.01 – 10.13</strong></div><button id="export" class="button">CSV татах ↓</button></div><div class="snapshot">◷ Өгөгдөл ачаалж байна…</div><div id="app" aria-live="polite"></div><footer>NGM · Drilling operations <span>Ээлжийн гүйцэтгэл болон collar бүртгэлийг тусад нь тооцсон.</span></footer></main>
-<dialog id="detail"><button class="close" aria-label="Хаах">×</button><div id="detail-body"></div></dialog><script src="app.js"></script></body></html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Нэргүй Өндөр өрөмдлөгийн явц, цооног болон ээлжийн гүйцэтгэлийн хяналт">
+  <title>Өрөмдлөгийн явц · Нэргүй Өндөр</title>
+  <link rel="stylesheet" href="style.css?v=20261015">
+</head>
+<body>
+  <aside>
+    <div class="nav-label">ХЯНАЛТЫН САМБАР</div>
+    <nav aria-label="Үндсэн цэс">
+      <button class="active" data-tab="overview">◫ <span>Ерөнхий тойм</span></button>
+      <button data-tab="shifts">≋ <span>Ээлжийн тайлан</span></button>
+      <button data-tab="data-log">◷ <span>Data Log</span></button>
+      <button data-tab="sources">▤ <span>Эх сурвалж & хяналт</span></button>
+    </nav>
+    <div class="aside-bottom">Нэргүй Өндөр</div>
+  </aside>
+  <main>
+    <header><h1>Өрөмдлөгийн явц</h1></header>
+    <div class="toolbar">
+      <div class="filter"><span class="filter-label">Талбай</span><strong class="site-name">Нэргүй Өндөр</strong></div>
+      <div class="filter"><label for="rig">Өрөм</label><select id="rig"><option value="">Бүх өрөм</option><option>C-1800</option><option>CSD-1300</option></select></div>
+      <div class="period">Тайлант хугацаа <strong>—</strong></div>
+      <button id="export" class="button">CSV татах ↓</button>
+    </div>
+    <p id="load-error" role="status" hidden></p>
+    <div id="app" aria-live="polite"><div class="empty">Өгөгдөл ачаалж байна…</div></div>
+  </main>
+  <dialog id="detail"><button class="close" aria-label="Хаах">×</button><div id="detail-body"></div></dialog>
+  <script src="chart-model.js?v=20261015"></script><script src="app.js?v=20261015"></script>
+</body>
+</html>

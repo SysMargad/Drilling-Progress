@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-14",
-  "updatedAt": "2026-10-14T16:01:25+08:00",
+  "asOf": "2026-10-15",
+  "updatedAt": "2026-10-15T11:53:32+08:00",
   "period": "2026-10-01 – 2026-10-13",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
@@ -9,7 +9,8 @@
   "collar": [
     {
       "id": "DTDH2602",
-      "site": "Дорнын төмөр",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Дорнын төмөр",
       "e": 686452.0,
       "n": 5452250.0,
       "z": 970.0,
@@ -24,7 +25,8 @@
     },
     {
       "id": "DTDH2603",
-      "site": "Дорнын төмөр",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Дорнын төмөр",
       "e": 686385.076,
       "n": 5452435.888,
       "z": 958.76,
@@ -39,7 +41,8 @@
     },
     {
       "id": "DTDH2601",
-      "site": "Дорнын төмөр",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Дорнын төмөр",
       "e": 686451.796,
       "n": 5452041.372,
       "z": 973.84,
@@ -54,7 +57,8 @@
     },
     {
       "id": "ZHDH2601",
-      "site": "Замт хөндий",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Замт хөндий",
       "e": 685523.957,
       "n": 5452508.086,
       "z": 892.071,
@@ -69,7 +73,8 @@
     },
     {
       "id": "DTDH2605",
-      "site": "Дорнын төмөр",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Дорнын төмөр",
       "e": null,
       "n": null,
       "z": null,
@@ -84,7 +89,8 @@
     },
     {
       "id": "ZHDH2612",
-      "site": "Замт хөндий",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Замт хөндий",
       "e": null,
       "n": null,
       "z": null,

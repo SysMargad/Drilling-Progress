@@ -25,7 +25,7 @@ Local дата шинэчлээд GitHub руу автоматаар push хий
 py -3 drilling_sync.py --source local --publish
 ```
 
-Зөвхөн `dist/data.json` commit хийнэ. `main` branch болон `SysMargad/Drilling-Progress` origin шаардлагатай. Бусад staged файлтай үед зогсоно. Force push хийхгүй; GitHub-ийн өөрчлөлттэй зөрвөл local дата, commit-ийг хадгалж алдааг мэдээлнэ. GitHub нэвтрэлт Git Credential Manager эсвэл таны SSH тохиргоогоор ажиллана.
+Зөвхөн `dist/data.json` болон `dist/data-log.json` commit хийнэ. `main` branch болон `SysMargad/Drilling-Progress` origin шаардлагатай. Бусад staged файлтай үед зогсоно. Force push хийхгүй; GitHub-ийн өөрчлөлттэй зөрвөл local дата, commit-ийг хадгалж алдааг мэдээлнэ. GitHub нэвтрэлт Git Credential Manager эсвэл таны SSH тохиргоогоор ажиллана.
 
 ## Google Drive автомат шинэчлэлт
 
@@ -58,7 +58,7 @@ py -3 -B -m unittest test_drilling_sync -v
 py -3 -B validate_data.py
 ```
 
-Давхардлыг өрөм + огноо + ээлж + цооногоор хасна. Хоосон гүн нь 0 биш, `null` байна. Ээлжийн гүн/метр, ажлын цаг зөрвөл нийтлэхгүй. Collar ба ээлжийн хоорондох зөрүүг dashboard дээр тайлбарлана. Өгөгдөл өөрчлөгдөөгүй бол хоосон commit үүсгэхгүй.
+Давхардлыг өрөм + огноо + ээлж + цооногоор хасна. Хоосон гүн нь 0 биш, `null` байна. Ээлжийн гүн/метр, ажлын цаг зөрвөл нийтлэхгүй. Collar ба ээлжийн хоорондох зөрүүг dashboard дээр тайлбарлана. Өгөгдөл өөрчлөгдөөгүй бол дата файлыг хэвээр үлдээж, бодит уншилтын түүхийг Data Log-д нэмнэ.
 
 Веб нээлттэй үед 60 секунд тутам `data.json`-ийг дахин уншина. GitHub Pages нийтэд нээлттэй: сайт болон repository-д хадгалсан өгөгдлийг хэн ч үзэж болно. Drive эх файлуудын эрх өөрчлөгдөхгүй.
 
@@ -73,3 +73,15 @@ py -3 -B validate_data.py
 - `requirements.txt`: Drive authentication package
 
 Official API references: [Google Drive download/export](https://developers.google.com/workspace/drive/api/guides/manage-downloads), [Google authentication](https://google-auth.readthedocs.io/en/latest/reference/google.oauth2.credentials.html).
+
+## Харагдац ба Data Log
+
+Талбай: **Нэргүй Өндөр**. Дөрвөн KPI карт нь ерөнхий тойм, цооногийн бүртгэл, ашиглалт болон ROP хэсгийг нээнэ.
+
+Гүйцэтгэлийг Ээлж, Өдөр, 7 хоног, Сар-аар сонгоно. Норм өрөм тус бүрт 30 м/ээлж, 60 м/өдөр, 420 м/7 хоног; сарынх 60 м × календарийн хоног байна. Дутуу 7 хоног/сар бүтэн үеийн нормтой харьцуулагдана.
+
+`dist/data-log.json` нь Python-оор өгөгдөл уншсан сүүлийн 500 бодит үйлдлийг хадгална: хугацаа, local/Drive эх үүсвэр, өөрчлөгдсөн/өөрчлөлтгүй/алдаатай төлөв, файлын тоо, цооног, ээлж, метр. Өмнөх бүртгэгдээгүй түүхийг зохиомлоор нөхөхгүй. Drive синк алдаатай үед өмнөх дата болон алдааны бүртгэл хадгалагдана.
+
+Графикийн нийлбэр, норм, leap year болон жилийн заагийн шалгалт:
+
+    node test_chart.cjs

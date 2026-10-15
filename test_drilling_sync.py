@@ -1,10 +1,11 @@
 import io
 import unittest
+import tempfile
 from unittest.mock import patch
 from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
-from drilling_sync import assemble, load_json, local_sources, parse_shifts, publish, signature, workbook_rows
+from drilling_sync import append_data_log, assemble, load_json, local_sources, parse_shifts, publish, signature, workbook_rows
 
 ROOT = Path(__file__).resolve().parent
 
@@ -20,6 +21,7 @@ class PipelineTests(unittest.TestCase):
         self.assertAlmostEqual(sum(s['meters'] for s in data['shifts']), 1103.8)
         self.assertAlmostEqual(sum(s['dt'] for s in data['shifts']), 366)
         self.assertEqual(sum(s['hours'] for s in data['shifts']), 528)
+        self.assertEqual({h['site'] for h in data['collar']}, {'Нэргүй Өндөр'})
         h = next(h for h in data['collar'] if h['id'] == 'DTDH2603')
         self.assertIsNone(h['collarDepth'])
         self.assertEqual(max(s['to'] for s in data['shifts'] if s['hole'] == h['id']), 203)
@@ -55,6 +57,15 @@ class PipelineTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'origin must be'):
                 publish({}, ROOT)
             self.assertEqual(run.call_count, 3)
+
+    def test_collection_log_keeps_real_attempts_and_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'data-log.json'
+            append_data_log(target, {'id': 'one', 'status': 'updated', 'source': 'local'})
+            append_data_log(target, {'id': 'two', 'status': 'failed', 'source': 'drive', 'error': 'HTTP 403'})
+            history = load_json(target)['entries']
+            self.assertEqual([row['id'] for row in history], ['one', 'two'])
+            self.assertEqual(history[-1]['error'], 'HTTP 403')
 
     def test_publisher_preserves_other_staged_files(self):
         responses = [CompletedProcess([], 0, str(ROOT)+'\n', ''),

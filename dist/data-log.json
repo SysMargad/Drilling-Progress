@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "0b0caf1a-e5e6-45c5-9714-931f70b073e7",
+      "source": "local",
+      "startedAt": "2026-10-15T11:53:32+08:00",
+      "status": "updated",
+      "completedAt": "2026-10-15T11:53:32+08:00",
+      "files": 2,
+      "holes": 6,
+      "shifts": 44,
+      "meters": 1103.8,
+      "note": ""
+    }
+  ]
+}
