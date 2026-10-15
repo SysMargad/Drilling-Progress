@@ -1,0 +1,187 @@
+:root {
+  color-scheme: dark;
+  --ink: #e4ecef;
+  --muted: #9aabb3;
+  --teal: #35b99c;
+  --orange: #f0a04e;
+  --line: #2b3b42;
+}
+
+body {
+  background: #0b1216;
+  color: var(--ink);
+}
+
+aside {
+  background: #101d22;
+  border-right: 1px solid #25363d;
+}
+
+main {
+  background: #0b1216;
+}
+
+.toolbar,
+.kpi,
+.panel {
+  background: #131f24;
+  border-color: #2b3b42;
+}
+
+.button,
+select,
+input,
+.chart-periods {
+  background: #1b2a30;
+  border-color: #34474f;
+  color: var(--ink);
+}
+
+select option {
+  background: #1b2a30;
+  color: var(--ink);
+}
+
+.kpi .value,
+.period strong,
+.cost-label strong {
+  color: var(--ink);
+}
+
+th {
+  background: #1a282e;
+  border-color: #304148;
+}
+
+td {
+  border-color: #26363d;
+}
+
+.source-row,
+.detail-grid div,
+.folder-links a {
+  background: #18262c;
+  border-color: #304148;
+}
+
+.track,
+.cost-bar {
+  background: #26373d;
+}
+
+.alert {
+  background: #2c281c;
+  border-color: #594b2d;
+  color: #e1c37b;
+}
+
+.alert strong {
+  color: #f0d79a;
+}
+
+.badge {
+  background: #19372f;
+  color: #8cddc2;
+}
+
+.badge.active {
+  background: #1c2d3b;
+  color: #a9c8e7;
+}
+
+.badge.planned {
+  background: #273238;
+  color: #b3c0c4;
+}
+
+.badge.warn {
+  background: #3b3020;
+  color: #f0cf83;
+}
+
+.chart-period-button {
+  border: 0;
+  border-radius: 5px;
+  padding: 7px 13px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+
+.chart-period-button.active {
+  background: #29433f;
+  color: #d8fff3;
+}
+
+.chart-period-button:hover {
+  color: #fff;
+}
+
+.cost-change {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.cost-change small {
+  color: var(--muted);
+  text-align: right;
+}
+
+.cost-change.up {
+  color: #50d49b;
+}
+
+.cost-change.down {
+  color: #ff7777;
+}
+
+.cost-change.flat {
+  color: var(--muted);
+}
+
+.financial-disclaimer {
+  margin: 20px 0 0;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  color: #f0cf83;
+  font-size: 12px;
+}
+
+.financial-panel svg line {
+  stroke: #2e4047;
+}
+
+svg text {
+  fill: #a6b5bb;
+}
+
+dialog {
+  background: #131f24;
+  border-color: #34474f;
+  color: var(--ink);
+}
+
+dialog::backdrop {
+  background: #030809c9;
+}
+
+footer {
+  border-color: var(--line);
+}
+
+@media (max-width: 700px) {
+  .cost-change {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .cost-change small {
+    text-align: left;
+  }
+}
