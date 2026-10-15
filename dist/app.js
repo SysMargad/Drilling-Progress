@@ -18,7 +18,7 @@ function chart(){
   const rows=shifts(),groups=DrillingChart.aggregate(rows,grain),rigs=$('#rig').value?[$('#rig').value]:['C-1800','CSD-1300'];
   const controls=`<div class="chart-periods" role="group" aria-label="Графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button data-grain="${value}" aria-pressed="${grain===value}">${label}</button>`).join('')}</div>`;
   const targetLabels={shift:'30 м / ээлж / өрөм',day:'60 м / өдөр / өрөм',week:'420 м / 7 хоног / өрөм',month:'60 м × сарын хоног / өрөм'};
-  let html=`<div class="panel-head"><h2>${DrillingChart.title(groups)}</h2>${controls}</div><div class="chart-legend">${rigs.map(rig=>`<span><i style="background:${rig==='C-1800'?'#128875':'#dc8a3b'}"></i>${rig}</span>`).join('')}<span class="target-key">Норм · ${targetLabels[grain]}</span></div>`;
+  let html=`<div class="panel-head"><h2>${DrillingChart.title(groups)}</h2>${controls}</div>`;
   if(!groups.length)return html+'<div class="empty">Ээлжийн өгөгдөл байхгүй.</div>';
   const W=Math.max(600,groups.length*(grain==='shift'?44:48)+90),H=280,left=45,right=18,top=30,bottom=grain==='shift'?58:40,plotH=H-top-bottom,step=(W-left-right)/groups.length;
   const high=Math.max(...groups.map(g=>Math.max(g.target,...Object.values(g.amounts)))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
