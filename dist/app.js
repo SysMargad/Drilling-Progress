@@ -228,7 +228,7 @@ function renderFinancialTab(){
       <h2>Дэлгэрэнгүй бүртгэл</h2>
       <div class="table-scroll financial-details-scroll">
         <table class="financial-details-table">
-          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Нийт ₮</th><th>₮/м</th><th>Төлөв</th></tr></thead>
+          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Нийт ₮</th><th>₮/м</th></tr></thead>
           <tbody>${rows.map(r=>`<tr>
             <td data-label="Хугацаа">${r.date}</td>
             <td data-label="Өрөм">${esc(r.rigs||'—')}</td>
@@ -237,7 +237,6 @@ function renderFinancialTab(){
             <td data-label="Метр">${fmt(r.drilledMeters,1)} м</td>
             <td data-label="Нийт зардал">${currency(r.totalCost,0)}</td>
             <td data-label="₮/м">${r.dailyCostPerMeter==null?'N/A':currency(r.dailyCostPerMeter,0)}</td>
-            <td data-label="Төлөв"><span class="badge warn">${r.note}</span></td>
           </tr>`).join('')}</tbody>
         </table>
       </div>
