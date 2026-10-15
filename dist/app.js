@@ -200,15 +200,15 @@ function renderFinancialTab(){
     {label:'Түлшний зардал (₮/м)',value:totalMeters?currency(totalFuel/totalMeters,0):'N/A',note:compare(currentFuelPerMeter,previousFuelPerMeter)},
   ];
   const categories=[['fuelCost','Түлш'],['mudCost','Өрөмдлөгийн шавар'],['waterCost','Ус'],['laborCost','Цалингийн зардал'],['foodCost','Хоолны зардал']];
-  const breakdown=categories.map(([key,label])=>({key,label,total:rows.reduce((sum,r)=>sum+r[key],0),current:latest[key],previous:rows.at(-2)?.[key]??null}));
+  const breakdown=categories.map(([key,label])=>({key,label,current:latest[key],previous:previous?.[key]??null}));
   const controls=[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button class="chart-period-button ${financialGrain===value?'active':''}" data-financial-grain="${value}" aria-pressed="${financialGrain===value}">${label}</button>`).join('');
-  const breakdownMax=Math.max(...breakdown.map(item=>item.total),1);
+  const breakdownMax=Math.max(...breakdown.map(item=>item.current),1);
   const costRows=breakdown.map(item=>{
     const delta=item.previous==null?null:item.current-item.previous;
     const percent=item.previous==null||item.previous===0?null:delta/item.previous*100;
     const direction=delta==null||delta===0?'flat':delta>0?'up':'down';
     const trend=percent==null?'Өмнөх хугацааны харьцуулалтгүй':`${delta>0?'▲':delta<0?'▼':'•'} ${fmt(Math.abs(percent),1)}% · ${financialPreviousLabel()} ${delta>0?'өссөн':delta<0?'буурсан':'өөрчлөлтгүй'}`;
-    return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.total,0)}</strong></div><div class="cost-bar"><span style="width:${(item.total/breakdownMax)*100}%"></span></div><div class="cost-change ${direction}"><span>${trend}</span><small>Сонгосон хугацааны дүн: ${currency(item.current,0)}</small></div></div>`;
+    return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.current,0)}</strong></div><div class="cost-bar"><span style="width:${(item.current/breakdownMax)*100}%"></span></div><div class="cost-change ${direction}"><span>${trend}</span><small>Өмнөх хугацааны дүн: ${currency(item.previous,0)}</small></div></div>`;
   }).join('');
   return `<div class="financial-wrap">
     <section class="panel financial-panel">
@@ -221,7 +221,7 @@ function renderFinancialTab(){
     <div class="kpis">${kpis.map(item=>`<article class="kpi financial-trend ${item.note.tone}"><div class="label">${item.label}</div><div class="value">${item.value}</div><div class="note">${item.note.text}</div></article>`).join('')}</div>
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
-      <p class="sub">Нийт дүн болон ${financialPreviousLabel()} өөрчлөлт</p>
+      <p class="sub">${financialGrainLabel()} зардал болон ${financialPreviousLabel()} өөрчлөлт</p>
       <div class="cost-breakdown">${costRows}</div>
     </section>
     <section class="panel">
