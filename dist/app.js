@@ -26,7 +26,7 @@ function chart(){
   let svg=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px" role="img" aria-label="Гүйцэтгэл, ${targetLabels[grain]}"><text x="6" y="14">м</text>`;
   const tick=Math.max(unit,Math.ceil(max/5/unit)*unit);
   for(let n=0;n<=max;n+=tick)svg+=`<line x1="${left}" x2="${W-right}" y1="${y(n)}" y2="${y(n)}" stroke="#e8eded"/><text x="${left-8}" y="${y(n)+4}" text-anchor="end">${fmt(n,0)}</text>`;
-  const barWidth=Math.min(17,(step-14)/rigs.length),colors={'C-1800':'#128875','CSD-1300':'#dc8a3b'};
+  const barWidth=Math.min(17,(step-14)/rigs.length),colors={'C-1800':'#dc8a3b','CSD-1300':'#128875'};
   groups.forEach((group,i)=>{
     const x=left+(i+0.5)*step;
     rigs.forEach((rig,j)=>{const value=group.amounts[rig]||0,recorded=group.counts[rig]||0,bx=x+(j-rigs.length/2)*barWidth;
