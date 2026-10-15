@@ -170,16 +170,37 @@ function renderFinancialTab(){
   const rows=financialRows(financialGrain);
   if(!rows.length)return '<div class="empty">Шүүлтүүрт тохирох санхүүгийн өгөгдөл байхгүй.</div>';
   const latest=rows.at(-1),dailyValue=latest.dailyCostPerMeter,change=latest.dayOverDayPercent;
+  const previous=rows.at(-2);
+  const compare=(current,prior,{lowerIsBetter=true,unit=''}={})=>{
+    if(current==null||prior==null||!Number.isFinite(current)||!Number.isFinite(prior))
+      return {tone:'flat',text:'Өмнөх хугацаатай харьцуулах мэдээлэл дутуу'};
+    const delta=current-prior;
+    if(delta===0)return {tone:'flat',text:'Өмнөх хугацаатай харьцуулахад өөрчлөлтгүй'};
+    const percent=prior>0?`${fmt(Math.abs(delta/prior*100),1)}%`:null;
+    const favorable=lowerIsBetter?delta<0:delta>0;
+    const direction=delta>0?'өссөн':'буурсан';
+    const amount=percent||`${fmt(Math.abs(delta),1)} ${unit}`;
+    return {
+      tone:favorable?'down':'up',
+      text:`${delta>0?'▲':'▼'} ${amount} · ${financialPreviousLabel()} ${direction}`,
+    };
+  };
+  const totalMeters=rows.reduce((sum,r)=>sum+r.drilledMeters,0);
+  const totalCost=rows.reduce((sum,r)=>sum+r.totalCost,0);
+  const totalFuel=rows.reduce((sum,r)=>sum+r.fuelCost,0);
+  const currentFuelPerMeter=latest.drilledMeters>0?latest.fuelCost/latest.drilledMeters:null;
+  const previousFuelPerMeter=previous?.drilledMeters>0?previous.fuelCost/previous.drilledMeters:null;
+  const previousUnitCost=previous?.drilledMeters>0?previous.totalCost/previous.drilledMeters:null;
+  const kpis=[
+    {label:`${financialGrainLabel()} зардал (₮/м)`,value:dailyValue==null?'N/A':currency(dailyValue,0),note:compare(dailyValue,previousUnitCost)},
+    {label:'Хуримтлагдсан зардал (₮/м)',value:latest.cumulativeCostPerMeter==null?'N/A':currency(latest.cumulativeCostPerMeter,0),note:compare(latest.cumulativeCostPerMeter,previous?.cumulativeCostPerMeter??null)},
+    {label:`Өмнөх ${financialGrain==='shift'?'ээлжтэй':financialGrain==='day'?'өдөртэй':financialGrain==='week'?'7 хоногтой':'сартай'} харьцуулсан өөрчлөлт (%)`,value:change==null?'N/A':`${fmt(change,1)}%`,note:compare(dailyValue,previousUnitCost)},
+    {label:'Нийт зардал (₮)',value:currency(totalCost,0),note:compare(latest.totalCost,previous?.totalCost??null)},
+    {label:'Нийт өрөмдсөн метр (м)',value:fmt(totalMeters,1),note:compare(latest.drilledMeters,previous?.drilledMeters??null,{lowerIsBetter:false,unit:'м'})},
+    {label:'Түлшний зардал (₮/м)',value:totalMeters?currency(totalFuel/totalMeters,0):'N/A',note:compare(currentFuelPerMeter,previousFuelPerMeter)},
+  ];
   const categories=[['fuelCost','Түлш'],['mudCost','Өрөмдлөгийн шавар'],['waterCost','Ус'],['laborCost','Цалингийн зардал'],['foodCost','Хоолны зардал']];
   const breakdown=categories.map(([key,label])=>({key,label,total:rows.reduce((sum,r)=>sum+r[key],0),current:latest[key],previous:rows.at(-2)?.[key]??null}));
-  const kpis=[
-    [`${financialGrainLabel()} зардал (₮/м)`, dailyValue==null?'N/A':currency(dailyValue,0), 'Сонгосон хугацааны 1 м-ийн өртөг'],
-    ['Хуримтлагдсан зардал (₮/м)', latest.cumulativeCostPerMeter==null?'N/A':currency(latest.cumulativeCostPerMeter,0), 'Эхний өдрөөс хойшхи өгөгдлийн жинхэнэ дундаж'],
-    [`Өмнөх ${financialGrain==='shift'?'ээлжтэй':financialGrain==='day'?'өдөртэй':financialGrain==='week'?'7 хоногтой':'сартай'} харьцуулсан өөрчлөлт (%)`, change==null?'N/A':`${fmt(change,1)}%`, change==null?'Харьцуулах мэдээлэл дутуу':change>=0?'Өсөлт':'Бууралт'],
-    ['Нийт зардал (₮)', currency(rows.reduce((sum,r)=>sum+r.totalCost,0),0), 'Бүгдийг нэгтгэсэн өртөг'],
-    ['Нийт өрөмдсөн метр (м)', fmt(rows.reduce((sum,r)=>sum+r.drilledMeters,0),1), 'Тайлангийн хугацааны нийт м'],
-    ['Түлшний зардал (₮/м)', rows.filter(r=>r.drilledMeters>0).length?currency(rows.reduce((sum,r)=>sum+r.fuelCost,0)/rows.reduce((sum,r)=>sum+r.drilledMeters,0),0):'N/A', 'Түлшний зардал/өрөмдсөн метр'],
-  ];
   const controls=[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button class="chart-period-button ${financialGrain===value?'active':''}" data-financial-grain="${value}" aria-pressed="${financialGrain===value}">${label}</button>`).join('');
   const breakdownMax=Math.max(...breakdown.map(item=>item.total),1);
   const costRows=breakdown.map(item=>{
@@ -189,7 +210,6 @@ function renderFinancialTab(){
     const trend=percent==null?'Өмнөх хугацааны харьцуулалтгүй':`${delta>0?'▲':delta<0?'▼':'•'} ${fmt(Math.abs(percent),1)}% · ${financialPreviousLabel()} ${delta>0?'өссөн':delta<0?'буурсан':'өөрчлөлтгүй'}`;
     return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.total,0)}</strong></div><div class="cost-bar"><span style="width:${(item.total/breakdownMax)*100}%"></span></div><div class="cost-change ${direction}"><span>${trend}</span><small>Сонгосон хугацааны дүн: ${currency(item.current,0)}</small></div></div>`;
   }).join('');
-  const changeTone=change==null?'flat':change>0?'up':'down';
   return `<div class="financial-wrap">
     <section class="panel financial-panel">
       <div class="panel-head">
@@ -198,7 +218,7 @@ function renderFinancialTab(){
       </div>
       ${renderFinancialChart(rows)}
     </section>
-    <div class="kpis">${kpis.map(([label,value,note],index)=>`<article class="kpi ${index===2?`financial-trend ${changeTone}`:''}"><div class="label">${label}</div><div class="value">${value}</div><div class="note">${note}</div></article>`).join('')}</div>
+    <div class="kpis">${kpis.map(item=>`<article class="kpi financial-trend ${item.note.tone}"><div class="label">${item.label}</div><div class="value">${item.value}</div><div class="note">${item.note.text}</div></article>`).join('')}</div>
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
       <p class="sub">Нийт дүн болон ${financialPreviousLabel()} өөрчлөлт</p>
