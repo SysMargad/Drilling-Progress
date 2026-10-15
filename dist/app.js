@@ -190,7 +190,39 @@ function renderFinancialTab(){
     return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.total,0)}</strong></div><div class="cost-bar"><span style="width:${(item.total/breakdownMax)*100}%"></span></div><div class="cost-change ${direction}"><span>${trend}</span><small>Сонгосон хугацааны дүн: ${currency(item.current,0)}</small></div></div>`;
   }).join('');
   const changeTone=change==null?'flat':change>0?'up':'down';
-  return `<div class="financial-wrap"><section class="panel financial-panel"><div class="panel-head"><div><h2>Өрөм тус бүрийн 1 метрийн зардал (₮/м)</h2><span class="sub">C-1800 болон CSD-1300 · хуримтлагдсан дундаж KPI-д</span></div><div class="chart-periods" role="group" aria-label="Санхүүгийн графикийн хугацаа">${controls}</div></div>${renderFinancialChart(rows)}</section><div class="kpis">${kpis.map(([label,value,note],index)=>`<article class="kpi ${index===2?`financial-trend ${changeTone}`:''}"><div class="label">${label}</div><div class="value">${value}</div><div class="note">${note}</div></article>`).join('')}</div><div class="grid"><section class="panel"><h2>Зардлын задаргаа</h2><p class="sub">Нийт дүн болон ${financialPreviousLabel()} өөрчлөлт</p><div class="cost-breakdown">${costRows}</div></section><section class="panel"><h2>Дэлгэрэнгүй бүртгэл</h2><div class="table-scroll"><table><thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Нийт ₮</th><th>₮/м</th><th>Төлөв</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.date}</td><td>${esc(r.rigs||'—')}</td><td>${esc(r.shiftLabel||'—')}</td><td>${esc(r.holes||'—')}</td><td>${fmt(r.drilledMeters,1)} м</td><td>${currency(r.totalCost,0)}</td><td>${r.dailyCostPerMeter==null?'N/A':currency(r.dailyCostPerMeter,0)}</td><td><span class="badge warn">${r.note}</span></td></tr>`).join('')}</tbody></table></div></section></div></div>`;
+  return `<div class="financial-wrap">
+    <section class="panel financial-panel">
+      <div class="panel-head">
+        <div><h2>Өрөм тус бүрийн 1 метрийн зардал (₮/м)</h2><span class="sub">C-1800 болон CSD-1300 · хуримтлагдсан дундаж KPI-д</span></div>
+        <div class="chart-periods" role="group" aria-label="Санхүүгийн графикийн хугацаа">${controls}</div>
+      </div>
+      ${renderFinancialChart(rows)}
+    </section>
+    <div class="kpis">${kpis.map(([label,value,note],index)=>`<article class="kpi ${index===2?`financial-trend ${changeTone}`:''}"><div class="label">${label}</div><div class="value">${value}</div><div class="note">${note}</div></article>`).join('')}</div>
+    <section class="panel">
+      <h2>Зардлын задаргаа</h2>
+      <p class="sub">Нийт дүн болон ${financialPreviousLabel()} өөрчлөлт</p>
+      <div class="cost-breakdown">${costRows}</div>
+    </section>
+    <section class="panel">
+      <h2>Дэлгэрэнгүй бүртгэл</h2>
+      <div class="table-scroll financial-details-scroll">
+        <table class="financial-details-table">
+          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Нийт ₮</th><th>₮/м</th><th>Төлөв</th></tr></thead>
+          <tbody>${rows.map(r=>`<tr>
+            <td data-label="Хугацаа">${r.date}</td>
+            <td data-label="Өрөм">${esc(r.rigs||'—')}</td>
+            <td data-label="Ээлж">${esc(r.shiftLabel||'—')}</td>
+            <td data-label="Цооног">${esc(r.holes||'—')}</td>
+            <td data-label="Метр">${fmt(r.drilledMeters,1)} м</td>
+            <td data-label="Нийт зардал">${currency(r.totalCost,0)}</td>
+            <td data-label="₮/м">${r.dailyCostPerMeter==null?'N/A':currency(r.dailyCostPerMeter,0)}</td>
+            <td data-label="Төлөв"><span class="badge warn">${r.note}</span></td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </section>
+  </div>`;
 }
 function kpis(){
   const rows=shifts(),dt=sum(rows,'dt'),hours=sum(rows,'hours');
