@@ -164,23 +164,30 @@ td {
 }
 
 .cost-change.up {
-  color: #39d98a;
+  color: #ff5c5c;
 }
 
 .cost-change.down {
-  color: #ff5c5c;
+  color: #39d98a;
 }
 
 .cost-change.flat {
   color: var(--muted);
 }
 
-.financial-disclaimer {
-  margin: 20px 0 0;
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-  color: #c6c6cb;
-  font-size: 12px;
+.kpi.financial-trend.up .value,
+.kpi.financial-trend.up .note {
+  color: #ff5c5c;
+}
+
+.kpi.financial-trend.down .value,
+.kpi.financial-trend.down .note {
+  color: #39d98a;
+}
+
+.kpi.financial-trend.flat .value,
+.kpi.financial-trend.flat .note {
+  color: var(--muted);
 }
 
 .financial-panel svg line {
