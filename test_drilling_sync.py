@@ -198,8 +198,8 @@ class PipelineTests(unittest.TestCase):
             drive.return_value.files.return_value = []
             with self.assertRaises(FinanceSourceError) as caught:
                 drive_finance_aggregates(None, [])
-        self.assertEqual(caught.exception.source, 'salary workbook in shared finance folder')
-        self.assertEqual(caught.exception.status, 404)
+        self.assertEqual(caught.exception.source, 'finance folder contents not visible to sync account')
+        self.assertEqual(caught.exception.status, 403)
         self.assertNotIn(FINANCE_FOLDER_ID, str(caught.exception))
 
     def test_empty_sources_cannot_overwrite_data(self):

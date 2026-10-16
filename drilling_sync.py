@@ -586,6 +586,10 @@ def drive_finance_aggregates(credentials_path, shifts):
             children = drive.files(folder)
         except urllib.error.HTTPError as error:
             raise FinanceSourceError("shared finance folder", error.code) from error
+        if folder == FINANCE_FOLDER_ID and not children:
+            # Drive can return an empty list instead of 403 for a folder whose
+            # contents are not shared with the service account.
+            raise FinanceSourceError("finance folder contents not visible to sync account", 403)
         for file in children:
             if file["mimeType"] == FOLDER_MIME:
                 pending.append(file["id"])
