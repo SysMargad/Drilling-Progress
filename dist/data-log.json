@@ -44,6 +44,18 @@
       "shifts": 50,
       "meters": 1236.6,
       "note": "9 source conflicts"
+    },
+    {
+      "id": "85ea66f7-c305-4698-802e-9bb58417461d",
+      "source": "drive",
+      "startedAt": "2026-10-16T16:41:05+08:00",
+      "status": "unchanged",
+      "completedAt": "2026-10-16T16:41:55+08:00",
+      "files": 8,
+      "holes": 6,
+      "shifts": 50,
+      "meters": 1236.6,
+      "note": "9 source conflicts; Finance refresh failed (HTTP 404)"
     }
   ]
 }
