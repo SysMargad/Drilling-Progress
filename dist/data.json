@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-10-16",
-  "updatedAt": "2026-10-16T10:22:45+08:00",
+  "updatedAt": "2026-10-16T11:58:13+08:00",
   "period": "2026-10-01 – 2026-10-15",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -1367,7 +1367,7 @@
     },
     {
       "rig": "CSD-1300",
-      "source": "20261014_n",
+      "source": "DTDH2605_Daily_report_20261014_n.JPG",
       "date": "2026-10-14",
       "shift": "Шөнө",
       "driller": "Д. Энхбаяр",
@@ -1379,7 +1379,7 @@
       "rt": null,
       "dt": 9.0,
       "hours": 12.0,
-      "notes": "20:00–08:00; PQ хоолой 0–12 м. Ээлжийн метр 51.00 м. Шийдвэрлэсэн 2026-10-15: 0–8.40 м-ийн өдрийн эх тайланг өмнөх мөрт нэмснээр гүний залгалт OK; шөнийн үндсэн утгуудыг өөрчлөөгүй.",
+      "notes": "20:00–08:00. PQ хоолой 0–12 м; өрөмдсөн метрт давхар нэмээгүй. Хэрэглэсэн зүйл: Бит 1; 650 1 (нэгж/нэр тодруулах). Захиалагчийн талбар, захиалагч ба ахлагчийн гарын үсэг хоосон.",
       "reports": [
         {
           "hole": "DTDH2605",
@@ -1407,7 +1407,7 @@
       "rt": null,
       "dt": 2.5,
       "hours": 12.0,
-      "notes": "08:00–20:00; 0–8.40 м. Маягтын Rig C-1300; CSD-1300 фолдер ба залгах шөнийн тайлантай холбон CSD-1300 кодоор бүртгэв (баталгаажуулах). POLYMER 1, нэгж бичээгүй. Захиалагч, ахлагчийн гарын үсэг хоосон.",
+      "notes": "08:00–20:00. Маягтын Rig: C-1300; CSD-1300 фолдер, ижил цооногийн шөнийн тайлантай холбон CSD-1300 код хэрэглэв (баталгаажуулах). POLYMER 1, нэгж бичээгүй. Захиалагч, ахлагчийн гарын үсэг хоосон.",
       "reports": [
         {
           "hole": "DTDH2605",
@@ -1491,7 +1491,7 @@
       "rt": null,
       "dt": 6.5,
       "hours": 7.0,
-      "notes": "10/15 08:00–14:00 (6 цагийн ХЭСЭГ). Эх зурагт PT=1/2, DT=6:30 (=6.5), кодын нийлбэр 7.0 цаг боловч ээлжийн хугацаа 6.0 цаг; цагийн зөрүү QA/QC-д. Маягтын Total 0.0 талбар бөглөгдөөгүй (хэвлэмэл). Rig хоосон, CSD-1300 эх фолдероор ангилсан; Бит 1. 14–20 цагийн тайлан ирээгүй.",
+      "notes": "10/15 ӨДӨР 08:00–14:00 (6 цагийн ХЭСЭГ). Маягтад PT=0.5, DT=6:30 буюу 6.5 гэж бичсэн: нийлбэр 7.0 цаг, ажилласан хугацаа 6.0 цаг — QA/QC цагийн зөрүү. Хэвлэмэл нийт цаг 0.0 талбар бөглөгдөөгүй. Rig хоосон; CSD-1300 фолдер ба DTDH2605 үргэлжлэлээр ангилсан. Бит 1; 14–20 тайлан ирээгүй. EOH үгүй; эхийг өөрчлөөгүй.",
       "reports": [
         {
           "hole": "DTDH2605",
@@ -1557,6 +1557,55 @@
         {
           "name": "00. Pre-Drill Planning & Readiness",
           "url": "https://drive.google.com/drive/folders/1RLnvLSdRMHeieXLA8eiF-tPOf9EHniHw"
+        }
+      ]
+    },
+    "ZHDH2612": {
+      "url": "https://drive.google.com/drive/folders/1DJUceHvbJ5eFk498MNPalUT6KOJr92OE",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1S7nGBMlYWlLZyimU3onnBKMBfKtAHebO"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1nqRcInlWiW9sde24j8nN6d-armQQyJP3"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/1uIUqZ7oilxzsx_XKGt3qMNR9vcahNQl6"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1WW00zRMYufmZXSqqIplt8XFZUoZrOjsp"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1j3OC8vG0tpIpP5QtBspRuIEfdoXKobyI"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1r3_rcrx42u8hHgYf3UL_PAzlTpIqyScK"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/14dpNmHW_oAc3M5uLDXMbpBKLXdJ0iSN5"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1l2yNS8O9dWf81qrfYly5frUePMHTc4WV"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1WQC46DqyXLUmDcV-GYOvO4G6by7ROzud"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/19XWdRG3XoSiMZjIJifsoTyf2t8d4lYW6"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1w8heKRUETRHytWMiaRzxds2YCTJLnSTF"
         }
       ]
     },
@@ -1770,16 +1819,10 @@
   ],
   "sources": [
     {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 10,
-      "shiftRows": 0
-    },
-    {
       "name": "Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
+      "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 3
+      "shiftRows": 50
     },
     {
       "name": "Drilling Shift Report Table",
@@ -1795,15 +1838,21 @@
     },
     {
       "name": "Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
+      "url": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 50
     },
     {
       "name": "Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
+      "url": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 50
+      "shiftRows": 3
+    },
+    {
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 10,
+      "shiftRows": 0
     },
     {
       "name": "NUDH_COLLAR.xlsx",
