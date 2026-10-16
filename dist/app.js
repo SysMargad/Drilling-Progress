@@ -16,11 +16,7 @@ const financialPreviousLabel=()=>({shift:'өмнөх ээлжтэй харьцу
 const currency=(value,digits=0)=>value==null||Number.isNaN(Number(value))?'—':`₮ ${Number(value).toLocaleString('en-US',{minimumFractionDigits:digits,maximumFractionDigits:digits})}`;
 function financialRows(grain=financialGrain){
   if(!D||!D.shifts?.length)return [];
-  const sourceRows=shifts(),shiftCounts=new Map();
-  for(const row of sourceRows){
-    const key=`${row.date}|${row.rig}`;
-    shiftCounts.set(key,(shiftCounts.get(key)||0)+1);
-  }
+  const sourceRows=DrillingCosts.records(shifts(),$('#rig').value?[$('#rig').value]:['C-1800','CSD-1300']);
   const groupMap=new Map();
   const periodStart=date=>{
     const day=new Date(`${date}T00:00:00Z`);
@@ -30,22 +26,20 @@ function financialRows(grain=financialGrain){
   };
   for(const row of sourceRows){
     const shiftKey=`${row.date}|${row.rig}|${row.shift}`;
-    const dailyRigKey=`${row.date}|${row.rig}`;
     const period=grain==='shift'?row.date+'|'+row.shift:grain==='day'?row.date:periodStart(row.date);
     const periodDate=grain==='shift'?row.date:period.split('|')[0];
-    const entry=groupMap.get(period)||{date:periodDate,endDate:periodDate,shiftOrder:row.shift==='Өдөр'?0:1,drilledMeters:0,fuelCost:0,mudCost:0,waterCost:0,laborCost:0,foodCost:0,rigs:new Set(),shifts:new Set(),shiftLabels:new Set(),holes:new Set()};
+    const entry=groupMap.get(period)||{date:periodDate,endDate:periodDate,shiftOrder:row.shift==='Өдөр'?0:1,drilledMeters:0,fuelCost:0,mudCost:0,waterCost:null,laborCost:0,foodCost:0,rigs:new Set(),shifts:new Set(),shiftLabels:new Set(),holes:new Set()};
     const meters=Number(row.meters||0);
     entry.drilledMeters+=meters;
     entry.rigs.add(row.rig);
-    entry.shifts.add(shiftKey);
+    if(row.recorded)entry.shifts.add(shiftKey);
     entry.shiftLabels.add(row.shift);
-    entry.holes.add(row.hole);
-    const rigFactor=row.rig==='C-1800'?1.48:1.18;
-    entry.fuelCost+=meters*rigFactor*3600;
-    entry.mudCost+=meters*27000;
-    entry.waterCost+=meters*9000;
-    entry.laborCost+=(row.rig==='C-1800'?1180000:980000)/(shiftCounts.get(dailyRigKey)||1);
-    entry.foodCost+=735000/(sourceRows.filter(s=>s.date===row.date).length||1);
+    if(row.hole)entry.holes.add(row.hole);
+    entry.fuelCost+=row.fuelCost;
+    entry.mudCost+=row.mudCost;
+    entry.laborCost+=row.laborCost;
+    entry.foodCost+=row.foodCost;
+    entry.endDate=row.date>entry.endDate?row.date:entry.endDate;
     groupMap.set(period,entry);
   }
   const rows=[];
@@ -53,7 +47,7 @@ function financialRows(grain=financialGrain){
   const sortedEntries=[...groupMap.entries()].sort(([,a],[,b])=>a.date.localeCompare(b.date)||(a.shiftOrder??0)-(b.shiftOrder??0));
   for(let i=0;i<sortedEntries.length;i++){
     const [date,entry]=sortedEntries[i];
-    const totalCost=entry.fuelCost+entry.mudCost+entry.waterCost+entry.laborCost+entry.foodCost;
+    const totalCost=entry.fuelCost+entry.mudCost+entry.laborCost+entry.foodCost;
     const dailyCostPerMeter=entry.drilledMeters>0?totalCost/entry.drilledMeters:null;
     runningCost += totalCost;
     runningMeters += entry.drilledMeters;
@@ -88,12 +82,7 @@ function financialRows(grain=financialGrain){
   return rows;
 }
 function financialRigSeries(grain=financialGrain){
-  const sourceRows=shifts(),rigs=['C-1800','CSD-1300'],shiftCounts=new Map(),dayCounts=new Map(),groups=new Map();
-  for(const row of sourceRows){
-    const rigDate=`${row.date}|${row.rig}`;
-    shiftCounts.set(rigDate,(shiftCounts.get(rigDate)||0)+1);
-    dayCounts.set(row.date,(dayCounts.get(row.date)||0)+1);
-  }
+  const rigs=$('#rig').value?[$('#rig').value]:['C-1800','CSD-1300'],sourceRows=DrillingCosts.records(shifts(),rigs),groups=new Map();
   const periodStart=date=>{
     const day=new Date(`${date}T00:00:00Z`);
     if(grain==='week')day.setUTCDate(day.getUTCDate()-((day.getUTCDay()+6)%7));
@@ -107,16 +96,15 @@ function financialRigSeries(grain=financialGrain){
     const groupKey=`${key}|${row.rig}`;
     const meters=Number(row.meters||0),entry=groups.get(groupKey)||{
       key,date:start,shiftOrder,shift:row.shift,rig:row.rig,meters:0,
-      fuelCost:0,mudCost:0,waterCost:0,laborCost:0,foodCost:0,
+      fuelCost:0,mudCost:0,waterCost:null,laborCost:0,foodCost:0,
       holes:new Set(),
     };
     entry.meters+=meters;
-    entry.fuelCost+=meters*(row.rig==='C-1800'?1.48:1.18)*3600;
-    entry.mudCost+=meters*27000;
-    entry.waterCost+=meters*9000;
-    entry.laborCost+=(row.rig==='C-1800'?1180000:980000)/(shiftCounts.get(`${row.date}|${row.rig}`)||1);
-    entry.foodCost+=735000/(dayCounts.get(row.date)||1);
-    entry.holes.add(row.hole);
+    entry.fuelCost+=row.fuelCost;
+    entry.mudCost+=row.mudCost;
+    entry.laborCost+=row.laborCost;
+    entry.foodCost+=row.foodCost;
+    if(row.hole)entry.holes.add(row.hole);
     groups.set(groupKey,entry);
   }
   const periods=[...new Map([...groups.values()].map(row=>[row.key,row])).values()]
@@ -126,7 +114,7 @@ function financialRigSeries(grain=financialGrain){
     const points=periods.map(period=>{
       const row=groups.get(`${period.key}|${rig}`);
       if(!row)return {key:period.key,date:period.date,shift:period.shift,rig,value:null,cumulative:null,meters:0};
-      const cost=row.fuelCost+row.mudCost+row.waterCost+row.laborCost+row.foodCost;
+      const cost=row.fuelCost+row.mudCost+row.laborCost+row.foodCost;
       runningCost+=cost;
       runningMeters+=row.meters;
       return {
@@ -156,7 +144,7 @@ function renderFinancialChart(rows){
       segment.push(`${xAt(index,points.length)},${yAt(value)}`);
     });
     if(segment.length)paths.push(segment.join(' '));
-    return paths.map(pathPoints=>`<polyline class="rig-cost-line" data-rig="${rig}" points="${pathPoints}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join('') + points.map((point,index)=>point.value==null?'':`<circle cx="${xAt(index,points.length)}" cy="${yAt(point.value)}" r="4" fill="${color}"><title>${esc(point.date)}${grain==='shift'?` · ${esc(point.shift)}`:''} · ${esc(rig)} · ${esc(point.holes||'—')} · Өрөмдсөн: ${fmt(point.meters)} м · Түлш: ${currency(point.fuelCost,0)} · Шавар: ${currency(point.mudCost,0)} · Ус: ${currency(point.waterCost,0)} · Цалин: ${currency(point.laborCost,0)} · Хоол: ${currency(point.foodCost,0)} · 1 м зардал: ${currency(point.value,0)} · Хуримтлагдсан: ${currency(point.cumulative,0)} /м</title></circle>`).join('');
+    return paths.map(pathPoints=>`<polyline class="rig-cost-line" data-rig="${rig}" points="${pathPoints}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join('') + points.map((point,index)=>point.value==null?'':`<circle cx="${xAt(index,points.length)}" cy="${yAt(point.value)}" r="4" fill="${color}"><title>${esc(point.date)}${financialGrain==='shift'?` · ${esc(point.shift)}`:''} · ${esc(rig)} · ${esc(point.holes||'—')} · Өрөмдсөн: ${fmt(point.meters)} м · Түлш: ${currency(point.fuelCost,0)} · Шавар: ${currency(point.mudCost,0)} · Ус: ${point.waterCost==null?'Дата ороогүй':currency(point.waterCost,0)} · Цалин: ${currency(point.laborCost,0)} · Хоол: ${currency(point.foodCost,0)} · 1 м зардал: ${currency(point.value,0)} · Хуримтлагдсан: ${currency(point.cumulative,0)} /м</title></circle>`).join('');
   };
   const axisTicks=[0,Math.ceil(maxValue/4),Math.ceil(maxValue/2),Math.ceil(maxValue*0.75),Math.ceil(maxValue)].filter((v,i,a)=>a.indexOf(v)===i);
   let svg=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Өрөмдлөгийн метрийн өртөг болон хуримтлагдсан өртгийн график">`;
@@ -193,10 +181,10 @@ function renderFinancialTab(){
   const previousFuelPerMeter=previous?.drilledMeters>0?previous.fuelCost/previous.drilledMeters:null;
   const previousUnitCost=previous?.drilledMeters>0?previous.totalCost/previous.drilledMeters:null;
   const kpis=[
-    {label:`${financialGrainLabel()} зардал (₮/м)`,value:dailyValue==null?'N/A':currency(dailyValue,0),note:compare(dailyValue,previousUnitCost)},
-    {label:'Хуримтлагдсан зардал (₮/м)',value:latest.cumulativeCostPerMeter==null?'N/A':currency(latest.cumulativeCostPerMeter,0),note:compare(latest.cumulativeCostPerMeter,previous?.cumulativeCostPerMeter??null)},
+    {label:`${financialGrainLabel()} зардал · ус ороогүй (₮/м)`,value:dailyValue==null?'N/A':currency(dailyValue,0),note:compare(dailyValue,previousUnitCost)},
+    {label:'Хуримтлагдсан зардал · ус ороогүй (₮/м)',value:latest.cumulativeCostPerMeter==null?'N/A':currency(latest.cumulativeCostPerMeter,0),note:compare(latest.cumulativeCostPerMeter,previous?.cumulativeCostPerMeter??null)},
     {label:`Өмнөх ${financialGrain==='shift'?'ээлжтэй':financialGrain==='day'?'өдөртэй':financialGrain==='week'?'7 хоногтой':'сартай'} харьцуулсан өөрчлөлт (%)`,value:change==null?'N/A':`${fmt(change,1)}%`,note:compare(dailyValue,previousUnitCost)},
-    {label:'Нийт зардал (₮)',value:currency(totalCost,0),note:compare(latest.totalCost,previous?.totalCost??null)},
+    {label:'Нийт зардал · ус ороогүй (₮)',value:currency(totalCost,0),note:compare(latest.totalCost,previous?.totalCost??null)},
     {label:'Нийт өрөмдсөн метр (м)',value:fmt(totalMeters,1),note:compare(latest.drilledMeters,previous?.drilledMeters??null,{lowerIsBetter:false,unit:'м'})},
     {label:'Түлшний зардал (₮/м)',value:totalMeters?currency(totalFuel/totalMeters,0):'N/A',note:compare(currentFuelPerMeter,previousFuelPerMeter)},
   ];
@@ -205,6 +193,9 @@ function renderFinancialTab(){
   const controls=[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button class="chart-period-button ${financialGrain===value?'active':''}" data-financial-grain="${value}" aria-pressed="${financialGrain===value}">${label}</button>`).join('');
   const breakdownMax=Math.max(...breakdown.map(item=>item.current),1);
   const costRows=breakdown.map(item=>{
+    if(item.current==null)return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>Дата ороогүй</strong></div></div>`;
+    const fixed=['laborCost','foodCost'].includes(item.key);
+    if(fixed)return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.current,0)}</strong></div><div class="cost-bar"><span style="width:${item.current/breakdownMax*100}%"></span></div><div class="cost-change flat">Тогтмол зардал</div></div>`;
     const delta=item.previous==null?null:item.current-item.previous;
     const percent=item.previous==null||item.previous===0?null:delta/item.previous*100;
     const direction=delta==null||delta===0?'flat':delta>0?'up':'down';
@@ -214,7 +205,7 @@ function renderFinancialTab(){
   return `<div class="financial-wrap">
     <section class="panel financial-panel">
       <div class="panel-head">
-        <div><h2>Өрөм тус бүрийн 1 метрийн зардал (₮/м)</h2><span class="sub">C-1800 болон CSD-1300 · хуримтлагдсан дундаж KPI-д</span></div>
+        <div><h2>Өрөм тус бүрийн 1 метрийн зардал (₮/м)</h2><span class="sub">C-1800 болон CSD-1300 · Усны зардлын дата ороогүй тул тооцоонд оруулаагүй</span></div>
         <div class="chart-periods" role="group" aria-label="Санхүүгийн графикийн хугацаа">${controls}</div>
       </div>
       ${renderFinancialChart(rows)}
@@ -222,14 +213,14 @@ function renderFinancialTab(){
     <div class="kpis">${kpis.map(item=>`<article class="kpi financial-trend ${item.note.tone}"><div class="label">${item.label}</div><div class="value">${item.value}</div><div class="note">${item.note.text}</div></article>`).join('')}</div>
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
-      <p class="sub">${financialGrainLabel()} зардал болон ${financialPreviousLabel()} өөрчлөлт</p>
+      <p class="sub">${financialGrainLabel()} зардал · Цалин, хоол нь хоногийн тогтмол зардал</p>
       <div class="cost-breakdown">${costRows}</div>
     </section>
     <section class="panel">
       <h2>Дэлгэрэнгүй бүртгэл</h2>
       <div class="table-scroll financial-details-scroll">
         <table class="financial-details-table">
-          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Нийт ₮</th><th>₮/м</th></tr></thead>
+          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Дүн ₮ (усгүй)</th><th>₮/м (усгүй)</th></tr></thead>
           <tbody>${rows.map(r=>`<tr>
             <td data-label="Хугацаа">${r.date}</td>
             <td data-label="Өрөм">${esc(r.rigs||'—')}</td>
