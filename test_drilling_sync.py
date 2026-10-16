@@ -6,7 +6,7 @@ from unittest.mock import patch
 from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
-from drilling_sync import append_data_log, assemble, finance_aggregates, load_json, local_sources, parse_shifts, publish, signature, workbook_rows, report_metadata, attach_reports, drive_sources
+from drilling_sync import append_data_log, assemble, drive_finance_aggregates, finance_aggregates, FinanceSourceError, load_json, local_sources, parse_shifts, publish, signature, workbook_rows, report_metadata, attach_reports, drive_sources
 
 ROOT = Path(__file__).resolve().parent
 
@@ -156,6 +156,17 @@ class PipelineTests(unittest.TestCase):
         unsafe = {**finance, 'daily': [{**finance['daily'][0], 'employeeName': 'PRIVATE_MASTER_1'}]}
         with self.assertRaisesRegex(ValueError, 'employee-level'):
             validate({**self.seed, 'finance': unsafe})
+
+    def test_finance_download_errors_identify_source_without_exposing_ids(self):
+        from urllib.error import HTTPError
+        missing = HTTPError('https://drive.google.com/', 404, 'Not found', None, None)
+        with patch('drilling_sync.Drive') as drive:
+            drive.return_value.download.side_effect = [b'salary', missing]
+            with self.assertRaises(FinanceSourceError) as caught:
+                drive_finance_aggregates(None, [])
+        self.assertEqual(caught.exception.source, 'attendance sheet')
+        self.assertEqual(caught.exception.status, 404)
+        self.assertNotIn('1OgJ4s7', str(caught.exception))
 
     def test_empty_sources_cannot_overwrite_data(self):
         with self.assertRaises(ValueError):

@@ -42,6 +42,13 @@ SALARY_PRORATION_DAYS = 31
 LOG = logging.getLogger("drilling")
 
 
+class FinanceSourceError(RuntimeError):
+    def __init__(self, source, status):
+        self.source = source
+        self.status = status
+        super().__init__(f"{source} returned HTTP {status}")
+
+
 def load_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8-sig"))
 
@@ -557,8 +564,14 @@ def drive_sources(folder, credentials_path):
 
 def drive_finance_aggregates(credentials_path, shifts):
     drive = Drive(credentials_path)
-    salary = drive.download({"id": FINANCE_SALARY_ID, "mimeType": XLSX_MIME})
-    attendance = drive.download({"id": FINANCE_ATTENDANCE_ID, "mimeType": FINANCE_SHEET_MIME})
+    try:
+        salary = drive.download({"id": FINANCE_SALARY_ID, "mimeType": XLSX_MIME})
+    except urllib.error.HTTPError as error:
+        raise FinanceSourceError("salary workbook", error.code) from error
+    try:
+        attendance = drive.download({"id": FINANCE_ATTENDANCE_ID, "mimeType": FINANCE_SHEET_MIME})
+    except urllib.error.HTTPError as error:
+        raise FinanceSourceError("attendance sheet", error.code) from error
     return finance_aggregates(
         workbook_rows(salary, ".xlsx"),
         workbook_rows(attendance, ".xlsx"),
@@ -717,7 +730,10 @@ def main():
                         data["finance"] = drive_finance_aggregates(args.credentials, data["shifts"])
                     except Exception as finance_error:
                         finance_note = f"Finance refresh failed ({type(finance_error).__name__})"
-                        if isinstance(finance_error, urllib.error.HTTPError):
+                        if isinstance(finance_error, FinanceSourceError):
+                            finance_note = (f"Finance refresh failed ({finance_error.source} "
+                                            f"HTTP {finance_error.status})")
+                        elif isinstance(finance_error, urllib.error.HTTPError):
                             finance_note = f"Finance refresh failed (HTTP {finance_error.code})"
                         LOG.warning("%s; previous aggregate retained", finance_note)
                 else:
