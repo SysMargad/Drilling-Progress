@@ -6,7 +6,12 @@ from unittest.mock import patch
 from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
-from drilling_sync import append_data_log, assemble, drive_finance_aggregates, finance_aggregates, FinanceSourceError, load_json, local_sources, parse_shifts, publish, signature, workbook_rows, report_metadata, attach_reports, drive_sources
+from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
+                           append_data_log, assemble, drive_finance_aggregates,
+                           finance_aggregates, FinanceSourceError, load_json,
+                           local_sources, parse_shifts, publish, signature,
+                           workbook_rows, report_metadata, attach_reports, drive_sources,
+                           XLSX_MIME)
 
 ROOT = Path(__file__).resolve().parent
 
@@ -157,16 +162,45 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'employee-level'):
             validate({**self.seed, 'finance': unsafe})
 
-    def test_finance_download_errors_identify_source_without_exposing_ids(self):
-        from urllib.error import HTTPError
-        missing = HTTPError('https://drive.google.com/', 404, 'Not found', None, None)
+    def test_finance_sources_are_discovered_from_shared_folder_headers(self):
+        salary_sheets = [('salary', [
+            ['Албан тушаал', 'Ажилтны тоо', 'Нэрлэсэн цалин'],
+            ['Өрмийн мастер', '1', '3100000'],
+        ])]
+        attendance_sheets = [('attendance', [
+            ['Өрмийн багийн 2026.09.01-2026.09.30 бүртгэл'],
+            ['10-р сар'],
+            ['', 'Нэр', 'Албан тушаал'],
+            ['', '', '', '', *[str(day) for day in range(1, 32)]],
+        ])]
+        files = [
+            {'id': 'attendance-file', 'mimeType': FINANCE_SHEET_MIME, 'modifiedTime': '2026-10-01'},
+            {'id': 'salary-file', 'mimeType': XLSX_MIME, 'modifiedTime': '2026-10-02'},
+        ]
+        sheets_by_content = {b'salary': salary_sheets, b'attendance': attendance_sheets}
+        expected = {'period': '2026-10'}
+        with (patch('drilling_sync.Drive') as drive,
+              patch('drilling_sync.workbook_rows',
+                    side_effect=lambda content, _: sheets_by_content[content]),
+              patch('drilling_sync.finance_aggregates', return_value=expected) as aggregate):
+            drive.return_value.files.side_effect = lambda folder: (
+                [{'id': 'nested', 'mimeType': FOLDER_MIME}] if folder == FINANCE_FOLDER_ID
+                else files if folder == 'nested' else []
+            )
+            drive.return_value.download.side_effect = lambda file: (
+                b'salary' if file['id'] == 'salary-file' else b'attendance'
+            )
+            self.assertEqual(drive_finance_aggregates(None, []), expected)
+        aggregate.assert_called_once_with(salary_sheets, attendance_sheets, [])
+
+    def test_missing_finance_folder_source_reports_safe_source_name(self):
         with patch('drilling_sync.Drive') as drive:
-            drive.return_value.download.side_effect = [b'salary', missing]
+            drive.return_value.files.return_value = []
             with self.assertRaises(FinanceSourceError) as caught:
                 drive_finance_aggregates(None, [])
-        self.assertEqual(caught.exception.source, 'attendance sheet')
+        self.assertEqual(caught.exception.source, 'salary workbook in shared finance folder')
         self.assertEqual(caught.exception.status, 404)
-        self.assertNotIn('1OgJ4s7', str(caught.exception))
+        self.assertNotIn(FINANCE_FOLDER_ID, str(caught.exception))
 
     def test_empty_sources_cannot_overwrite_data(self):
         with self.assertRaises(ValueError):

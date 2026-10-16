@@ -33,10 +33,10 @@ TZ = timezone(timedelta(hours=8))
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 RIGS = {"C-1800", "CSD-1300"}
-FINANCE_ATTENDANCE_ID = "1OgJ4s7-8bSeN5TXN7uscFycUv8EsmMcd72TUIKdeSJ8"
-FINANCE_SALARY_ID = "1mnSVpmSOXyANuJconT3dDD14HTFghgrC"
+FINANCE_FOLDER_ID = "1j8QjgqCHBh50pJwl68hBpTCvTu1tUYgj"
 FINANCE_SHEET_MIME = "application/vnd.google-apps.spreadsheet"
 XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+FOLDER_MIME = "application/vnd.google-apps.folder"
 FOOD_COST_PER_FIELD_DAY = 35000.0
 SALARY_PRORATION_DAYS = 31
 LOG = logging.getLogger("drilling")
@@ -248,6 +248,18 @@ def _find_finance_table(sheets, required_headers):
             if all(any(required in header for header in headers) for required in required_headers):
                 return name, rows, index, headers
     raise ValueError("Finance workbook is missing a required header row")
+
+
+def _finance_has_headers(sheets, required_headers, exact=False):
+    return any(
+        all(
+            required in [norm(value) for value in row]
+            if exact else any(required in norm(value) for value in row)
+            for required in required_headers
+        )
+        for _, rows in sheets
+        for row in rows
+    )
 
 
 def _salary_table(sheets):
@@ -564,17 +576,48 @@ def drive_sources(folder, credentials_path):
 
 def drive_finance_aggregates(credentials_path, shifts):
     drive = Drive(credentials_path)
-    try:
-        salary = drive.download({"id": FINANCE_SALARY_ID, "mimeType": XLSX_MIME})
-    except urllib.error.HTTPError as error:
-        raise FinanceSourceError("salary workbook", error.code) from error
-    try:
-        attendance = drive.download({"id": FINANCE_ATTENDANCE_ID, "mimeType": FINANCE_SHEET_MIME})
-    except urllib.error.HTTPError as error:
-        raise FinanceSourceError("attendance sheet", error.code) from error
+    pending, seen, files = [FINANCE_FOLDER_ID], set(), {}
+    while pending:
+        folder = pending.pop()
+        if folder in seen:
+            continue
+        seen.add(folder)
+        try:
+            children = drive.files(folder)
+        except urllib.error.HTTPError as error:
+            raise FinanceSourceError("shared finance folder", error.code) from error
+        for file in children:
+            if file["mimeType"] == FOLDER_MIME:
+                pending.append(file["id"])
+            elif file["mimeType"] in {FINANCE_SHEET_MIME, XLSX_MIME}:
+                files[file["id"]] = file
+
+    salary_sheets = attendance_sheets = None
+    for file in sorted(files.values(), key=lambda item: item.get("modifiedTime", ""), reverse=True):
+        try:
+            content = drive.download(file)
+        except urllib.error.HTTPError as error:
+            if error.code == 404:
+                continue
+            raise FinanceSourceError("workbook in shared finance folder", error.code) from error
+        sheets = workbook_rows(content, ".xlsx")
+        if salary_sheets is None and _finance_has_headers(
+                sheets, ("албан тушаал", "ажилтны тоо", "нэрлэсэн цалин")):
+            _salary_table(sheets)
+            salary_sheets = sheets
+        if attendance_sheets is None and _finance_has_headers(
+                sheets, ("нэр", "албан тушаал"), exact=True):
+            _attendance_layout(sheets)
+            attendance_sheets = sheets
+        if salary_sheets is not None and attendance_sheets is not None:
+            break
+    if salary_sheets is None:
+        raise FinanceSourceError("salary workbook in shared finance folder", 404)
+    if attendance_sheets is None:
+        raise FinanceSourceError("attendance sheet in shared finance folder", 404)
     return finance_aggregates(
-        workbook_rows(salary, ".xlsx"),
-        workbook_rows(attendance, ".xlsx"),
+        salary_sheets,
+        attendance_sheets,
         shifts,
     )
 
