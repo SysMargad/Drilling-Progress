@@ -92,6 +92,18 @@
       "shifts": 50,
       "meters": 1236.6,
       "note": "9 source conflicts; Finance refresh failed (salary workbook in shared finance folder HTTP 404)"
+    },
+    {
+      "id": "60cbbeae-793b-4da4-bff7-582f26557035",
+      "source": "drive",
+      "startedAt": "2026-10-16T17:27:47+08:00",
+      "status": "unchanged",
+      "completedAt": "2026-10-16T17:28:36+08:00",
+      "files": 8,
+      "holes": 6,
+      "shifts": 50,
+      "meters": 1236.6,
+      "note": "9 source conflicts; Finance refresh failed (ValueError)"
     }
   ]
 }
