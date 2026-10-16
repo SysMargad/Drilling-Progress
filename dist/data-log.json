@@ -56,6 +56,18 @@
       "shifts": 50,
       "meters": 1236.6,
       "note": "9 source conflicts; Finance refresh failed (HTTP 404)"
+    },
+    {
+      "id": "975c08c5-1aec-4c57-8077-0829a7674c98",
+      "source": "drive",
+      "startedAt": "2026-10-16T16:45:31+08:00",
+      "status": "unchanged",
+      "completedAt": "2026-10-16T16:46:10+08:00",
+      "files": 8,
+      "holes": 6,
+      "shifts": 50,
+      "meters": 1236.6,
+      "note": "9 source conflicts; Finance refresh failed (salary workbook HTTP 404)"
     }
   ]
 }
