@@ -35,9 +35,11 @@ def validate(data):
             if any(report.get(k) != s[k] for k in ('hole', 'rig', 'date', 'shift')):
                 raise ValueError('Report provenance does not match shift')
         for key in ('from', 'to', 'meters', 'dt', 'st', 'rt', 'hours'):
+            if key in {'st', 'rt'} and s[key] is None:
+                continue
             if not isinstance(s[key], (int, float)) or not math.isfinite(s[key]) or s[key] < 0:
                 raise ValueError('Invalid shift number')
-        if abs(s['to'] - s['from'] - s['meters']) > 0.05 or s['dt'] + s['st'] + s['rt'] > s['hours'] + 0.01:
+        if abs(s['to'] - s['from'] - s['meters']) > 0.05 or s['dt'] + (s['st'] or 0) + (s['rt'] or 0) > s['hours'] + 0.01:
             raise ValueError('Shift depth or hours mismatch')
     for key in ('driveUrl', 'collarUrl', 'shiftUrl'):
         url = data.get(key, '')

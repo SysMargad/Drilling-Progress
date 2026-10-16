@@ -197,11 +197,14 @@ def parse_shifts(rows):
         if not item["date"] or shift not in {"Өдөр", "Шөнө"}:
             raise ValueError(f"Missing/invalid date or shift for {h}")
         for key in ("from", "to", "meters", "st", "rt", "dt", "hours"):
+            # A blank optional time code is unknown, not zero. Keep it null.
+            if key in {"st", "rt"} and item[key] is None and str(get(lambda x: x == key)).strip() in {"", "-", "—"}:
+                continue
             if item[key] is None or item[key] < 0:
                 raise ValueError(f"Missing/invalid {key} for {h} on {item['date']}")
         if abs(item["to"] - item["from"] - item["meters"]) > 0.05:
             raise ValueError(f"Depth/meters mismatch for {h} on {item['date']}")
-        if item["dt"] + item["st"] + item["rt"] > item["hours"] + 0.01:
+        if item["dt"] + (item["st"] or 0) + (item["rt"] or 0) > item["hours"] + 0.01:
             raise ValueError(f"Work hours mismatch for {h} on {item['date']}")
         output.append(item)
     return output
@@ -367,6 +370,10 @@ def assemble(records, seed, folders=None, report_index=None):
     if report_index is None:
         report_index = [report for row in seed.get("shifts", []) for report in row.get("reports", [])]
     attach_reports(list(shifts.values()), report_index)
+    for item in shifts.values():
+        missing = [key.upper() for key in ("st", "rt") if item[key] is None]
+        if missing:
+            warnings.append(f"Unreported time codes: {item['hole']} / {item['date']} / {item['shift']} / {', '.join(missing)}; preserved as null")
     now = datetime.now(TZ)
     dates = sorted(s["date"] for s in shifts.values())
     return {"schemaVersion": 1, "asOf": now.date().isoformat(), "updatedAt": now.isoformat(timespec="seconds"),

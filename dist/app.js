@@ -4,6 +4,7 @@ const $=selector=>document.querySelector(selector);
 const fmt=(n,d=1)=>n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sum=(rows,key)=>rows.reduce((total,row)=>total+row[key],0),SITE='Нэргүй Өндөр';
+function knownHours(rows,key){const known=rows.filter(row=>Number.isFinite(row[key]));return known.length?(known.length<rows.length?'≥ ':'')+fmt(sum(known,key)):'—';}
 function areaOf(h){const area=(h.targetArea||'').toLocaleLowerCase();if(area==='дорнын төмөр'||(!area&&h.id.startsWith('DTDH')))return 'Дорнын Төмөр';if(area==='замт хөндий'||(!area&&h.id.startsWith('ZHDH')))return 'Замт Хөндий';return h.targetArea||'—';}
 function holes(){return D.collar.filter(h=>(h.site||SITE)===$('#site').value&&(!$('#area').value||areaOf(h)===$('#area').value)&&(!$('#rig').value||D.shifts.some(s=>s.hole===h.id&&s.rig===$('#rig').value)));}
 function shifts(){const ids=new Set(holes().map(h=>h.id));return D.shifts.filter(s=>ids.has(s.hole)&&(!$('#rig').value||s.rig===$('#rig').value));}
@@ -307,7 +308,7 @@ function chart(){
   const last=groups.at(-1);svg+=`<text class="target-label" x="${W-right-3}" y="${y(last.target)-7}" text-anchor="end">Норм ${fmt(last.target)} м</text></svg>`;
   return html+`<div class="chart-canvas" tabindex="0" aria-label="Графикийг хэвтээ гүйлгэж үзэх">${svg}</div>`;
 }
-function rigs(){return ['C-1800','CSD-1300'].filter(rig=>!$('#rig').value||$('#rig').value===rig).map(rig=>{const rows=shifts().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${rig==='C-1800'?'#128875':'#dc8a3b'}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${fmt(sum(rows,'st'))} цаг</span></div></div>`;}).join('');}
+function rigs(){return ['C-1800','CSD-1300'].filter(rig=>!$('#rig').value||$('#rig').value===rig).map(rig=>{const rows=shifts().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${rig==='C-1800'?'#128875':'#dc8a3b'}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
 function holeTable(){
   const list=holes().filter(h=>h.id.toLowerCase().includes(query.toLowerCase()));
   return '<div class="table-scroll"><table><thead><tr><th>Цооног</th><th>Талбай</th><th>Участик</th><th>Өрөм</th><th>Төлөв</th><th>Төлөвлөсөн</th><th>Ээлжийн гүн</th><th>Collar гүн</th><th>Ахиц</th></tr></thead><tbody>'+list.map(h=>{

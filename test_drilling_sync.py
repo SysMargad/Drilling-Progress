@@ -10,6 +10,21 @@ from drilling_sync import append_data_log, assemble, load_json, local_sources, p
 ROOT = Path(__file__).resolve().parent
 
 class PipelineTests(unittest.TestCase):
+    def test_blank_optional_time_codes_remain_unknown(self):
+        headers=['Rig','Source','Date','Shift','Driller','Hole ID','From','To','Drilled','ST','RT','DT','Total','Work notes']
+        row=['CSD-1300','photo','2026-10-14','Өдөр','x','DTDH2605','0','8.4','8.4','','','2.5','12','']
+        parsed=parse_shifts([headers,row])[0]
+        self.assertIsNone(parsed['st'])
+        self.assertIsNone(parsed['rt'])
+        self.assertEqual(parsed['dt'],2.5)
+        for index,value in [(9,'#REF!'),(9,'-1'),(11,''),(11,'13')]:
+            bad=row.copy();bad[index]=value
+            with self.assertRaises(ValueError):
+                parse_shifts([headers,bad])
+        data=self.seed.copy();data['shifts']=[parsed]
+        from validate_data import validate
+        validate(data)
+
     def test_drive_report_folder_traversal(self):
         def folder(id,name):
             return {'id':id,'name':name,'mimeType':'application/vnd.google-apps.folder'}
