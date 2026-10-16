@@ -1,6 +1,14 @@
 name: Sync drilling data from Google Drive
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/drive-sync.yml'
+      - 'drilling_sync.py'
+      - 'validate_data.py'
+      - 'requirements.txt'
   schedule:
     # Same daily timing as Drone Track: 08:00 Asia/Shanghai.
     - cron: '0 0 * * *'
