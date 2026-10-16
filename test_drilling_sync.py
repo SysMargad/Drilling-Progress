@@ -1,11 +1,12 @@
 import io
+import json
 import unittest
 import tempfile
 from unittest.mock import patch
 from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
-from drilling_sync import append_data_log, assemble, load_json, local_sources, parse_shifts, publish, signature, workbook_rows, report_metadata, attach_reports, drive_sources
+from drilling_sync import append_data_log, assemble, finance_aggregates, load_json, local_sources, parse_shifts, publish, signature, workbook_rows, report_metadata, attach_reports, drive_sources
 
 ROOT = Path(__file__).resolve().parent
 
@@ -90,6 +91,71 @@ class PipelineTests(unittest.TestCase):
         sheets = workbook_rows(buf.getvalue(), '.xlsx')
         self.assertEqual(sheets[0][1][0], ['', 'Hole Id', '', 'Plan Depth, m'])
         self.assertEqual(sheets[0][1][1][3], '280')
+
+    def test_finance_aggregates_map_roles_and_exclude_private_rows(self):
+        salary_rows = [
+            ['№', 'Албан тушаал', 'Ажилтны тоо', 'Нэрлэсэн цалин',
+             'Бонус (1 хүн - 1 метр тутам)', 'Өдрийн', 'НДШ', 'Бодит цалин'],
+            ['1', 'Өрмийн мастер', '4', '3100000', '10000', '120000', '', ''],
+            ['2', 'Тогоочийн туслах', '1', '3100000', '', '', '', ''],
+            ['3', 'Туслах угаагч', '1', '3100000', '', '', '', ''],
+            ['4', 'ХАБ, Кемп менежер', '1', '3100000', '', '', '', ''],
+            ['5', 'Кемп бой', '1', '3100000', '', '', '', ''],
+            ['6', 'Усны жолооч', '3', '6200000', '', '', '', ''],
+        ]
+        day_header = ['', '', '', '', *[str(day) for day in range(1, 32)]]
+        attendance_rows = [
+            ['Өрмийн багийн 2026.09.01-2026.09.30 бүртгэл'],
+            ['', '', '', '', '10-р сар 1-31'],
+            [],
+            ['№', 'Нэр', 'Албан тушаал', 'Ажилтны төрөл', 'Тайлант сар'],
+            [],
+            day_header,
+            ['1', 'PRIVATE_MASTER_1', 'Өрмийн мастер', '', 'C18D'],
+            ['2', 'PRIVATE_MASTER_2', '', '', 'C18D'],
+            ['3', 'PRIVATE_COOK_HELPER', 'Туслах тогооч', '', 'W'],
+            ['4', 'PRIVATE_WASHER', 'Угаагч', '', 'P'],
+            ['5', 'PRIVATE_HSE', 'ХАБЭА мэргэжилтэн', '', 'W'],
+            ['6', 'PRIVATE_CAMP_WORKER', 'Аж ахуйн ажилтан', '', 'W'],
+            ['7', 'PRIVATE_DRIVER_1', 'Жолооч', '', 'W'],
+            ['8', 'PRIVATE_DRIVER_2', '', '', 'P'],
+            ['9', 'PRIVATE_DRIVER_3', '', '', 'P'],
+            ['10', 'PRIVATE_DRIVER_4', '', '', 'P'],
+        ]
+        finance = finance_aggregates(
+            [('salary.xlsx', salary_rows)],
+            [('attendance.xlsx', attendance_rows)],
+            [
+                {'date': '2026-10-01', 'rig': 'C-1800', 'shift': 'Өдөр', 'meters': 12},
+                {'date': '2026-10-01', 'rig': 'C-1800', 'shift': 'Өдөр', 'meters': 8},
+            ],
+        )
+        self.assertEqual(finance['period'], '2026-10')
+        self.assertEqual(finance['daily'], [
+            {'date': '2026-10-01', 'laborCost': 1840000.0, 'foodCost': 210000.0}
+        ])
+        self.assertAlmostEqual(sum(row['laborCost'] for row in finance['rigShifts']), 1840000.0)
+        self.assertAlmostEqual(sum(row['foodCost'] for row in finance['rigShifts']), 210000.0)
+        day_shift = next(row for row in finance['rigShifts']
+                         if row['rig'] == 'C-1800' and row['shift'] == 'Өдөр')
+        self.assertEqual(day_shift['laborCost'], 1240000.0)
+        self.assertEqual(day_shift['foodCost'], 140000.0)
+        values = json.loads(json.dumps(finance, ensure_ascii=False))
+        def leaves(value):
+            if isinstance(value, dict):
+                return [leaf for child in value.values() for leaf in leaves(child)]
+            if isinstance(value, list):
+                return [leaf for child in value for leaf in leaves(child)]
+            return [value]
+        public_values = leaves(values)
+        self.assertFalse(any(isinstance(value, str) and 'PRIVATE_' in value for value in public_values))
+        for individual_amount in (3100000, 6200000, 120000, 10000):
+            self.assertNotIn(individual_amount, public_values)
+        from validate_data import validate
+        validate({**self.seed, 'finance': finance})
+        unsafe = {**finance, 'daily': [{**finance['daily'][0], 'employeeName': 'PRIVATE_MASTER_1'}]}
+        with self.assertRaisesRegex(ValueError, 'employee-level'):
+            validate({**self.seed, 'finance': unsafe})
 
     def test_empty_sources_cannot_overwrite_data(self):
         with self.assertRaises(ValueError):

@@ -33,6 +33,12 @@ TZ = timezone(timedelta(hours=8))
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 RIGS = {"C-1800", "CSD-1300"}
+FINANCE_ATTENDANCE_ID = "1OgJ4s7-8bSeN5TXN7uscFycUv8EsmMcd72TUIKdeSJ8"
+FINANCE_SALARY_ID = "1mnSVpmSOXyANuJconT3dDD14HTFghgrC"
+FINANCE_SHEET_MIME = "application/vnd.google-apps.spreadsheet"
+XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+FOOD_COST_PER_FIELD_DAY = 35000.0
+SALARY_PRORATION_DAYS = 31
 LOG = logging.getLogger("drilling")
 
 
@@ -99,6 +105,15 @@ def workbook_rows(content, suffix):
 
 def norm(value):
     return re.sub(r"\s+", " ", str(value).strip().lower())
+
+
+ATTENDANCE_ROLE_ALIASES = {
+    norm("Туслах тогооч"): norm("Тогоочийн туслах"),
+    norm("Угаагч"): norm("Туслах угаагч"),
+    norm("ХАБЭА мэргэжилтэн"): norm("ХАБ, Кемп менежер"),
+    norm("Аж ахуйн ажилтан"): norm("Кемп бой"),
+    norm("Жолооч"): norm("Усны жолооч"),
+}
 
 
 def number(value):
@@ -208,6 +223,212 @@ def parse_shifts(rows):
             raise ValueError(f"Work hours mismatch for {h} on {item['date']}")
         output.append(item)
     return output
+
+
+def _finance_number(value):
+    text = str(value).replace("₮", "").replace(",", "").replace("\u00a0", "").strip()
+    return number(text)
+
+
+def _finance_cell(row, index):
+    return str(row[index]).strip() if 0 <= index < len(row) else ""
+
+
+def _find_finance_table(sheets, required_headers):
+    for name, rows in sheets:
+        for index, row in enumerate(rows):
+            headers = [norm(value) for value in row]
+            if all(any(required in header for header in headers) for required in required_headers):
+                return name, rows, index, headers
+    raise ValueError("Finance workbook is missing a required header row")
+
+
+def _salary_table(sheets):
+    _, rows, header_index, headers = _find_finance_table(
+        sheets, ("албан тушаал", "ажилтны тоо", "нэрлэсэн цалин"))
+    title_col = next(i for i, value in enumerate(headers) if "албан тушаал" in value)
+    count_col = next(i for i, value in enumerate(headers) if "ажилтны тоо" in value)
+    monthly_col = next(i for i, value in enumerate(headers) if "нэрлэсэн цалин" in value)
+    bonus_col = next((i for i, value in enumerate(headers) if "бонус" in value), -1)
+    daily_col = next((i for i, value in enumerate(headers) if value.startswith("өдрийн")), -1)
+    payroll = {}
+    for row in rows[header_index + 1:]:
+        title = _finance_cell(row, title_col)
+        count = _finance_number(_finance_cell(row, count_col))
+        if not title or count is None or norm(title).startswith("нийт"):
+            continue
+        key = norm(title)
+        if key in payroll:
+            raise ValueError("Salary workbook contains a duplicate job title")
+        payroll[key] = {
+            "headcount": count,
+            "monthlySalary": _finance_number(_finance_cell(row, monthly_col)),
+            "dailyRate": _finance_number(_finance_cell(row, daily_col)),
+            "bonusPerMeter": _finance_number(_finance_cell(row, bonus_col)),
+        }
+    if not payroll:
+        raise ValueError("Salary workbook contains no payroll positions")
+    return payroll
+
+
+def _attendance_layout(sheets):
+    _, rows, header_index, headers = _find_finance_table(sheets, ("нэр", "албан тушаал"))
+    name_col = next(i for i, value in enumerate(headers) if value == "нэр")
+    role_col = next(i for i, value in enumerate(headers) if value == "албан тушаал")
+    day_header_index, day_columns = None, None
+    for index, row in enumerate(rows):
+        for start in range(len(row)):
+            if _finance_cell(row, start) != "1":
+                continue
+            columns = []
+            for day in range(1, 32):
+                if _finance_cell(row, start + day - 1) != str(day):
+                    break
+                columns.append(start + day - 1)
+            if len(columns) >= 28:
+                day_header_index, day_columns = index, columns
+                break
+        if day_columns:
+            break
+    if day_columns is None:
+        raise ValueError("Attendance workbook has no sequential calendar-day header")
+    all_text = "\n".join(str(cell) for row in rows for cell in row)
+    month_match = re.search(r"(?<!\d)(\d{1,2})\s*[-–]?\s*р\s*сар", all_text, re.I)
+    year_match = re.search(r"\b(20\d{2})\b", all_text)
+    if not month_match or not year_match:
+        raise ValueError("Attendance workbook is missing its reporting month or year")
+    year, month = int(year_match[1]), int(month_match[1])
+    if month < 1 or month > 12:
+        raise ValueError("Attendance workbook contains an invalid reporting month")
+    month_days = (datetime(year + (month == 12), month % 12 + 1, 1) -
+                  timedelta(days=1)).day
+    if len(day_columns) > month_days:
+        raise ValueError("Attendance calendar contains days outside the reporting month")
+    return rows, header_index, day_header_index, day_columns, name_col, role_col, year, month
+
+
+def finance_aggregates(salary_sheets, attendance_sheets, shifts):
+    """Return public-safe date/rig/shift cost totals; employee rows stay in memory."""
+    payroll = _salary_table(salary_sheets)
+    (rows, header_index, day_header_index, day_columns, name_col, role_col,
+     year, month) = _attendance_layout(attendance_sheets)
+    period = f"{year:04d}-{month:02d}"
+    daily = {}
+    rig_shifts = {}
+    shared = {}
+    master_attendance = {}
+
+    def daily_entry(day):
+        date_key = f"{period}-{day:02d}"
+        return daily.setdefault(date_key, {"date": date_key, "laborCost": 0.0, "foodCost": 0.0})
+
+    def rig_shift_entry(date_key, rig, shift):
+        key = (date_key, rig, shift)
+        return rig_shifts.setdefault(key, {
+            "date": date_key, "rig": rig, "shift": shift,
+            "laborCost": 0.0, "foodCost": 0.0,
+        })
+
+    role = ""
+    for row in rows[max(header_index, day_header_index) + 1:]:
+        if not _finance_cell(row, name_col):
+            continue
+        explicit_role = _finance_cell(row, role_col)
+        if explicit_role:
+            role = explicit_role
+        if not role:
+            raise ValueError("Attendance employee row has no job-title mapping")
+        payroll_role = ATTENDANCE_ROLE_ALIASES.get(norm(role), norm(role))
+        if payroll_role not in payroll:
+            raise ValueError(f"Attendance job title has no payroll mapping: {role}")
+        position = payroll[payroll_role]
+        daily_rate = position["dailyRate"] if payroll_role in {
+            norm("Супервайзер"), norm("Өрмийн мастер")
+        } else None
+        attendance = [
+            (column, day, _finance_cell(row, column).upper())
+            for column, day in zip(day_columns, range(1, len(day_columns) + 1))
+            if _finance_cell(row, column)
+        ]
+        attendance = [item for item in attendance if item[2] != "A"]
+        if daily_rate is None:
+            monthly_salary = position["monthlySalary"]
+            if monthly_salary is None:
+                if attendance:
+                    raise ValueError(f"Payroll salary is missing for an attended role: {role}")
+                continue
+            daily_rate = monthly_salary / SALARY_PRORATION_DAYS
+        for column, day, code in attendance:
+            if code == "P":
+                target = daily_entry(day)
+                target["laborCost"] += daily_rate
+                shared.setdefault(target["date"], {"laborCost": 0.0, "foodCost": 0.0})["laborCost"] += daily_rate
+                continue
+            if code == "W":
+                target = daily_entry(day)
+                target["laborCost"] += daily_rate
+                target["foodCost"] += FOOD_COST_PER_FIELD_DAY
+                shared_day = shared.setdefault(target["date"], {"laborCost": 0.0, "foodCost": 0.0})
+                shared_day["laborCost"] += daily_rate
+                shared_day["foodCost"] += FOOD_COST_PER_FIELD_DAY
+                continue
+            match = re.fullmatch(r"C(13|18)(D|N)", code)
+            if not match:
+                raise ValueError(f"Attendance contains an unsupported work code: {code}")
+            rig = "CSD-1300" if match[1] == "13" else "C-1800"
+            shift = "Өдөр" if match[2] == "D" else "Шөнө"
+            target = daily_entry(day)
+            target["laborCost"] += daily_rate
+            target["foodCost"] += FOOD_COST_PER_FIELD_DAY
+            rig_entry = rig_shift_entry(target["date"], rig, shift)
+            rig_entry["laborCost"] += daily_rate
+            rig_entry["foodCost"] += FOOD_COST_PER_FIELD_DAY
+            if payroll_role == norm("Өрмийн мастер"):
+                key = (target["date"], rig, shift)
+                master_attendance[key] = master_attendance.get(key, 0) + 1
+
+    meters_by_shift = {}
+    active_rigs_by_shift = {}
+    for item in shifts:
+        date_key = item["date"]
+        if not date_key.startswith(period + "-"):
+            continue
+        key = (date_key, item["rig"], item["shift"])
+        meters_by_shift[key] = meters_by_shift.get(key, 0.0) + float(item["meters"] or 0)
+        active_rigs_by_shift.setdefault((date_key, item["shift"]), set()).add(item["rig"])
+
+    master_payroll = payroll.get(norm("Өрмийн мастер"), {})
+    bonus_rate = master_payroll.get("bonusPerMeter")
+    for key, meters in meters_by_shift.items():
+        master_count = master_attendance.get(key, 0)
+        if not master_count or not meters:
+            continue
+        if bonus_rate is None:
+            raise ValueError("Master per-meter bonus is missing from the salary workbook")
+        date_key, rig, shift = key
+        bonus = meters * bonus_rate * master_count
+        daily_entry(int(date_key[-2:]))["laborCost"] += bonus
+        rig_shift_entry(date_key, rig, shift)["laborCost"] += bonus
+
+    for date_key, amounts in shared.items():
+        for shift in ("Өдөр", "Шөнө"):
+            rigs = active_rigs_by_shift.get((date_key, shift)) or RIGS
+            labor_share = amounts["laborCost"] / 2 / len(rigs)
+            food_share = amounts["foodCost"] / 2 / len(rigs)
+            for rig in rigs:
+                item = rig_shift_entry(date_key, rig, shift)
+                item["laborCost"] += labor_share
+                item["foodCost"] += food_share
+
+    rounded_daily = [
+        {key: (round(value, 2) if key != "date" else value) for key, value in daily[date_key].items()}
+        for date_key in sorted(daily)
+    ]
+    rounded_rig_shifts = [
+        {key: (round(value, 2) if key.endswith("Cost") else value) for key, value in item.items()}
+        for _, item in sorted(rig_shifts.items())
+    ]
+    return {"period": period, "daily": rounded_daily, "rigShifts": rounded_rig_shifts}
 
 
 class Drive:
@@ -334,7 +555,18 @@ def drive_sources(folder, credentials_path):
     return sorted(records, key=lambda x: x["modified"], reverse=True), folders, reports
 
 
-def assemble(records, seed, folders=None, report_index=None):
+def drive_finance_aggregates(credentials_path, shifts):
+    drive = Drive(credentials_path)
+    salary = drive.download({"id": FINANCE_SALARY_ID, "mimeType": XLSX_MIME})
+    attendance = drive.download({"id": FINANCE_ATTENDANCE_ID, "mimeType": FINANCE_SHEET_MIME})
+    return finance_aggregates(
+        workbook_rows(salary, ".xlsx"),
+        workbook_rows(attendance, ".xlsx"),
+        shifts,
+    )
+
+
+def assemble(records, seed, folders=None, report_index=None, finance=None):
     collar, shifts, warnings, provenance = {}, {}, [], []
     collar_url, shift_url = seed.get("collarUrl", ""), seed.get("shiftUrl", "")
     for source in records:
@@ -376,12 +608,17 @@ def assemble(records, seed, folders=None, report_index=None):
             warnings.append(f"Unreported time codes: {item['hole']} / {item['date']} / {item['shift']} / {', '.join(missing)}; preserved as null")
     now = datetime.now(TZ)
     dates = sorted(s["date"] for s in shifts.values())
-    return {"schemaVersion": 1, "asOf": now.date().isoformat(), "updatedAt": now.isoformat(timespec="seconds"),
+    data = {"schemaVersion": 1, "asOf": now.date().isoformat(), "updatedAt": now.isoformat(timespec="seconds"),
             "period": dates[0] + " – " + dates[-1], "collarUrl": collar_url, "shiftUrl": shift_url,
             "driveUrl": seed["driveUrl"], "collar": list(collar.values()),
             "shifts": sorted(shifts.values(), key=lambda x: (x["date"], x["rig"], x["shift"])),
             "folderMap": folders if folders is not None else seed.get("folderMap", {}),
             "syncWarnings": sorted(set(warnings)), "sources": provenance}
+    if finance is not None:
+        data["finance"] = finance
+    elif seed.get("finance") is not None:
+        data["finance"] = seed["finance"]
+    return data
 
 
 def signature(data):
@@ -471,13 +708,23 @@ def main():
             log_path = args.output.parent / "data-log.json"
             try:
                 seed = load_json(args.output if args.output.exists() else ROOT / "dist" / "data.json")
+                finance = seed.get("finance")
+                finance_note = ""
                 if args.source == "drive":
                     records, folders, report_index = drive_sources(args.folder_id, args.credentials)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"))
+                    try:
+                        data["finance"] = drive_finance_aggregates(args.credentials, data["shifts"])
+                    except Exception as finance_error:
+                        finance_note = f"Finance refresh failed ({type(finance_error).__name__})"
+                        if isinstance(finance_error, urllib.error.HTTPError):
+                            finance_note = f"Finance refresh failed (HTTP {finance_error.code})"
+                        LOG.warning("%s; previous aggregate retained", finance_note)
                 else:
                     records, folders = local_sources(args.input), None
                     report_file = args.input / "report-index.json"
                     report_index = load_json(report_file) if report_file.exists() else None
-                data = assemble(records, seed, folders, report_index)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"))
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.
@@ -491,7 +738,9 @@ def main():
                               "files": len(records), "holes": len(data["collar"]),
                               "shifts": len(data["shifts"]),
                               "meters": round(sum(s["meters"] for s in data["shifts"]), 3),
-                              "note": f"{len(data['syncWarnings'])} source conflicts" if data["syncWarnings"] else ""})
+                              "note": "; ".join(note for note in (
+                                  f"{len(data['syncWarnings'])} source conflicts" if data["syncWarnings"] else "",
+                                  finance_note) if note)})
                 append_data_log(log_path, event)
                 recorded = True
                 if args.publish:
