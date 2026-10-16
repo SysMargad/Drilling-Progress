@@ -12,6 +12,14 @@
       "shifts": 44,
       "meters": 1103.8,
       "note": ""
+    },
+    {
+      "id": "bd82522b-29e8-4071-9bd1-b91844deb365",
+      "source": "drive",
+      "startedAt": "2026-10-16T10:17:33+08:00",
+      "status": "failed",
+      "completedAt": "2026-10-16T10:18:07+08:00",
+      "error": "ValueError"
     }
   ]
 }
