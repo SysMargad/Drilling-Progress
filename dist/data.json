@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-16",
-  "updatedAt": "2026-10-16T11:58:13+08:00",
+  "asOf": "2026-10-17",
+  "updatedAt": "2026-10-17T11:47:59+08:00",
   "period": "2026-10-01 – 2026-10-15",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
@@ -65,9 +65,9 @@
       "az": 109.0,
       "dip": 60.0,
       "plan": 200.0,
-      "collarDepth": null,
+      "collarDepth": 200.0,
       "start": "2026-10-14",
-      "finish": "",
+      "finish": "2026-10-16",
       "recovery": null,
       "boxes": null
     },
@@ -99,6 +99,22 @@
       "plan": 420.0,
       "collarDepth": null,
       "start": "2026-10-15",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    },
+    {
+      "id": "DTDH2606",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Дорнын Төмөр",
+      "e": null,
+      "n": null,
+      "z": null,
+      "az": 110.0,
+      "dip": 60.0,
+      "plan": 150.0,
+      "collarDepth": null,
+      "start": "2026-10-16",
       "finish": "",
       "recovery": null,
       "boxes": null
@@ -1819,6 +1835,12 @@
   ],
   "sources": [
     {
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 11,
+      "shiftRows": 0
+    },
+    {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
       "collarRows": 0,
@@ -1847,12 +1869,6 @@
       "url": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 3
-    },
-    {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 10,
-      "shiftRows": 0
     },
     {
       "name": "NUDH_COLLAR.xlsx",
