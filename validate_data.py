@@ -61,12 +61,12 @@ def validate_finance(finance):
         raise ValueError('Invalid finance period')
     daily = {}
     for row in finance['daily']:
-        if set(row) not in ({'date', 'laborCost', 'foodCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost'}):
+        if set(row) not in ({'date', 'laborCost', 'foodCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost', 'incentiveCost'}):
             raise ValueError('Finance daily rows must not contain employee-level fields')
         date.fromisoformat(row['date'])
         if row['date'][:7] != finance['period'] or row['date'] in daily:
             raise ValueError('Invalid or duplicate finance date')
-        for key in ('laborCost', 'foodCost', 'bonusCost'):
+        for key in ('laborCost', 'foodCost', 'bonusCost', 'incentiveCost'):
             value = row.get(key, 0)
             if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
                 raise ValueError('Invalid aggregate finance amount')
@@ -74,7 +74,7 @@ def validate_finance(finance):
     by_date = {}
     seen = set()
     for row in finance['rigShifts']:
-        if set(row) not in ({'date', 'rig', 'shift', 'laborCost', 'foodCost'}, {'date', 'rig', 'shift', 'laborCost', 'foodCost', 'bonusCost'}):
+        if set(row) not in ({'date', 'rig', 'shift', 'laborCost', 'foodCost'}, {'date', 'rig', 'shift', 'laborCost', 'foodCost', 'bonusCost'}, {'date', 'rig', 'shift', 'laborCost', 'foodCost', 'bonusCost', 'incentiveCost'}):
             raise ValueError('Finance shift rows must contain aggregate fields only')
         date.fromisoformat(row['date'])
         key = (row['date'], row['rig'], row['shift'])
@@ -82,8 +82,8 @@ def validate_finance(finance):
                 row['shift'] not in {'Өдөр', 'Шөнө'} or key in seen):
             raise ValueError('Invalid or duplicate finance rig shift')
         seen.add(key)
-        totals = by_date.setdefault(row['date'], {'laborCost': 0.0, 'foodCost': 0.0, 'bonusCost': 0.0})
-        for amount in ('laborCost', 'foodCost', 'bonusCost'):
+        totals = by_date.setdefault(row['date'], {'laborCost': 0.0, 'foodCost': 0.0, 'bonusCost': 0.0, 'incentiveCost': 0.0})
+        for amount in ('laborCost', 'foodCost', 'bonusCost', 'incentiveCost'):
             value = row.get(amount, 0)
             if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
                 raise ValueError('Invalid aggregate finance amount')
@@ -91,7 +91,7 @@ def validate_finance(finance):
     if set(daily) != set(by_date):
         raise ValueError('Finance daily and rig-shift aggregates do not align')
     for date_key, totals in by_date.items():
-        for amount in ('laborCost', 'foodCost', 'bonusCost'):
+        for amount in ('laborCost', 'foodCost', 'bonusCost', 'incentiveCost'):
             if not math.isclose(totals[amount], daily[date_key].get(amount, 0), abs_tol=0.05):
                 raise ValueError('Finance aggregate allocation does not balance')
 

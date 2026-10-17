@@ -286,7 +286,9 @@ def _salary_table(sheets):
     count_col = next(i for i, value in enumerate(headers) if "ажилтны тоо" in value)
     monthly_col = next(i for i, value in enumerate(headers) if "нэрлэсэн цалин" in value)
     bonus_col = next((i for i, value in enumerate(headers) if "бонус" in value), -1)
-    daily_col = next((i for i, value in enumerate(headers) if value.startswith("өдрийн")), -1)
+    daily_col = next((i for i, value in enumerate(headers) if "урамшуулал" in value), -1)
+    if daily_col < 0:
+        daily_col = next((i for i, value in enumerate(headers) if value.startswith("өдрийн")), -1)
     payroll = {}
     for row in rows[header_index + 1:]:
         title = _finance_cell(row, title_col)
@@ -299,7 +301,7 @@ def _salary_table(sheets):
         payroll[key] = {
             "headcount": count,
             "monthlySalary": _finance_number(_finance_cell(row, monthly_col)),
-            "dailyRate": _finance_number(_finance_cell(row, daily_col)),
+            "incentiveDailyRate": _finance_number(_finance_cell(row, daily_col)),
             "bonusPerMeter": _finance_number(_finance_cell(row, bonus_col)),
         }
     if not payroll:
@@ -344,7 +346,7 @@ def _attendance_layout(sheets):
 
 
 def finance_aggregates(salary_sheets, attendance_sheets, shifts):
-    """Publish aggregate fixed base costs and production bonuses separately."""
+    """Aggregate attendance-based pay, production bonus and daily field incentives."""
     payroll = _salary_table(salary_sheets)
     rows, _, day_header_index, day_columns, name_col, role_col, year, month = _attendance_layout(attendance_sheets)
     period = f"{year:04d}-{month:02d}"
@@ -353,56 +355,64 @@ def finance_aggregates(salary_sheets, attendance_sheets, shifts):
     if not period_shifts:
         raise ValueError("No drilling records match the finance reporting month")
     last_day = max(int(row['date'][-2:]) for row in period_shifts)
-    base_daily = 0.0
-    for position in payroll.values():
-        rate = position['dailyRate']
-        if rate is None:
-            if position['monthlySalary'] is None:
-                raise ValueError("A fixed base rate is missing from the cost source")
-            rate = position['monthlySalary'] / month_days
-        base_daily += rate * position['headcount']
-    # Keep the existing agreed camp meal budget (21 people x 35,000/day).
+    # The source's daily amount is an additional field incentive, not base pay.
     food_daily = FOOD_COST_PER_FIELD_DAY * 21
+    amounts = ('laborCost', 'foodCost', 'bonusCost', 'incentiveCost')
     rig_shifts = {}
     for day in range(1, last_day + 1):
-        date_key = f"{period}-{day:02d}"
         for rig in sorted(RIGS):
             for shift in ('Өдөр', 'Шөнө'):
+                date_key = f"{period}-{day:02d}"
                 rig_shifts[(date_key, rig, shift)] = {
                     'date': date_key, 'rig': rig, 'shift': shift,
-                    'laborCost': round(base_daily / 4, 2),
-                    'foodCost': round(food_daily / 4, 2), 'bonusCost': 0.0,
+                    'laborCost': 0.0, 'foodCost': round(food_daily / 4, 2),
+                    'bonusCost': 0.0, 'incentiveCost': 0.0,
                 }
-    master_counts = {}
+    meters = {}
+    for row in period_shifts:
+        key = (row['date'], row['rig'], row['shift'])
+        meters[key] = meters.get(key, 0.0) + row['meters']
     role = ''
     for row in rows[day_header_index + 1:]:
         if not _finance_cell(row, name_col):
             continue
         role = _finance_cell(row, role_col) or role
-        if norm(role) != norm('Өрмийн мастер'):
-            continue
-        for column, day in zip(day_columns, range(1, len(day_columns) + 1)):
-            match = re.fullmatch(r'C(13|18)(D|N)', _finance_cell(row, column).upper())
+        position_key = ATTENDANCE_ROLE_ALIASES.get(norm(role), norm(role))
+        for column, day in zip(day_columns[:last_day], range(1, last_day + 1)):
+            code = _finance_cell(row, column).upper()
+            match = re.fullmatch(r'C(13|18)(D|N)', code)
+            # P is factory attendance, outside the drilling field cost centre.
+            if not match and code not in {'A', 'W', 'D'}:
+                continue
+            position = payroll.get(position_key)
+            if position is None or position['monthlySalary'] is None:
+                raise ValueError('Field attendance has no matching base pay rate')
+            date_key = f"{period}-{day:02d}"
             if match:
-                key = (f"{period}-{day:02d}", 'CSD-1300' if match[1] == '13' else 'C-1800',
-                       'Өдөр' if match[2] == 'D' else 'Шөнө')
-                master_counts[key] = master_counts.get(key, 0) + 1
-    bonus_rate = payroll.get(norm('Өрмийн мастер'), {}).get('bonusPerMeter')
-    for row in period_shifts:
-        key = (row['date'], row['rig'], row['shift'])
-        count = master_counts.get(key, 0)
-        if count and row['meters']:
-            if bonus_rate is None:
-                raise ValueError('Production bonus rate is missing from the cost source')
-            rig_shifts[key]['bonusCost'] += row['meters'] * bonus_rate * count
+                keys = [(date_key, 'CSD-1300' if match[1] == '13' else 'C-1800',
+                         'Өдөр' if match[2] == 'D' else 'Шөнө')]
+            else:
+                # Shared field staff are distributed evenly across two rigs/two shifts.
+                keys = [(date_key, rig, shift) for rig in sorted(RIGS)
+                        for shift in ('Өдөр', 'Шөнө')]
+            base = position['monthlySalary'] / month_days
+            incentive = position['incentiveDailyRate'] or 0.0
+            for key in keys:
+                bonus = (position['bonusPerMeter'] or 0.0) * meters.get(key, 0.0) if match else 0.0
+                # Apply the user's 13% loading to each person's components once.
+                entry = rig_shifts[key]
+                entry['laborCost'] += base * 1.13 / len(keys)
+                entry['bonusCost'] += bonus * 1.13
+                entry['incentiveCost'] += incentive * 1.13 / len(keys)
     daily = {}
     for entry in rig_shifts.values():
-        entry['bonusCost'] = round(entry['bonusCost'], 2)
-        day = daily.setdefault(entry['date'], {'date': entry['date'], 'laborCost': 0.0, 'foodCost': 0.0, 'bonusCost': 0.0})
-        for key in ('laborCost', 'foodCost', 'bonusCost'):
+        day = daily.setdefault(entry['date'], {'date': entry['date'], **dict.fromkeys(amounts, 0.0)})
+        for key in amounts:
+            entry[key] = round(entry[key], 2)
             day[key] = round(day[key] + entry[key], 2)
     return {'period': period, 'daily': [daily[key] for key in sorted(daily)],
             'rigShifts': [entry for _, entry in sorted(rig_shifts.items())]}
+
 
 
 class Drive:

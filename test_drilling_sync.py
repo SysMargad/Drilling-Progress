@@ -147,19 +147,29 @@ class PipelineTests(unittest.TestCase):
         )
         self.assertEqual(finance['period'], '2026-10')
         self.assertEqual(finance['daily'], [
-            {'date': '2026-10-01', 'laborCost': 1480000.0, 'foodCost': 735000.0, 'bonusCost': 400000.0}
+            {'date': '2026-10-01', 'laborCost': 791000.0, 'foodCost': 735000.0, 'bonusCost': 452000.0, 'incentiveCost': 271200.0}
         ])
-        self.assertAlmostEqual(sum(row['laborCost'] for row in finance['rigShifts']), 1480000.0)
+        self.assertAlmostEqual(sum(row['laborCost'] for row in finance['rigShifts']), 791000.0)
         self.assertAlmostEqual(sum(row['foodCost'] for row in finance['rigShifts']), 735000.0)
         day_shift = next(row for row in finance['rigShifts']
                          if row['rig'] == 'C-1800' and row['shift'] == 'Өдөр')
-        self.assertEqual(day_shift['laborCost'], 370000.0)
+        self.assertEqual(day_shift['laborCost'], 367250.0)
         self.assertEqual(day_shift['foodCost'], 183750.0)
-        self.assertEqual(day_shift['bonusCost'],400000.0)
+        self.assertEqual(day_shift['bonusCost'],452000.0)
+        self.assertEqual(day_shift['incentiveCost'],271200.0)
+        # Two active masters, four shared field staff; factory attendance is excluded.
+        self.assertAlmostEqual(finance['daily'][0]['laborCost'] + finance['daily'][0]['bonusCost'] + finance['daily'][0]['incentiveCost'], (700000 + 400000 + 240000) * 1.13)
+        absent_rows = [r.copy() for r in attendance_rows]
+        absent_rows[6][4] = ''
+        absent = finance_aggregates([('rates', salary_rows)], [('days', absent_rows)], [{'date':'2026-10-01','rig':'C-1800','shift':'Өдөр','meters':20}])
+        self.assertEqual(absent['daily'][0]['laborCost'],678000.0)
+        self.assertEqual(absent['daily'][0]['bonusCost'],226000.0)
+        self.assertEqual(absent['daily'][0]['incentiveCost'],135600.0)
+        self.assertEqual(absent['daily'][0]['foodCost'],735000.0)
         changed=finance_aggregates([('rates', salary_rows)],[('days', attendance_rows)],[{'date':'2026-10-01','rig':'C-1800','shift':'Өдөр','meters':40}])
         self.assertEqual(changed['daily'][0]['laborCost'],finance['daily'][0]['laborCost'])
         self.assertEqual(changed['daily'][0]['foodCost'],finance['daily'][0]['foodCost'])
-        self.assertEqual(changed['daily'][0]['bonusCost'],800000.0)
+        self.assertEqual(changed['daily'][0]['bonusCost'],904000.0)
         values = json.loads(json.dumps(finance, ensure_ascii=False))
         def leaves(value):
             if isinstance(value, dict):
