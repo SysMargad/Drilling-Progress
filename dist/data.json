@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-10-17",
-  "updatedAt": "2026-10-17T21:25:44+08:00",
+  "updatedAt": "2026-10-17T21:39:15+08:00",
   "period": "2026-10-01 – 2026-10-15",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
@@ -136,6 +136,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "OT – өрмийн үзлэг.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -164,6 +165,7 @@
       "dt": 6.5,
       "hours": 12.0,
       "notes": "Шинэ цооног руу нүүж, өрөм бэлтгэв (HQ STD).",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -192,6 +194,7 @@
       "dt": 10.5,
       "hours": 12.0,
       "notes": "Шавар зуурав. 66–71 м шавартай, бутарсан маш муу чулуулаг.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -220,6 +223,7 @@
       "dt": 2.0,
       "hours": 12.0,
       "notes": "9 м өрөмдөв. HQ багана сугалж, PQ хамгаалалтын хоолойг өргөсгөн 39 м хүртэл суулгав.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -248,6 +252,7 @@
       "dt": 0.0,
       "hours": 12.0,
       "notes": "PCD болон PQ битээр 21 м-ээс доош өргөсгөв (дуусах гүн маягтад засвартай).",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -276,6 +281,7 @@
       "dt": 0.0,
       "hours": 12.0,
       "notes": "Цооног нурсан; HQ шавраар өрөмдөх оролдлого хийв. HQ багана сугалж, PCD битээр 0–21 м өргөсгөв. Маягтад DT 4 цагийг «PQ REAM» гэж тэмдэглэсэн тул RT-д ангилав.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -304,6 +310,7 @@
       "dt": 2.0,
       "hours": 12.0,
       "notes": "PQ хоолойг 71 м хүртэл суулгав; 71–74 м маш муу чулуулагт өрөмдөв; HQ багана сугалж, PQ хоолой 3 м нэмэв.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -332,6 +339,7 @@
       "dt": 0.0,
       "hours": 12.0,
       "notes": "PQ битээр 54–71 м өргөсгөв.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -360,6 +368,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -388,6 +397,7 @@
       "dt": 10.5,
       "hours": 12.0,
       "notes": "Бит солив.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -416,6 +426,7 @@
       "dt": 9.0,
       "hours": 12.0,
       "notes": "Хамгаалалтын хоолой 0–3.00 м.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -444,6 +455,7 @@
       "dt": 1.0,
       "hours": 12.0,
       "notes": "Талбай янзлав (7 цагийг маягтад ST кодоор бүртгэсэн).",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -472,6 +484,7 @@
       "dt": 10.0,
       "hours": 12.0,
       "notes": "Бит солив; хатуу чулуулаг.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -500,6 +513,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -528,6 +542,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -556,6 +571,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -584,6 +600,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн. Маягтад нийт цаг, захиалагч бичигдээгүй.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -612,6 +629,7 @@
       "dt": 10.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -640,6 +658,7 @@
       "dt": 10.0,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -668,6 +687,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "Маягтад өрмийг «CSD-1800» гэж засвартай бичсэн.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -696,6 +716,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -724,6 +745,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн. Полимер 1.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -752,6 +774,7 @@
       "dt": 8.0,
       "hours": 12.0,
       "notes": "Ус хүлээж зогсов.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -780,6 +803,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -808,6 +832,7 @@
       "dt": 0.0,
       "hours": 12.0,
       "notes": "Өрмийн тохиргоо хийх механик хүлээж зогсов.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -836,6 +861,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн. Полимер 1, багана тос 1.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -864,6 +890,7 @@
       "dt": 8.0,
       "hours": 12.0,
       "notes": "Ус хүлээж зогсов.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -892,6 +919,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -920,6 +948,7 @@
       "dt": 8.5,
       "hours": 12.0,
       "notes": "Шинэ цооног эхлэв. PQ хоолой 0–3 м. Эвдрэл ихтэй муу чулуулаг.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -948,6 +977,7 @@
       "dt": 0.0,
       "hours": 12.0,
       "notes": "Механикчид өрмийн тохиргоо хийв (OT 6). Бүх HQ багана, PQ хоолойг сугалж, цооногийг 374.00 м-т хаав (EOH); шинэ цооног руу нүүв.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "ZHDH2601",
@@ -976,6 +1006,7 @@
       "dt": 4.0,
       "hours": 12.0,
       "notes": "Шинэ цооног руу нүүж, өрөм байрлуулав. Хамгаалалтын хоолой 0–9.00 м.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1004,6 +1035,7 @@
       "dt": 8.5,
       "hours": 12.0,
       "notes": "Цооногийг 305.40 м-т хааж (EOH), багана сугалав.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2602",
@@ -1032,6 +1064,7 @@
       "dt": 9.0,
       "hours": 12.0,
       "notes": "Бит солив; өрөмдлөг хэвийн. Бит 1, полимер 1.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1060,6 +1093,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Хагарал ихтэй чулуулаг. Полимер 1.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1088,6 +1122,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1116,6 +1151,7 @@
       "dt": 10.0,
       "hours": 12.0,
       "notes": "PQ хоолой 9.00–15.00 м.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1144,6 +1180,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1172,6 +1209,7 @@
       "dt": 9.5,
       "hours": 12.0,
       "notes": "Бит солив; бутарсан, хагарал ихтэй чулуулаг. Бит 1, полимер 1.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1200,6 +1238,7 @@
       "dt": 9.0,
       "hours": 12.0,
       "notes": "Ус хүлээж зогсов.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1228,6 +1267,7 @@
       "dt": 8.5,
       "hours": 12.0,
       "notes": "86.40 м-т бит солив; өрмийн сервис хийв.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1256,6 +1296,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Өрөмдлөг хэвийн. Полимер 1.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1284,6 +1325,7 @@
       "dt": 8.5,
       "hours": 12.0,
       "notes": "Ус хүлээж зогсов.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1312,6 +1354,7 @@
       "dt": 10.5,
       "hours": 12.0,
       "notes": "221.4 м хүртэл өрөмдөв.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1340,6 +1383,7 @@
       "dt": 11.0,
       "hours": 12.0,
       "notes": "Маягтад огноо, өрөм, талбай, захиалагч бичигдээгүй (огноог файлын нэрээс авав); гарын үсэг огт зураагүй. «HQ»-г хоолойн Size баганад бичсэн.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2601",
@@ -1368,6 +1412,7 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "Маягт: Өдөр; өрөмдөгчийн цаг 20–08, бусад ажилтных 08–20 гэж зөрүүтэй. PT 0.5, DT 11.5, нийт 12 цаг. Гурван гарын үсэг хоосон. Хоосон кодыг 0 гэж нөхөөгүй.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1396,6 +1441,7 @@
       "dt": 9.0,
       "hours": 12.0,
       "notes": "20:00–08:00. PQ хоолой 0–12 м; өрөмдсөн метрт давхар нэмээгүй. Хэрэглэсэн зүйл: Бит 1; 650 1 (нэгж/нэр тодруулах). Захиалагчийн талбар, захиалагч ба ахлагчийн гарын үсэг хоосон.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2605",
@@ -1424,6 +1470,7 @@
       "dt": 2.5,
       "hours": 12.0,
       "notes": "08:00–20:00. Маягтын Rig: C-1300; CSD-1300 фолдер, ижил цооногийн шөнийн тайлантай холбон CSD-1300 код хэрэглэв (баталгаажуулах). POLYMER 1, нэгж бичээгүй. Захиалагч, ахлагчийн гарын үсэг хоосон.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2605",
@@ -1452,6 +1499,7 @@
       "dt": 5.0,
       "hours": 12.0,
       "notes": "Маягтын огноо 2026-10-15, Шөнө 20–08 хэвээр. 10/14 өдрийн 248 м-тэй залгана; завсрын ээлж/огноог баталгаажуулах. PT 0.5, MM 0.5, DT 5, BD 6 = 12 цаг. BD шалтгаан бичээгүй. Нэрийн бичилт, захиалагч/ахлагчийн гарын үсгийг шалгах.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1480,6 +1528,7 @@
       "dt": 1.0,
       "hours": 6.0,
       "notes": "10/15 ӨДӨР 14:00–20:00 (6 цагийн ХЭСЭГ). MN 1, PD 0.5, RP 3.5, DT 1 = 6 цаг. HQ rod / PQ casing сугалсан; өрөм нүүхэд бэлтгэсэн тухай тайлбартай. Хоолойн нэмэлт метргүй. Rig талбар хоосон — C-1800 эх фолдероор ангилсан. Өрөмдөгчийн нэрийн бичилт, EOH/хаалтыг баталгаажуулах; EOH таамаглаагүй.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2603",
@@ -1508,6 +1557,7 @@
       "dt": 6.5,
       "hours": 7.0,
       "notes": "10/15 ӨДӨР 08:00–14:00 (6 цагийн ХЭСЭГ). Маягтад PT=0.5, DT=6:30 буюу 6.5 гэж бичсэн: нийлбэр 7.0 цаг, ажилласан хугацаа 6.0 цаг — QA/QC цагийн зөрүү. Хэвлэмэл нийт цаг 0.0 талбар бөглөгдөөгүй. Rig хоосон; CSD-1300 фолдер ба DTDH2605 үргэлжлэлээр ангилсан. Бит 1; 14–20 тайлан ирээгүй. EOH үгүй; эхийг өөрчлөөгүй.",
+      "waterUsageM3": null,
       "reports": [
         {
           "hole": "DTDH2605",
