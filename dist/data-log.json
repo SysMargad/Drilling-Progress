@@ -104,6 +104,18 @@
       "shifts": 50,
       "meters": 1236.6,
       "note": "9 source conflicts; Finance refresh failed (ValueError)"
+    },
+    {
+      "id": "1be6e014-601a-4f51-aafd-d6a692320e8e",
+      "source": "drive",
+      "startedAt": "2026-10-17T11:47:03+08:00",
+      "status": "updated",
+      "completedAt": "2026-10-17T11:48:01+08:00",
+      "files": 8,
+      "holes": 7,
+      "shifts": 50,
+      "meters": 1236.6,
+      "note": "9 source conflicts; Finance refresh failed (ValueError)"
     }
   ]
 }
