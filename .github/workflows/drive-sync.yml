@@ -64,6 +64,7 @@ jobs:
           python -B -m unittest test_drilling_sync -v
           node test_chart.cjs
           node test_financial_costs.cjs
+          node test_finance_dashboard.cjs
       - name: Report collection failure
         if: steps.collection.outcome == 'failure'
         run: echo '::warning::Drive collection failed. Previous valid data and the failed attempt log are preserved.'

@@ -108,7 +108,7 @@ class PipelineTests(unittest.TestCase):
             ['5', 'Кемп бой', '1', '3100000', '', '', '', ''],
             ['6', 'Усны жолооч', '3', '6200000', '', '', '', ''],
         ]
-        day_header = ['', '', '', '', *[str(day) for day in range(1, 32)]]
+        day_header = ['', '', '', '', *[str(float(day)) for day in range(1, 32)]]
         attendance_rows = [
             ['Өрмийн багийн 2026.09.01-2026.09.30 бүртгэл'],
             ['', '', '', '', '10-р сар 1-31'],
@@ -137,14 +137,19 @@ class PipelineTests(unittest.TestCase):
         )
         self.assertEqual(finance['period'], '2026-10')
         self.assertEqual(finance['daily'], [
-            {'date': '2026-10-01', 'laborCost': 1840000.0, 'foodCost': 210000.0}
+            {'date': '2026-10-01', 'laborCost': 1480000.0, 'foodCost': 735000.0, 'bonusCost': 400000.0}
         ])
-        self.assertAlmostEqual(sum(row['laborCost'] for row in finance['rigShifts']), 1840000.0)
-        self.assertAlmostEqual(sum(row['foodCost'] for row in finance['rigShifts']), 210000.0)
+        self.assertAlmostEqual(sum(row['laborCost'] for row in finance['rigShifts']), 1480000.0)
+        self.assertAlmostEqual(sum(row['foodCost'] for row in finance['rigShifts']), 735000.0)
         day_shift = next(row for row in finance['rigShifts']
                          if row['rig'] == 'C-1800' and row['shift'] == 'Өдөр')
-        self.assertEqual(day_shift['laborCost'], 1240000.0)
-        self.assertEqual(day_shift['foodCost'], 140000.0)
+        self.assertEqual(day_shift['laborCost'], 370000.0)
+        self.assertEqual(day_shift['foodCost'], 183750.0)
+        self.assertEqual(day_shift['bonusCost'],400000.0)
+        changed=finance_aggregates([('rates', salary_rows)],[('days', attendance_rows)],[{'date':'2026-10-01','rig':'C-1800','shift':'Өдөр','meters':40}])
+        self.assertEqual(changed['daily'][0]['laborCost'],finance['daily'][0]['laborCost'])
+        self.assertEqual(changed['daily'][0]['foodCost'],finance['daily'][0]['foodCost'])
+        self.assertEqual(changed['daily'][0]['bonusCost'],800000.0)
         values = json.loads(json.dumps(finance, ensure_ascii=False))
         def leaves(value):
             if isinstance(value, dict):

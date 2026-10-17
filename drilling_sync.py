@@ -241,6 +241,13 @@ def _finance_cell(row, index):
     return str(row[index]).strip() if 0 <= index < len(row) else ""
 
 
+def _calendar_day_cell(row, index):
+    value = _finance_cell(row, index)
+    if not re.fullmatch(r"\d+(?:\.0+)?", value):
+        return None
+    return int(float(value))
+
+
 def _find_finance_table(sheets, required_headers):
     for name, rows in sheets:
         for index, row in enumerate(rows):
@@ -297,11 +304,11 @@ def _attendance_layout(sheets):
     day_header_index, day_columns = None, None
     for index, row in enumerate(rows):
         for start in range(len(row)):
-            if _finance_cell(row, start) != "1":
+            if _calendar_day_cell(row, start) != 1:
                 continue
             columns = []
             for day in range(1, 32):
-                if _finance_cell(row, start + day - 1) != str(day):
+                if _calendar_day_cell(row, start + day - 1) != day:
                     break
                 columns.append(start + day - 1)
             if len(columns) >= 28:
@@ -327,127 +334,65 @@ def _attendance_layout(sheets):
 
 
 def finance_aggregates(salary_sheets, attendance_sheets, shifts):
-    """Return public-safe date/rig/shift cost totals; employee rows stay in memory."""
+    """Publish aggregate fixed base costs and production bonuses separately."""
     payroll = _salary_table(salary_sheets)
-    (rows, header_index, day_header_index, day_columns, name_col, role_col,
-     year, month) = _attendance_layout(attendance_sheets)
+    rows, _, day_header_index, day_columns, name_col, role_col, year, month = _attendance_layout(attendance_sheets)
     period = f"{year:04d}-{month:02d}"
-    daily = {}
+    month_days = (datetime(year + (month == 12), month % 12 + 1, 1) - timedelta(days=1)).day
+    period_shifts = [row for row in shifts if row['date'].startswith(period + '-')]
+    if not period_shifts:
+        raise ValueError("No drilling records match the finance reporting month")
+    last_day = max(int(row['date'][-2:]) for row in period_shifts)
+    base_daily = 0.0
+    for position in payroll.values():
+        rate = position['dailyRate']
+        if rate is None:
+            if position['monthlySalary'] is None:
+                raise ValueError("A fixed base rate is missing from the cost source")
+            rate = position['monthlySalary'] / month_days
+        base_daily += rate * position['headcount']
+    # Keep the existing agreed camp meal budget (21 people x 35,000/day).
+    food_daily = FOOD_COST_PER_FIELD_DAY * 21
     rig_shifts = {}
-    shared = {}
-    master_attendance = {}
-
-    def daily_entry(day):
+    for day in range(1, last_day + 1):
         date_key = f"{period}-{day:02d}"
-        return daily.setdefault(date_key, {"date": date_key, "laborCost": 0.0, "foodCost": 0.0})
-
-    def rig_shift_entry(date_key, rig, shift):
-        key = (date_key, rig, shift)
-        return rig_shifts.setdefault(key, {
-            "date": date_key, "rig": rig, "shift": shift,
-            "laborCost": 0.0, "foodCost": 0.0,
-        })
-
-    role = ""
-    for row in rows[max(header_index, day_header_index) + 1:]:
+        for rig in sorted(RIGS):
+            for shift in ('Өдөр', 'Шөнө'):
+                rig_shifts[(date_key, rig, shift)] = {
+                    'date': date_key, 'rig': rig, 'shift': shift,
+                    'laborCost': round(base_daily / 4, 2),
+                    'foodCost': round(food_daily / 4, 2), 'bonusCost': 0.0,
+                }
+    master_counts = {}
+    role = ''
+    for row in rows[day_header_index + 1:]:
         if not _finance_cell(row, name_col):
             continue
-        explicit_role = _finance_cell(row, role_col)
-        if explicit_role:
-            role = explicit_role
-        if not role:
-            raise ValueError("Attendance employee row has no job-title mapping")
-        payroll_role = ATTENDANCE_ROLE_ALIASES.get(norm(role), norm(role))
-        if payroll_role not in payroll:
-            raise ValueError(f"Attendance job title has no payroll mapping: {role}")
-        position = payroll[payroll_role]
-        daily_rate = position["dailyRate"] if payroll_role in {
-            norm("Супервайзер"), norm("Өрмийн мастер")
-        } else None
-        attendance = [
-            (column, day, _finance_cell(row, column).upper())
-            for column, day in zip(day_columns, range(1, len(day_columns) + 1))
-            if _finance_cell(row, column)
-        ]
-        attendance = [item for item in attendance if item[2] != "A"]
-        if daily_rate is None:
-            monthly_salary = position["monthlySalary"]
-            if monthly_salary is None:
-                if attendance:
-                    raise ValueError(f"Payroll salary is missing for an attended role: {role}")
-                continue
-            daily_rate = monthly_salary / SALARY_PRORATION_DAYS
-        for column, day, code in attendance:
-            if code == "P":
-                target = daily_entry(day)
-                target["laborCost"] += daily_rate
-                shared.setdefault(target["date"], {"laborCost": 0.0, "foodCost": 0.0})["laborCost"] += daily_rate
-                continue
-            if code == "W":
-                target = daily_entry(day)
-                target["laborCost"] += daily_rate
-                target["foodCost"] += FOOD_COST_PER_FIELD_DAY
-                shared_day = shared.setdefault(target["date"], {"laborCost": 0.0, "foodCost": 0.0})
-                shared_day["laborCost"] += daily_rate
-                shared_day["foodCost"] += FOOD_COST_PER_FIELD_DAY
-                continue
-            match = re.fullmatch(r"C(13|18)(D|N)", code)
-            if not match:
-                raise ValueError(f"Attendance contains an unsupported work code: {code}")
-            rig = "CSD-1300" if match[1] == "13" else "C-1800"
-            shift = "Өдөр" if match[2] == "D" else "Шөнө"
-            target = daily_entry(day)
-            target["laborCost"] += daily_rate
-            target["foodCost"] += FOOD_COST_PER_FIELD_DAY
-            rig_entry = rig_shift_entry(target["date"], rig, shift)
-            rig_entry["laborCost"] += daily_rate
-            rig_entry["foodCost"] += FOOD_COST_PER_FIELD_DAY
-            if payroll_role == norm("Өрмийн мастер"):
-                key = (target["date"], rig, shift)
-                master_attendance[key] = master_attendance.get(key, 0) + 1
-
-    meters_by_shift = {}
-    active_rigs_by_shift = {}
-    for item in shifts:
-        date_key = item["date"]
-        if not date_key.startswith(period + "-"):
+        role = _finance_cell(row, role_col) or role
+        if norm(role) != norm('Өрмийн мастер'):
             continue
-        key = (date_key, item["rig"], item["shift"])
-        meters_by_shift[key] = meters_by_shift.get(key, 0.0) + float(item["meters"] or 0)
-        active_rigs_by_shift.setdefault((date_key, item["shift"]), set()).add(item["rig"])
-
-    master_payroll = payroll.get(norm("Өрмийн мастер"), {})
-    bonus_rate = master_payroll.get("bonusPerMeter")
-    for key, meters in meters_by_shift.items():
-        master_count = master_attendance.get(key, 0)
-        if not master_count or not meters:
-            continue
-        if bonus_rate is None:
-            raise ValueError("Master per-meter bonus is missing from the salary workbook")
-        date_key, rig, shift = key
-        bonus = meters * bonus_rate * master_count
-        daily_entry(int(date_key[-2:]))["laborCost"] += bonus
-        rig_shift_entry(date_key, rig, shift)["laborCost"] += bonus
-
-    for date_key, amounts in shared.items():
-        for shift in ("Өдөр", "Шөнө"):
-            rigs = active_rigs_by_shift.get((date_key, shift)) or RIGS
-            labor_share = amounts["laborCost"] / 2 / len(rigs)
-            food_share = amounts["foodCost"] / 2 / len(rigs)
-            for rig in rigs:
-                item = rig_shift_entry(date_key, rig, shift)
-                item["laborCost"] += labor_share
-                item["foodCost"] += food_share
-
-    rounded_daily = [
-        {key: (round(value, 2) if key != "date" else value) for key, value in daily[date_key].items()}
-        for date_key in sorted(daily)
-    ]
-    rounded_rig_shifts = [
-        {key: (round(value, 2) if key.endswith("Cost") else value) for key, value in item.items()}
-        for _, item in sorted(rig_shifts.items())
-    ]
-    return {"period": period, "daily": rounded_daily, "rigShifts": rounded_rig_shifts}
+        for column, day in zip(day_columns, range(1, len(day_columns) + 1)):
+            match = re.fullmatch(r'C(13|18)(D|N)', _finance_cell(row, column).upper())
+            if match:
+                key = (f"{period}-{day:02d}", 'CSD-1300' if match[1] == '13' else 'C-1800',
+                       'Өдөр' if match[2] == 'D' else 'Шөнө')
+                master_counts[key] = master_counts.get(key, 0) + 1
+    bonus_rate = payroll.get(norm('Өрмийн мастер'), {}).get('bonusPerMeter')
+    for row in period_shifts:
+        key = (row['date'], row['rig'], row['shift'])
+        count = master_counts.get(key, 0)
+        if count and row['meters']:
+            if bonus_rate is None:
+                raise ValueError('Production bonus rate is missing from the cost source')
+            rig_shifts[key]['bonusCost'] += row['meters'] * bonus_rate * count
+    daily = {}
+    for entry in rig_shifts.values():
+        entry['bonusCost'] = round(entry['bonusCost'], 2)
+        day = daily.setdefault(entry['date'], {'date': entry['date'], 'laborCost': 0.0, 'foodCost': 0.0, 'bonusCost': 0.0})
+        for key in ('laborCost', 'foodCost', 'bonusCost'):
+            day[key] = round(day[key] + entry[key], 2)
+    return {'period': period, 'daily': [daily[key] for key in sorted(daily)],
+            'rigShifts': [entry for _, entry in sorted(rig_shifts.items())]}
 
 
 class Drive:
