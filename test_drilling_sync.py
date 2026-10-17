@@ -31,6 +31,16 @@ class PipelineTests(unittest.TestCase):
         from validate_data import validate
         validate(data)
 
+    def test_water_volume_is_not_a_cost_and_preserves_missing_values(self):
+        headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','ST','RT','DT','Total','Water consumption (L)']
+        row=['C-1800','photo','2026-10-14','Өдөр','DTDH2605','0','8','8','','','2','12','2500']
+        self.assertEqual(parse_shifts([headers,row])[0]['waterUsageM3'],2.5)
+        self.assertEqual(parse_shifts([headers,[*row[:-1],'0']])[0]['waterUsageM3'],0)
+        self.assertIsNone(parse_shifts([headers,[*row[:-1],'']])[0]['waterUsageM3'])
+        self.assertEqual(parse_shifts([[*headers[:-1],'Усны хэрэглээ (м³)'],row])[0]['waterUsageM3'],2500)
+        with self.assertRaisesRegex(ValueError,'water consumption'):
+            parse_shifts([headers,[*row[:-1],'-1']])
+
     def test_drive_report_folder_traversal(self):
         def folder(id,name):
             return {'id':id,'name':name,'mimeType':'application/vnd.google-apps.folder'}

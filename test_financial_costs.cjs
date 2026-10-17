@@ -11,7 +11,7 @@ for(const date of ['2026-10-01','2026-10-02','2026-10-03']){
  assert.equal(sum(day,'foodCost'),DAILY_FOOD);
 }
 assert.equal(sum(all,'meters'),15);
-assert.ok(all.every(row=>row.waterCost===null));
+assert.ok(all.every(row=>row.waterUsageM3===null));
 const one=records(source,['C-1800']),two=records(source,['CSD-1300']);
 assert.equal(sum(one,'foodCost')+sum(two,'foodCost'),sum(all,'foodCost'));
 const changed=records(source.map(row=>({...row,meters:row.meters*10})));
@@ -21,4 +21,4 @@ const split=records([row('2026-10-01','C-1800','Өдөр',4,'A',4),row('2026-10-
 assert.equal(sum(split,'laborCost'),DAILY_LABOR['C-1800']+DAILY_LABOR['CSD-1300']);
 assert.equal(sum(split,'foodCost'),DAILY_FOOD);
 assert.deepEqual(records([]),[]);
-console.log('Financial costs verified: fixed calendar costs, missing reports, meter independence, rig filtering, split shifts, unknown water.');
+console.log('Financial costs verified: fixed calendar costs, missing reports, meter independence, rig filtering, split shifts, water volume separate from costs.');

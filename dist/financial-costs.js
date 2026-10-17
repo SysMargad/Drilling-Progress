@@ -1,6 +1,6 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.DrillingCosts=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  // Existing daily assumptions. Water remains unknown until a source is provided.
+  // Existing daily assumptions; water volume is carried separately from costs.
   const DAILY_LABOR=Object.freeze({'C-1800':1180000,'CSD-1300':980000}),DAILY_FOOD=735000;
   function records(rows,rigs=Object.keys(DAILY_LABOR)){
     if(!rows.length)return [];
@@ -13,7 +13,7 @@
         for(const row of slots){
           const fraction=hours>0?(row.hours||0)/hours:1/slots.length,meters=Number(row.meters||0);
           result.push({...row,recorded:!!actual.length,
-            fuelCost:meters*(rig==='C-1800'?1.48:1.18)*3600,mudCost:meters*27000,waterCost:null,
+            fuelCost:meters*(rig==='C-1800'?1.48:1.18)*3600,mudCost:meters*27000,waterUsageM3:row.waterUsageM3??null,
             laborCost:DAILY_LABOR[rig]/2*fraction,foodCost:DAILY_FOOD/Object.keys(DAILY_LABOR).length/2*fraction});
         }
       }

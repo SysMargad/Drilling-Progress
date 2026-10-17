@@ -40,6 +40,9 @@ def validate(data):
                 continue
             if not isinstance(s[key], (int, float)) or not math.isfinite(s[key]) or s[key] < 0:
                 raise ValueError('Invalid shift number')
+        water = s.get('waterUsageM3')
+        if water is not None and (not isinstance(water, (int, float)) or not math.isfinite(water) or water < 0):
+            raise ValueError('Invalid water consumption volume')
         if abs(s['to'] - s['from'] - s['meters']) > 0.05 or s['dt'] + (s['st'] or 0) + (s['rt'] or 0) > s['hours'] + 0.01:
             raise ValueError('Shift depth or hours mismatch')
     for key in ('driveUrl', 'collarUrl', 'shiftUrl'):

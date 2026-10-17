@@ -216,6 +216,16 @@ def parse_shifts(rows):
                 "dt": number(get(lambda x: x == "dt")),
                 "hours": number(get(lambda x: x.endswith("total"))),
                 "notes": get(lambda x: "work notes" in x)}
+        water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
+        water = number(get(lambda h: h == water_header)) if water_header else None
+        if water is not None and water < 0:
+            raise ValueError('Invalid water consumption')
+        # Publish volume in m3 only when source units are explicit.
+        if water is not None and any(unit in water_header for unit in ('литр', 'liter', '(l)', '(л)')):
+            water /= 1000
+        elif water is not None and not any(unit in water_header for unit in ('м³', 'м3', 'm³', 'm3')):
+            water = None
+        item['waterUsageM3'] = water
         if not item["date"] or shift not in {"Өдөр", "Шөнө"}:
             raise ValueError(f"Missing/invalid date or shift for {h}")
         for key in ("from", "to", "meters", "st", "rt", "dt", "hours"):
