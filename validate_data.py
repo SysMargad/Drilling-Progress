@@ -55,10 +55,12 @@ def validate(data):
 
 
 def validate_finance(finance):
-    if set(finance) != {'period', 'daily', 'rigShifts'}:
+    if set(finance) not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}):
         raise ValueError('Finance data must contain aggregate fields only')
     if not isinstance(finance['period'], str) or not re.fullmatch(r'\d{4}-\d{2}', finance['period']):
         raise ValueError('Invalid finance period')
+    if 'mud' in finance:
+        validate_mud(finance['mud'])
     daily = {}
     for row in finance['daily']:
         if set(row) not in ({'date', 'laborCost', 'foodCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost', 'incentiveCost'}):
@@ -94,6 +96,27 @@ def validate_finance(finance):
         for amount in ('laborCost', 'foodCost', 'bonusCost', 'incentiveCost'):
             if not math.isclose(totals[amount], daily[date_key].get(amount, 0), abs_tol=0.05):
                 raise ValueError('Finance aggregate allocation does not balance')
+
+
+def validate_mud(mud):
+    if set(mud) != {'totalBags', 'bagKg', 'pricePerBag', 'allocations'}:
+        raise ValueError('Unexpected mud fields')
+    for key in ('totalBags', 'bagKg', 'pricePerBag'):
+        if not isinstance(mud[key], (int, float)) or not math.isfinite(mud[key]) or mud[key] <= 0:
+            raise ValueError('Invalid mud total or unit')
+    seen = set()
+    for row in mud['allocations']:
+        if set(row) != {'date', 'rig', 'shift', 'hole', 'bags'}:
+            raise ValueError('Unexpected mud allocation fields')
+        date.fromisoformat(row['date'])
+        key = (row['date'], row['rig'], row['shift'], row['hole'])
+        if key in seen or row['rig'] not in {'C-1800', 'CSD-1300'} or row['shift'] not in {'Өдөр', 'Шөнө'} or not row['hole']:
+            raise ValueError('Invalid mud allocation key')
+        seen.add(key)
+        if not isinstance(row['bags'], (int, float)) or not math.isfinite(row['bags']) or row['bags'] < 0:
+            raise ValueError('Invalid mud allocation volume')
+    if not math.isclose(sum(row['bags'] for row in mud['allocations']), mud['totalBags'], abs_tol=0.00001):
+        raise ValueError('Mud allocations do not balance to total')
 
 
 if __name__ == '__main__':

@@ -44,5 +44,20 @@ near(vm.runInContext("financialRows('month')[0].fuelUsageL",context),20*1.18);
 const markup=vm.runInContext('renderFinancialTab()',context);
 assert.ok(markup.includes('Тооцоот хэрэглээ:'));
 assert.ok(markup.includes('Түлш (л, тооцоот)'));
-assert.ok(markup.includes('Шавар (кг, тооцоот)'));
+assert.ok(markup.includes('Шавар (кг, хуваарилсан)'));
 console.log('Consumption dashboard verified: four periods, rig filter, details and chart consistency.');
+
+selectedRig='';
+context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
+vm.runInContext('D=fixture',context);
+const confirmed=context.fixture.finance.mud,confirmedKg=confirmed.totalBags*confirmed.bagKg,confirmedCost=confirmed.totalBags*confirmed.pricePerBag;
+for(const period of ['shift','day','week','month']){
+ context.grainUnderTest=period;
+ const rows=vm.runInContext('financialRows(grainUnderTest)',context);
+ near(rows.reduce((n,r)=>n+r.mudUsageKg,0),confirmedKg);
+ near(rows.reduce((n,r)=>n+r.mudUsageBags,0),confirmed.totalBags);
+ near(rows.reduce((n,r)=>n+r.mudCost,0),confirmedCost);
+}
+context.fixture.shifts.push({...context.fixture.shifts.at(-1),date:'2026-10-18',meters:1000});
+near(vm.runInContext("financialRows('month').reduce((n,r)=>n+r.mudUsageKg,0)",context),confirmedKg);
+console.log('Source mud totals and cost reconcile across periods; new drilling adds no mud.');

@@ -539,6 +539,46 @@ def drive_sources(folder, credentials_path):
     return sorted(records, key=lambda x: x["modified"], reverse=True), folders, reports
 
 
+def mud_aggregates(sheets):
+    """Use the confirmed stock total and source shift allocation, never metres as a norm."""
+    bag_kg = price = total = None
+    allocations = []
+    for _, rows in sheets:
+        for row in rows:
+            if row and norm(row[0]) == 'mud':
+                bag_kg, price = _finance_number(_finance_cell(row, 1)), _finance_number(_finance_cell(row, 3))
+            for index, cell in enumerate(row):
+                if norm(cell) == 'нийт тооцооны шуудай':
+                    total = _finance_number(_finance_cell(row, index + 1))
+        header = None
+        for row in rows:
+            names = [norm(c) for c in row]
+            if 'mud тооцоо (шуудай)' in names and 'огноо' in names:
+                header = names
+                continue
+            if header is None:
+                continue
+            def get(label):
+                return _finance_cell(row, header.index(label))
+            if get('өрөм') not in RIGS or get('ээлж') not in {'Өдөр', 'Шөнө'}:
+                continue
+            bags = _finance_number(get('mud тооцоо (шуудай)'))
+            if bags is None or bags < 0:
+                raise ValueError('Missing or invalid source mud allocation')
+            allocations.append({'date': date(get('огноо')), 'rig': get('өрөм'),
+                                'shift': get('ээлж'), 'hole': hole_id(get('цооног')), 'bags': bags})
+    if any(value is None or value <= 0 for value in (total, bag_kg, price)) or not allocations:
+        raise ValueError('Missing mud total, unit price or shift allocations')
+    allocated = sum(row['bags'] for row in allocations)
+    if not math.isclose(allocated, total, abs_tol=0.001):
+        raise ValueError('Source mud allocation does not balance to confirmed total')
+    # Exported formula decimals can have tiny rounding differences.
+    for row in allocations:
+        row['bags'] = round(row['bags'] * total / allocated, 8)
+    allocations[-1]['bags'] = round(total - sum(row['bags'] for row in allocations[:-1]), 8)
+    return {'totalBags': total, 'bagKg': bag_kg, 'pricePerBag': price, 'allocations': allocations}
+
+
 def drive_finance_aggregates(credentials_path, shifts):
     drive = Drive(credentials_path)
     pending, seen, files = [FINANCE_FOLDER_ID], set(), {}
@@ -561,7 +601,7 @@ def drive_finance_aggregates(credentials_path, shifts):
             elif file["mimeType"] in {FINANCE_SHEET_MIME, XLSX_MIME}:
                 files[file["id"]] = file
 
-    salary_sheets = attendance_sheets = None
+    salary_sheets = attendance_sheets = products_sheets = None
     for file in sorted(files.values(), key=lambda item: item.get("modifiedTime", ""), reverse=True):
         try:
             content = drive.download(file)
@@ -578,17 +618,20 @@ def drive_finance_aggregates(credentials_path, shifts):
                 sheets, ("нэр", "албан тушаал"), exact=True):
             _attendance_layout(sheets)
             attendance_sheets = sheets
-        if salary_sheets is not None and attendance_sheets is not None:
+        if products_sheets is None and _finance_has_headers(sheets, ('бүтээгдэхүүн', 'тоо хэмжээ', 'нэгж', 'үнэ')):
+            products_sheets = sheets
+        if salary_sheets is not None and attendance_sheets is not None and products_sheets is not None:
             break
     if salary_sheets is None:
         raise FinanceSourceError("salary workbook in shared finance folder", 404)
     if attendance_sheets is None:
         raise FinanceSourceError("attendance sheet in shared finance folder", 404)
-    return finance_aggregates(
-        salary_sheets,
-        attendance_sheets,
-        shifts,
-    )
+    if products_sheets is None:
+        raise FinanceSourceError("mud workbook in shared finance folder", 404)
+    result = finance_aggregates(salary_sheets, attendance_sheets, shifts)
+    result['mud'] = mud_aggregates(products_sheets)
+    return result
+
 
 
 def assemble(records, seed, folders=None, report_index=None, finance=None):

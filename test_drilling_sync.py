@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path
 from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
                            append_data_log, assemble, drive_finance_aggregates,
-                           finance_aggregates, FinanceSourceError, load_json,
+                           finance_aggregates, mud_aggregates, FinanceSourceError, load_json,
                            local_sources, parse_shifts, publish, signature,
                            workbook_rows, report_metadata, attach_reports, drive_sources,
                            XLSX_MIME)
@@ -198,11 +198,13 @@ class PipelineTests(unittest.TestCase):
             ['', 'Нэр', 'Албан тушаал'],
             ['', '', '', '', *[str(day) for day in range(1, 32)]],
         ])]
+        products_sheets = [('products', [['Бүтээгдэхүүн','Тоо хэмжээ','Нэгж','Үнэ'], ['Mud','25','кг','330000']]), ('usage', [['Нийт тооцооны шуудай','17'], ['Огноо','Өрөм','Цооног','Ээлж','Mud тооцоо (шуудай)'], ['2026-10-01','C-1800','DTDH2601','Өдөр','17']])]
         files = [
+            {'id':'products-file','mimeType':XLSX_MIME,'modifiedTime':'2026-10-03'},
             {'id': 'attendance-file', 'mimeType': FINANCE_SHEET_MIME, 'modifiedTime': '2026-10-01'},
             {'id': 'salary-file', 'mimeType': XLSX_MIME, 'modifiedTime': '2026-10-02'},
         ]
-        sheets_by_content = {b'salary': salary_sheets, b'attendance': attendance_sheets}
+        sheets_by_content = {b'salary': salary_sheets, b'attendance': attendance_sheets, b'products': products_sheets}
         expected = {'period': '2026-10'}
         with (patch('drilling_sync.Drive') as drive,
               patch('drilling_sync.workbook_rows',
@@ -213,10 +215,25 @@ class PipelineTests(unittest.TestCase):
                 else files if folder == 'nested' else []
             )
             drive.return_value.download.side_effect = lambda file: (
-                b'salary' if file['id'] == 'salary-file' else b'attendance'
+                b'salary' if file['id'] == 'salary-file' else b'products' if file['id']=='products-file' else b'attendance'
             )
-            self.assertEqual(drive_finance_aggregates(None, []), expected)
+            result=drive_finance_aggregates(None, [])
+            self.assertEqual(result['mud']['totalBags'],17)
+            self.assertEqual(result['mud']['totalBags']*result['mud']['bagKg'],425)
         aggregate.assert_called_once_with(salary_sheets, attendance_sheets, [])
+
+    def test_mud_source_total_and_allocation_must_balance(self):
+        sheets=[('products', [['Бүтээгдэхүүн','Тоо хэмжээ','Нэгж','Үнэ'],['Mud','25','кг','330000']]),
+                ('usage', [['Нийт тооцооны шуудай','17'],['Огноо','Өрөм','Цооног','Ээлж','Mud тооцоо (шуудай)'],
+                           ['2026-10-01','C-1800','DTDH2601','Өдөр','9'],['2026-10-01','CSD-1300','DTDH2602','Шөнө','8']])]
+        mud=mud_aggregates(sheets)
+        self.assertEqual(sum(r['bags'] for r in mud['allocations']),17)
+        self.assertEqual(mud['totalBags']*mud['pricePerBag'],5610000)
+        from validate_data import validate_mud
+        validate_mud(mud)
+        sheets[1][1][-1][-1]='9'
+        with self.assertRaisesRegex(ValueError,'balance'):
+            mud_aggregates(sheets)
 
     def test_missing_finance_folder_source_reports_safe_source_name(self):
         with patch('drilling_sync.Drive') as drive:

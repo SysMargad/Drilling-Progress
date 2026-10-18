@@ -34,3 +34,10 @@ assert.ok(Math.abs(sum(split,'fuelUsageL')-12*1.48)<1e-9);
 assert.equal(sum(all.filter(r=>!r.recorded),'fuelUsageL'),0);
 assert.equal(sum(all.filter(r=>!r.recorded),'mudUsageKg'),0);
 console.log('Consumption verified: units reconcile with cost, both rigs, split rows and empty periods.');
+
+const mud={totalBags:17,bagKg:25,pricePerBag:330000,allocations:[{date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',bags:17}]};
+const divided=records([row('2026-10-01','C-1800','Өдөр',10,'A',6),row('2026-10-01','C-1800','Өдөр',20,'A',6),row('2026-10-02','C-1800','Өдөр',100,'B')],undefined,mud);
+assert.ok(Math.abs(sum(divided,'mudUsageBags')-17)<1e-9);
+assert.ok(Math.abs(sum(divided,'mudUsageKg')-425)<1e-9);
+assert.ok(Math.abs(sum(divided,'mudCost')-5610000)<1e-6);
+assert.equal(sum(divided.filter(r=>r.date==='2026-10-02'),'mudCost'),0);
