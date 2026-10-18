@@ -274,7 +274,6 @@ function renderFinancialTab(){
     <div class="kpis">${kpis.map(item=>`<article class="kpi financial-trend ${item.note.tone}"><div class="label">${item.label}</div><div class="value">${item.value}</div><div class="note">${item.note.text}</div></article>`).join('')}</div>
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
-      <p class="sub">${financialGrainLabel()} зардал · Түлшний олголтыг ажлын цагаар хуваарилсан · Шавар: нийт ${fmt(D.finance?.mud?.totalBags,0)} шуудай, ээлжээр хуваарилсан · Цалин ирцээр · Цалин, бонус, урамшууллын дүнд 13% шингэсэн · Хоол тогтмол</p>
       <div class="cost-breakdown">${costRows}</div>
     </section>
     <section class="panel">
