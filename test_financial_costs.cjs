@@ -22,3 +22,15 @@ assert.equal(sum(split,'laborCost'),DAILY_LABOR['C-1800']+DAILY_LABOR['CSD-1300'
 assert.equal(sum(split,'foodCost'),DAILY_FOOD);
 assert.deepEqual(records([]),[]);
 console.log('Financial costs verified: fixed calendar costs, missing reports, meter independence, rig filtering, split shifts, water volume separate from costs.');
+
+const {FUEL_PRICE_PER_LITRE,MUD_PRICE_PER_BAG,MUD_BAG_KG}=require('./dist/financial-costs.js');
+assert.ok(Math.abs(sum(all,'fuelUsageL')-(10*1.48+5*1.18))<1e-9);
+for(const item of all){
+ assert.ok(Math.abs(item.fuelUsageL*FUEL_PRICE_PER_LITRE-item.fuelCost)<1e-6);
+ assert.ok(Math.abs(item.mudUsageBags*MUD_PRICE_PER_BAG-item.mudCost)<1e-6);
+ assert.ok(Math.abs(item.mudUsageBags*MUD_BAG_KG-item.mudUsageKg)<1e-9);
+}
+assert.ok(Math.abs(sum(split,'fuelUsageL')-12*1.48)<1e-9);
+assert.equal(sum(all.filter(r=>!r.recorded),'fuelUsageL'),0);
+assert.equal(sum(all.filter(r=>!r.recorded),'mudUsageKg'),0);
+console.log('Consumption verified: units reconcile with cost, both rigs, split rows and empty periods.');

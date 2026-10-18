@@ -201,6 +201,7 @@ td {
 
 .financial-details-table {
   table-layout: fixed;
+  min-width: 1040px;
   white-space: normal;
   width: 100%;
 }
@@ -212,14 +213,16 @@ td {
   vertical-align: top;
 }
 
-.financial-details-table th:nth-child(1) { width: 11%; }
-.financial-details-table th:nth-child(2) { width: 12%; }
-.financial-details-table th:nth-child(3) { width: 12%; }
+.financial-details-table th:nth-child(1) { width: 10%; }
+.financial-details-table th:nth-child(2) { width: 10%; }
+.financial-details-table th:nth-child(3) { width: 9%; }
 .financial-details-table th:nth-child(4) { width: 13%; }
-.financial-details-table th:nth-child(5) { width: 8%; }
-.financial-details-table th:nth-child(6) { width: 14%; }
-.financial-details-table th:nth-child(7) { width: 12%; }
-.financial-details-table th:nth-child(8) { width: 18%; }
+.financial-details-table th:nth-child(5) { width: 7%; }
+.financial-details-table th:nth-child(6) { width: 10%; }
+.financial-details-table th:nth-child(7) { width: 10%; }
+.financial-details-table th:nth-child(8) { width: 9%; }
+.financial-details-table th:nth-child(9) { width: 12%; }
+.financial-details-table th:nth-child(10) { width: 10%; }
 
 .legend .rig-orange {
   background: #dc8a3b;
@@ -259,6 +262,7 @@ footer {
   }
 
   .financial-details-table {
+    min-width: 0;
     display: block;
     white-space: normal;
   }
@@ -308,3 +312,5 @@ footer {
     text-align: left;
   }
 }
+
+.cost-usage { margin: 5px 0 8px; }
