@@ -73,3 +73,22 @@ for(const period of ['shift','day','week','month']){
  near(points.reduce((n,p)=>n+(p.fuelUsageL||0),0),litres);
 }
 console.log('Actual drilling fuel ledger reconciles for every grain, including issues after the last drilling report.');
+
+for(const period of ['shift','day','week','month']){
+ context.grainUnderTest=period;
+ const html=vm.runInContext('financialGrain=grainUnderTest;renderFinancialTab()',context);
+ assert.ok(!html.includes('Өмнөх хугацааны дүн:'));
+ assert.ok(!html.includes('өөрчлөлтгүй'));
+ assert.ok(html.includes(`Өрөмд олгосон: ${litres.toLocaleString('en-US',{maximumFractionDigits:2})} л`));
+ assert.ok(html.includes(`Хуваарилсан хэрэглээ: ${confirmedKg.toLocaleString('en-US',{maximumFractionDigits:2})} кг`));
+ const cards=[...html.matchAll(/<article class="kpi">([\s\S]*?)<\/article>/g)].map(m=>m[1]);
+ assert.equal(cards.length,8);
+ for(const index of [1,3,4,5,6,7])assert.ok(!cards[index].includes('class="note"'));
+}
+console.log('Totals have no period comparisons; breakdown uses consistent totals across all grains.');
+
+context.fixture={collar:[{id:'X',site:'Нэргүй Өндөр'}],shifts:[{date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'X',meters:10},{date:'2026-10-01',rig:'C-1800',shift:'Шөнө',hole:'X',meters:20}],finance:{period:'2026-10',rigShifts:['Өдөр','Шөнө'].map(shift=>({date:'2026-10-01',rig:'C-1800',shift,laborCost:100,foodCost:0,bonusCost:0,incentiveCost:0}))}};
+vm.runInContext("D=fixture;financialGrain='shift'",context);
+const compared=vm.runInContext('renderFinancialTab()',context);
+assert.ok(compared.includes('-50%'));
+assert.ok(compared.includes('2026-10-01 · Шөнө: ₮ 5 /м ↔ 2026-10-01 · Өдөр: ₮ 10 /м'));
