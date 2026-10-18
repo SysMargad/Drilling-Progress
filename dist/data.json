@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-10-18",
-  "updatedAt": "2026-10-18T11:54:07+08:00",
+  "updatedAt": "2026-10-18T21:30:29+08:00",
   "period": "2026-10-01 – 2026-10-17",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
@@ -72,6 +72,22 @@
       "boxes": null
     },
     {
+      "id": "DTDH2606",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Дорнын Төмөр",
+      "e": null,
+      "n": null,
+      "z": null,
+      "az": 110.0,
+      "dip": 60.0,
+      "plan": 150.0,
+      "collarDepth": null,
+      "start": "2026-10-16",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    },
+    {
       "id": "ZHDH2601",
       "site": "Нэргүй Өндөр",
       "targetArea": "Замт Хөндий",
@@ -88,7 +104,7 @@
       "boxes": 107.0
     },
     {
-      "id": "ZHDH2612",
+      "id": "ZHDH2602",
       "site": "Нэргүй Өндөр",
       "targetArea": "Замт Хөндий",
       "e": 686280.0,
@@ -104,17 +120,17 @@
       "boxes": null
     },
     {
-      "id": "DTDH2606",
+      "id": "ZHDH2612",
       "site": "Нэргүй Өндөр",
-      "targetArea": "Дорнын Төмөр",
+      "targetArea": "Замт Хөндий",
       "e": null,
       "n": null,
       "z": null,
-      "az": 110.0,
-      "dip": 60.0,
-      "plan": 150.0,
+      "az": null,
+      "dip": null,
+      "plan": null,
       "collarDepth": null,
-      "start": "2026-10-16",
+      "start": "",
       "finish": "",
       "recovery": null,
       "boxes": null
@@ -1627,6 +1643,24 @@
     },
     {
       "rig": "C-1800",
+      "source": "2026-10-17_ZHDH2612_n.jpg",
+      "date": "2026-10-17",
+      "shift": "Шөнө",
+      "driller": "Анхболд",
+      "hole": "ZHDH2612",
+      "from": 200.0,
+      "to": 221.0,
+      "meters": 21.0,
+      "st": null,
+      "rt": null,
+      "dt": 6.0,
+      "hours": 6.0,
+      "notes": "2026-10-17, 20:00–08:00. HQ 200→221 м = 21 м. Маягтын нийт 12 цаг боловч зөвхөн DT 6 цаг гэж бичсэн; бусад код хоосон. Кодын нийлбэр 6 цаг, тайлагнасан 12 цагаас 6 цаг дутуу. «22 цагаас шөнийн 00 цагт бит солив» гэсэн тайлбар бий; кодгүй хугацааг RP/OT-д таамгаар оруулаагүй. Бит 1ш, полимер 1ш, гурав дахь материалын нэр тодорхойгүй 2ш. Захиалагч, ахлагчийн гарын үсэг хоосон. EOH бичээгүй.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
       "source": "2026-10-17_ZHDH2612_d.jpg",
       "date": "2026-10-17",
       "shift": "Өдөр",
@@ -1640,6 +1674,24 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "08:00–20:00. PT1/2=0.5ц, DT11½=11.5ц; нийт12ц. Өрөмдлөг хэвийн. POLYMER1 (нэгжгүй), ус1рейс. Эхэд C-1800; 155→200=45м. Захиалагч/ахлагчийн гарын үсэг хоосон; EOH бичээгүй.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-17_DTDH2606_n.jpg",
+      "date": "2026-10-17",
+      "shift": "Шөнө",
+      "driller": "Мөнхтөр",
+      "hole": "DTDH2606",
+      "from": 65.4,
+      "to": 107.4,
+      "meters": 42.0,
+      "st": null,
+      "rt": null,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "2026-10-17, 20:00–08:00. HQ 65.4→107.4 м = 42 м. PT 30мин=0.5ц, DT11:30=11.5ц; нийт12ц. Эх Hole ID-ийн сүүлийн цифр 6/0 мэт дугуй бичигдсэн; өмнөх өдрийн DTDH2606 65.4м төгсгөл, CSD-1300 Rig, огноо, гар бичмэлийн хам контекстээр DTDH2606-д ангилсан (баталгаажуулах). «МАД» 1 (нэгжгүй). Casing шинэ интервал бичээгүй. Захиалагч, ахлагчийн гарын үсэг хоосон. EOH бичээгүй.",
       "waterUsageM3": null,
       "reports": []
     },
@@ -1716,7 +1768,7 @@
         }
       ]
     },
-    "ZHDH2612": {
+    "ZHDH2602": {
       "url": "https://drive.google.com/drive/folders/1DJUceHvbJ5eFk498MNPalUT6KOJr92OE",
       "folders": [
         {
@@ -1983,8 +2035,10 @@
     "Unreported time codes: DTDH2605 / 2026-10-15 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2605 / 2026-10-15 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-16 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: DTDH2606 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-17 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-16 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2612 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-17 / Өдөр / ST, RT; preserved as null"
   ],
   "sources": [
@@ -1998,30 +2052,30 @@
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 55
+      "shiftRows": 57
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1jVCDlWGsx9EYqLmuA9ciIx0L21935DFy1JCkzNUG5Iw/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 55
+      "shiftRows": 57
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1zKwVkfUrOkTY-W9B4IZlqO4R83RChDk6r-vXIP4-PR0/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 55
+      "shiftRows": 57
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 55
+      "shiftRows": 57
     },
     {
       "name": "NUDH_COLLAR.xlsx",
       "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 11,
+      "collarRows": 12,
       "shiftRows": 0
     },
     {

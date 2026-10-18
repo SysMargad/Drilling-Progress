@@ -164,6 +164,18 @@
       "shifts": 55,
       "meters": 1442.6,
       "note": "14 source conflicts"
+    },
+    {
+      "id": "91145967-c957-4795-b581-0d4db05a46b4",
+      "source": "drive",
+      "startedAt": "2026-10-18T21:29:48+08:00",
+      "status": "updated",
+      "completedAt": "2026-10-18T21:30:35+08:00",
+      "files": 8,
+      "holes": 8,
+      "shifts": 57,
+      "meters": 1505.6,
+      "note": "16 source conflicts"
     }
   ]
 }
