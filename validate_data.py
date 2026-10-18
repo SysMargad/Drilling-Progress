@@ -55,10 +55,12 @@ def validate(data):
 
 
 def validate_finance(finance):
-    if set(finance) not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}):
+    if set(finance) not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
         raise ValueError('Finance data must contain aggregate fields only')
     if not isinstance(finance['period'], str) or not re.fullmatch(r'\d{4}-\d{2}', finance['period']):
         raise ValueError('Invalid finance period')
+    if 'fuel' in finance:
+        validate_fuel(finance['fuel'], finance['period'])
     if 'mud' in finance:
         validate_mud(finance['mud'])
     daily = {}
@@ -117,6 +119,41 @@ def validate_mud(mud):
             raise ValueError('Invalid mud allocation volume')
     if not math.isclose(sum(row['bags'] for row in mud['allocations']), mud['totalBags'], abs_tol=0.00001):
         raise ValueError('Mud allocations do not balance to total')
+
+
+def validate_fuel(fuel, period):
+    if set(fuel) != {'daily', 'allocations'}:
+        raise ValueError('Unexpected fuel fields')
+    daily = {}
+    for row in fuel['daily']:
+        if set(row) != {'date', 'litres', 'cost'} or row['date'] in daily or not row['date'].startswith(period+'-'):
+            raise ValueError('Invalid fuel daily fields or duplicate date')
+        date.fromisoformat(row['date'])
+        if (row['litres'] is None) != (row['cost'] is None):
+            raise ValueError('Fuel quantity and cost must be known together')
+        for key in ('litres','cost'):
+            if row[key] is not None and (not isinstance(row[key],(int,float)) or not math.isfinite(row[key]) or row[key]<0):
+                raise ValueError('Invalid fuel amount')
+        daily[row['date']] = row
+    totals, seen = {}, set()
+    for row in fuel['allocations']:
+        if set(row) != {'date','rig','shift','hole','litres','cost'}:
+            raise ValueError('Unexpected fuel allocation fields')
+        key=(row['date'],row['rig'],row['shift'],row['hole'])
+        if key in seen or row['date'] not in daily or daily[row['date']]['litres'] is None or row['rig'] not in {'C-1800','CSD-1300'} or row['shift'] not in {'Өдөр','Шөнө'}:
+            raise ValueError('Invalid fuel allocation key')
+        seen.add(key)
+        total=totals.setdefault(row['date'],{'litres':0,'cost':0})
+        for field in ('litres','cost'):
+            if not isinstance(row[field],(int,float)) or not math.isfinite(row[field]) or row[field]<0:
+                raise ValueError('Invalid allocated fuel amount')
+            total[field]+=row[field]
+    for day,row in daily.items():
+        if row['litres'] is None:
+            continue
+        for field in ('litres','cost'):
+            if not math.isclose(totals.get(day,{}).get(field,-1),row[field],abs_tol=0.005):
+                raise ValueError('Fuel allocation does not balance to daily ledger')
 
 
 if __name__ == '__main__':

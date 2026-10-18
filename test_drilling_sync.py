@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path
 from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
                            append_data_log, assemble, drive_finance_aggregates,
-                           finance_aggregates, mud_aggregates, FinanceSourceError, load_json,
+                           finance_aggregates, mud_aggregates, fuel_aggregates, FinanceSourceError, load_json,
                            local_sources, parse_shifts, publish, signature,
                            workbook_rows, report_metadata, attach_reports, drive_sources,
                            XLSX_MIME)
@@ -199,12 +199,14 @@ class PipelineTests(unittest.TestCase):
             ['', '', '', '', *[str(day) for day in range(1, 32)]],
         ])]
         products_sheets = [('products', [['Бүтээгдэхүүн','Тоо хэмжээ','Нэгж','Үнэ'], ['Mud','25','кг','330000']]), ('usage', [['Нийт тооцооны шуудай','17'], ['Огноо','Өрөм','Цооног','Ээлж','Mud тооцоо (шуудай)'], ['2026-10-01','C-1800','DTDH2601','Өдөр','17']])]
+        fuel_sheets=[('ledger',[['Огноо','Зарлага (өрөм) (л)','Өрөмийн Зардал (Төгрөг)'],['2026-10-01','200','1080000']])]
         files = [
+            {'id':'fuel-file','mimeType':FINANCE_SHEET_MIME,'modifiedTime':'2026-10-04'},
             {'id':'products-file','mimeType':XLSX_MIME,'modifiedTime':'2026-10-03'},
             {'id': 'attendance-file', 'mimeType': FINANCE_SHEET_MIME, 'modifiedTime': '2026-10-01'},
             {'id': 'salary-file', 'mimeType': XLSX_MIME, 'modifiedTime': '2026-10-02'},
         ]
-        sheets_by_content = {b'salary': salary_sheets, b'attendance': attendance_sheets, b'products': products_sheets}
+        sheets_by_content = {b'salary': salary_sheets, b'attendance': attendance_sheets, b'products': products_sheets, b'fuel':fuel_sheets}
         expected = {'period': '2026-10'}
         with (patch('drilling_sync.Drive') as drive,
               patch('drilling_sync.workbook_rows',
@@ -215,12 +217,33 @@ class PipelineTests(unittest.TestCase):
                 else files if folder == 'nested' else []
             )
             drive.return_value.download.side_effect = lambda file: (
-                b'salary' if file['id'] == 'salary-file' else b'products' if file['id']=='products-file' else b'attendance'
+                b'salary' if file['id'] == 'salary-file' else b'products' if file['id']=='products-file' else b'fuel' if file['id']=='fuel-file' else b'attendance'
             )
             result=drive_finance_aggregates(None, [])
             self.assertEqual(result['mud']['totalBags'],17)
             self.assertEqual(result['mud']['totalBags']*result['mud']['bagKg'],425)
         aggregate.assert_called_once_with(salary_sheets, attendance_sheets, [])
+
+    def test_fuel_ledger_actual_issues_cost_and_missing_values(self):
+        sheets=[('ledger',[['Огноо','Зарлага (өрөм) (л)','Өрөмийн Зардал (Төгрөг)'],
+                          ['2026-09-30','100','540000'],['2026-10-01','','0'],
+                          ['2026-10-02','200','1080000'],['2026-10-03','0','0'],
+                          ['2026-10-04','600','3240000']])]
+        shifts=[{'date':'2026-10-02','rig':'C-1800','shift':'Өдөр','hole':'X','hours':9},
+                {'date':'2026-10-02','rig':'CSD-1300','shift':'Шөнө','hole':'Y','hours':3}]
+        fuel=fuel_aggregates(sheets,shifts,'2026-10')
+        self.assertEqual(len(fuel['daily']),4)
+        self.assertIsNone(fuel['daily'][0]['litres'])
+        self.assertEqual(fuel['daily'][2]['litres'],0)
+        items=[r for r in fuel['allocations'] if r['date']=='2026-10-02']
+        self.assertEqual([r['litres'] for r in items],[150,50])
+        self.assertEqual(sum(r['cost'] for r in items),1080000)
+        self.assertEqual(sum(r['litres'] for r in fuel['allocations']),800)
+        from validate_data import validate_fuel
+        validate_fuel(fuel,'2026-10')
+        fuel['allocations'][0]['cost']+=100
+        with self.assertRaisesRegex(ValueError,'balance'):
+            validate_fuel(fuel,'2026-10')
 
     def test_mud_source_total_and_allocation_must_balance(self):
         sheets=[('products', [['Бүтээгдэхүүн','Тоо хэмжээ','Нэгж','Үнэ'],['Mud','25','кг','330000']]),

@@ -579,6 +579,57 @@ def mud_aggregates(sheets):
     return {'totalBags': total, 'bagKg': bag_kg, 'pricePerBag': price, 'allocations': allocations}
 
 
+def fuel_aggregates(sheets, shifts, period):
+    """Read drilling issues and source cost; allocate daily issues by reported hours."""
+    daily, allocations = [], []
+    for _, rows in sheets:
+        header = None
+        for row in rows:
+            names = [norm(c) for c in row]
+            if 'зарлага (өрөм) (л)' in names and 'огноо' in names:
+                header = names
+                if 'өрөмийн зардал (төгрөг)' not in header:
+                    raise ValueError('Fuel ledger has no drilling cost column')
+                continue
+            if header is None or not _finance_cell(row, header.index('огноо')):
+                continue
+            raw_date = _finance_cell(row, header.index('огноо'))
+            if not re.match(r'^(?:20\d{2}[-./]|\d+(?:\.\d+)?$)', raw_date):
+                continue
+            day = date(raw_date)
+            if not day.startswith(period + '-'):
+                continue
+            litres = _finance_number(_finance_cell(row, header.index('зарлага (өрөм) (л)')))
+            cost = _finance_number(_finance_cell(row, header.index('өрөмийн зардал (төгрөг)')))
+            if litres is None:
+                if cost not in (None, 0):
+                    raise ValueError('Fuel ledger cost has no issue volume')
+                daily.append({'date': day, 'litres': None, 'cost': None})
+                continue
+            if litres < 0 or cost is None or cost < 0:
+                raise ValueError('Fuel ledger has invalid quantity or cost')
+            daily.append({'date': day, 'litres': litres, 'cost': cost})
+            weights = {}
+            for entry in shifts:
+                if entry['date'] == day:
+                    key = (entry['rig'], entry['shift'], entry['hole'])
+                    weights[key] = weights.get(key, 0.0) + entry.get('hours', 0)
+            if not weights or sum(weights.values()) <= 0:
+                weights = {(rig, shift, ''): 1 for rig in sorted(RIGS) for shift in ('Өдөр','Шөнө')}
+            total_weight = sum(weights.values())
+            items = []
+            for (rig, shift, hole), weight in weights.items():
+                items.append({'date': day, 'rig': rig, 'shift': shift, 'hole': hole,
+                              'litres': round(litres * weight / total_weight, 8),
+                              'cost': round(cost * weight / total_weight, 2)})
+            items[-1]['litres'] = round(litres - sum(r['litres'] for r in items[:-1]), 8)
+            items[-1]['cost'] = round(cost - sum(r['cost'] for r in items[:-1]), 2)
+            allocations.extend(items)
+    if not daily:
+        raise ValueError('No fuel ledger dates match the reporting month')
+    return {'daily': sorted(daily, key=lambda row: row['date']), 'allocations': allocations}
+
+
 def drive_finance_aggregates(credentials_path, shifts):
     drive = Drive(credentials_path)
     pending, seen, files = [FINANCE_FOLDER_ID], set(), {}
@@ -601,7 +652,7 @@ def drive_finance_aggregates(credentials_path, shifts):
             elif file["mimeType"] in {FINANCE_SHEET_MIME, XLSX_MIME}:
                 files[file["id"]] = file
 
-    salary_sheets = attendance_sheets = products_sheets = None
+    salary_sheets = attendance_sheets = products_sheets = fuel_sheets = None
     for file in sorted(files.values(), key=lambda item: item.get("modifiedTime", ""), reverse=True):
         try:
             content = drive.download(file)
@@ -620,7 +671,9 @@ def drive_finance_aggregates(credentials_path, shifts):
             attendance_sheets = sheets
         if products_sheets is None and _finance_has_headers(sheets, ('бүтээгдэхүүн', 'тоо хэмжээ', 'нэгж', 'үнэ')):
             products_sheets = sheets
-        if salary_sheets is not None and attendance_sheets is not None and products_sheets is not None:
+        if fuel_sheets is None and _finance_has_headers(sheets, ('зарлага (өрөм) (л)', 'өрөмийн зардал (төгрөг)')):
+            fuel_sheets = sheets
+        if salary_sheets is not None and attendance_sheets is not None and products_sheets is not None and fuel_sheets is not None:
             break
     if salary_sheets is None:
         raise FinanceSourceError("salary workbook in shared finance folder", 404)
@@ -630,6 +683,9 @@ def drive_finance_aggregates(credentials_path, shifts):
         raise FinanceSourceError("mud workbook in shared finance folder", 404)
     result = finance_aggregates(salary_sheets, attendance_sheets, shifts)
     result['mud'] = mud_aggregates(products_sheets)
+    if fuel_sheets is None:
+        raise FinanceSourceError('drilling fuel ledger with cost', 404)
+    result['fuel'] = fuel_aggregates(fuel_sheets, shifts, result['period'])
     return result
 
 

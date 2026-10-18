@@ -23,14 +23,14 @@ assert.equal(sum(split,'foodCost'),DAILY_FOOD);
 assert.deepEqual(records([]),[]);
 console.log('Financial costs verified: fixed calendar costs, missing reports, meter independence, rig filtering, split shifts, water volume separate from costs.');
 
-const {FUEL_PRICE_PER_LITRE,MUD_PRICE_PER_BAG,MUD_BAG_KG}=require('./dist/financial-costs.js');
-assert.ok(Math.abs(sum(all,'fuelUsageL')-(10*1.48+5*1.18))<1e-9);
+const {MUD_PRICE_PER_BAG,MUD_BAG_KG}=require('./dist/financial-costs.js');
+assert.equal(sum(all,'fuelUsageL'),0); // No inferred issues without a ledger.
 for(const item of all){
- assert.ok(Math.abs(item.fuelUsageL*FUEL_PRICE_PER_LITRE-item.fuelCost)<1e-6);
+ assert.equal(item.fuelCost,0);
  assert.ok(Math.abs(item.mudUsageBags*MUD_PRICE_PER_BAG-item.mudCost)<1e-6);
  assert.ok(Math.abs(item.mudUsageBags*MUD_BAG_KG-item.mudUsageKg)<1e-9);
 }
-assert.ok(Math.abs(sum(split,'fuelUsageL')-12*1.48)<1e-9);
+assert.equal(sum(split,'fuelUsageL'),0);
 assert.equal(sum(all.filter(r=>!r.recorded),'fuelUsageL'),0);
 assert.equal(sum(all.filter(r=>!r.recorded),'mudUsageKg'),0);
 console.log('Consumption verified: units reconcile with cost, both rigs, split rows and empty periods.');
@@ -41,3 +41,12 @@ assert.ok(Math.abs(sum(divided,'mudUsageBags')-17)<1e-9);
 assert.ok(Math.abs(sum(divided,'mudUsageKg')-425)<1e-9);
 assert.ok(Math.abs(sum(divided,'mudCost')-5610000)<1e-6);
 assert.equal(sum(divided.filter(r=>r.date==='2026-10-02'),'mudCost'),0);
+
+const fuel={daily:[{date:'2026-10-01',litres:200,cost:1080000},{date:'2026-10-02',litres:600,cost:3240000}],allocations:[
+ {date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',litres:200,cost:1080000},
+ ...['C-1800','CSD-1300'].flatMap(rig=>['Өдөр','Шөнө'].map(shift=>({date:'2026-10-02',rig,shift,hole:'',litres:150,cost:810000})))]};
+const actualFuel=records([row('2026-10-01','C-1800','Өдөр',10,'A',4),row('2026-10-01','C-1800','Өдөр',30,'A',8)],undefined,null,fuel);
+assert.ok(Math.abs(sum(actualFuel,'fuelUsageL')-800)<1e-9);
+assert.ok(Math.abs(sum(actualFuel,'fuelCost')-4320000)<1e-6);
+assert.equal(sum(actualFuel.filter(r=>r.date==='2026-10-02'),'fuelUsageL'),600);
+assert.ok(Math.abs(actualFuel.filter(r=>r.recorded)[0].fuelUsageL-200/3)<1e-9);

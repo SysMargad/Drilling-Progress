@@ -35,15 +35,15 @@ for(const period of ['shift','day','week','month']){
  context.grainUnderTest=period;
  const rows=vm.runInContext('financialRows(grainUnderTest)',context);
  const points=vm.runInContext('financialRigSeries(grainUnderTest)',context).flatMap(s=>s.points);
- near(rows.reduce((n,r)=>n+r.fuelUsageL,0),20*1.48+20*1.18);
+ near(rows.reduce((n,r)=>n+r.fuelUsageL,0),0);
  near(points.reduce((n,p)=>n+(p.fuelUsageL||0),0),rows.reduce((n,r)=>n+r.fuelUsageL,0));
  near(points.reduce((n,p)=>n+(p.mudUsageKg||0),0),rows.reduce((n,r)=>n+r.mudUsageKg,0));
 }
 selectedRig='CSD-1300';
-near(vm.runInContext("financialRows('month')[0].fuelUsageL",context),20*1.18);
+near(vm.runInContext("financialRows('month')[0].fuelUsageL",context),0);
 const markup=vm.runInContext('renderFinancialTab()',context);
-assert.ok(markup.includes('Тооцоот хэрэглээ:'));
-assert.ok(markup.includes('Түлш (л, тооцоот)'));
+assert.ok(markup.includes('Өрөмд олгосон:'));
+assert.ok(markup.includes('Түлш (л, олголт)'));
 assert.ok(markup.includes('Шавар (кг, хуваарилсан)'));
 console.log('Consumption dashboard verified: four periods, rig filter, details and chart consistency.');
 
@@ -61,3 +61,15 @@ for(const period of ['shift','day','week','month']){
 context.fixture.shifts.push({...context.fixture.shifts.at(-1),date:'2026-10-18',meters:1000});
 near(vm.runInContext("financialRows('month').reduce((n,r)=>n+r.mudUsageKg,0)",context),confirmedKg);
 console.log('Source mud totals and cost reconcile across periods; new drilling adds no mud.');
+
+const fuelLedger=context.fixture.finance.fuel;
+const litres=fuelLedger.daily.reduce((n,r)=>n+(r.litres||0),0),fuelCost=fuelLedger.daily.reduce((n,r)=>n+(r.cost||0),0);
+for(const period of ['shift','day','week','month']){
+ context.grainUnderTest=period;
+ const rows=vm.runInContext('financialRows(grainUnderTest)',context);
+ near(rows.reduce((n,r)=>n+r.fuelUsageL,0),litres);
+ near(rows.reduce((n,r)=>n+r.fuelCost,0),fuelCost);
+ const points=vm.runInContext('financialRigSeries(grainUnderTest)',context).flatMap(s=>s.points);
+ near(points.reduce((n,p)=>n+(p.fuelUsageL||0),0),litres);
+}
+console.log('Actual drilling fuel ledger reconciles for every grain, including issues after the last drilling report.');
