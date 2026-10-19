@@ -81,9 +81,9 @@ for(const period of ['shift','day','week','month']){
  assert.ok(!html.includes('өөрчлөлтгүй'));
  assert.ok(html.includes(`Өрөмд олгосон: ${litres.toLocaleString('en-US',{maximumFractionDigits:2})} л`));
  assert.ok(html.includes(`Хуваарилсан хэрэглээ: ${confirmedKg.toLocaleString('en-US',{maximumFractionDigits:2})} кг`));
- const cards=[...html.matchAll(/<article class="kpi">([\s\S]*?)<\/article>/g)].map(m=>m[1]);
+ const cards=[...html.matchAll(/<article class="kpi(?: financial-trend [a-z]+)?">([\s\S]*?)<\/article>/g)].map(m=>m[1]);
  assert.equal(cards.length,8);
- for(const index of [1,3,4,5,6,7])assert.ok(!cards[index].includes('class="note"'));
+ for(const index of [3,4,6,7])assert.ok(!cards[index].includes('class="note"'));
 }
 console.log('Totals have no period comparisons; breakdown uses consistent totals across all grains.');
 
@@ -92,3 +92,18 @@ vm.runInContext("D=fixture;financialGrain='shift'",context);
 const compared=vm.runInContext('renderFinancialTab()',context);
 assert.ok(compared.includes('-50%'));
 assert.ok(compared.includes('2026-10-01 · Шөнө: ₮ 5 /м ↔ 2026-10-01 · Өдөр: ₮ 10 /м'));
+
+assert.ok(compared.includes('kpi financial-trend down'));
+context.fixture.shifts.push({date:'2026-10-02',rig:'C-1800',shift:'Өдөр',hole:'X',meters:0});
+context.fixture.finance.rigShifts.push({date:'2026-10-02',rig:'C-1800',shift:'Өдөр',laborCost:200,foodCost:0});
+const noTrailingNA=vm.runInContext('renderFinancialTab()',context);
+assert.ok(noTrailingNA.includes('Сүүлийн ээлжийн зардал (₮/м)'));
+assert.ok(noTrailingNA.includes('2026-10-01 · Шөнө · ▼ 50%'));
+const firstCard=noTrailingNA.match(/<article[^>]*>([\s\S]*?)<\/article>/)[1];
+assert.ok(firstCard.includes('₮ 5'));
+assert.ok(!firstCard.includes('N/A'));
+context.fixture.shifts[1].meters=5;
+const increased=vm.runInContext('renderFinancialTab()',context);
+assert.ok(increased.includes('kpi financial-trend up'));
+assert.ok(increased.includes('2026-10-01 · Шөнө · ▲ 100%'));
+console.log('Cost trends verified: red increase, green decrease, last recorded drilling period and trailing zero-metre costs.');
