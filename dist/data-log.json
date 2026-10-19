@@ -196,6 +196,14 @@
       "status": "failed",
       "completedAt": "2026-10-19T10:22:57+08:00",
       "error": "ValueError"
+    },
+    {
+      "id": "cdafa8ec-4f44-4b70-9f25-ba27decbf60e",
+      "source": "drive",
+      "startedAt": "2026-10-19T12:02:04+08:00",
+      "status": "failed",
+      "completedAt": "2026-10-19T12:02:54+08:00",
+      "error": "ValueError"
     }
   ]
 }
