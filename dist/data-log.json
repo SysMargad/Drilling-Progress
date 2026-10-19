@@ -188,6 +188,14 @@
       "shifts": 57,
       "meters": 1505.6,
       "note": "16 source conflicts"
+    },
+    {
+      "id": "d5dfb73a-d207-4619-8d77-55b2199f18e1",
+      "source": "drive",
+      "startedAt": "2026-10-19T10:22:15+08:00",
+      "status": "failed",
+      "completedAt": "2026-10-19T10:22:57+08:00",
+      "error": "ValueError"
     }
   ]
 }
