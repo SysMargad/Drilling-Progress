@@ -5,6 +5,8 @@
   <meta name="description" content="Нэргүй Өндөр өрөмдлөгийн явц, цооног болон ээлжийн гүйцэтгэлийн хяналт">
   <title>Өрөмдлөгийн явц · Нэргүй Өндөр</title>
   <link rel="stylesheet" href="style.css?v=20261015.18">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="mapping.css?v=20261019.1">
   <link rel="stylesheet" href="dark-theme.css?v=20261018.1">
 </head>
 <body>
@@ -13,6 +15,7 @@
     <nav aria-label="Үндсэн цэс">
       <button class="active" data-tab="overview">◫ <span>Ерөнхий тойм</span></button>
       <button data-tab="financial">₮ <span>Санхүүгийн үзүүлэлтүүд</span></button>
+      <button data-tab="mapping">⌖ <span>Mapping</span></button>
       <button data-tab="shifts">≋ <span>Ээлжийн тайлан</span></button>
       <button data-tab="data-log">◷ <span>Data Log</span></button>
       <button data-tab="sources">▤ <span>Эх сурвалж & хяналт</span></button>
@@ -32,6 +35,6 @@
   </main>
   <dialog id="detail"><button class="close" aria-label="Хаах">×</button><div id="detail-body"></div></dialog>
   <div id="bar-tooltip" role="tooltip" hidden></div>
-  <script src="chart-model.js?v=20261015.18"></script><script src="financial-costs.js?v=20261018.3"></script><script src="app.js?v=20261018.5"></script>
+  <script src="chart-model.js?v=20261015.18"></script><script src="financial-costs.js?v=20261018.3"></script><script src="vendor/leaflet.js"></script><script src="vendor/proj4.js"></script><script src="map-model.js?v=20261019.1"></script><script src="app.js?v=20261019.1"></script>
 </body>
 </html>

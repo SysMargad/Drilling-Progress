@@ -375,19 +375,62 @@ function logTable(){
   return `<section class="panel"><div class="panel-head"><h2>Data Log</h2><button class="button" id="refresh-log">Дахин унших ↻</button></div><p class="sub">Дата татсан түүх · Улаанбаатарын цагаар</p>${logError?`<p role="status">${esc(logError)}</p>`:''}<div class="table-scroll"><table><thead><tr><th>Татсан огноо / цаг</th><th>Эх үүсвэр</th><th>Төлөв</th><th>Файл</th><th>Цооног</th><th>Ээлж</th><th>Өрөмдсөн</th><th>Тайлбар</th></tr></thead><tbody>${entries.map(entry=>`<tr><td>${logTime(entry.startedAt)}</td><td>${entry.source==='drive'?'Google Drive':'Local CSV / XLSX'}</td><td><span class="badge ${entry.status==='failed'?'warn':''}">${labels[entry.status]||esc(entry.status)}</span></td><td>${fmt(entry.files,0)}</td><td>${fmt(entry.holes,0)}</td><td>${fmt(entry.shifts,0)}</td><td>${entry.meters==null?'—':fmt(entry.meters)+' м'}</td><td>${esc(entry.error||entry.note||'')}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Дата татсан түүх бүртгэгдээгүй.</td></tr>'}</tbody></table></div></section>`;
 }
 function sources(){return `<section class="panel"><h2>Өгөгдлийн эх сурвалж</h2><div class="source-list"><div class="source-row"><a class="source-link" href="${esc(D.collarUrl)}" target="_blank" rel="noopener">Collar бүртгэл ↗</a></div><div class="source-row"><a class="source-link" href="${esc(D.shiftUrl)}" target="_blank" rel="noopener">Ээлжийн тайлан ↗</a></div></div></section><section class="panel"><h2>Тооцоолол</h2><p>Ашиглалт = DT / нийт цаг. ROP = өрөмдсөн метр / DT. Цооногийн ахиц = сүүлийн ээлжийн гүн / төлөвлөсөн гүн.</p><p>Нормыг өрөм тус бүрээр 30 м/ээлж, 60 м/өдөр, 420 м/7 хоног гэж тооцно. Сарын норм = 60 м × тухайн сарын календарийн хоног. Дутуу тайлант 7 хоног, сарыг бүтэн календарийн үеийн нормтой харьцуулна.</p></section>`;}
+let mappingMap=null,mappingMarkers=new Map();
+function renderMapping(){
+  const selected=holes(),points=DrillingMap.points(selected),known=new Set(points.map(point=>point.id));
+  const missing=selected.filter(hole=>!known.has(hole.id));
+  return `<section class="panel mapping-panel"><div class="panel-head"><div><h2>Mapping</h2><span class="sub">Газрын зурагт ${points.length} · Координатгүй ${missing.length}</span></div><button class="button" id="map-fit">Бүгдийг багтаах</button></div>
+    <div class="mapping-layout"><div id="mapping-map" aria-label="Цооногуудын газрын зураг"></div><div class="mapping-list"><h3>Координаттай цооногууд</h3>
+      ${points.map(point=>`<button class="mapping-hole" data-map-hole="${esc(point.id)}"><span class="map-dot ${areaOf(point.hole)==='Дорнын Төмөр'?'east':'west'}"></span><span><strong>${esc(point.id)}</strong><small>${esc(areaOf(point.hole))} · ${status(point.hole)[0]}</small></span></button>`).join('')||'<p class="sub">Шүүлтүүрт тохирох координаттай цооног алга.</p>'}
+      ${missing.length?`<h3>Координатгүй</h3>${missing.map(hole=>`<button class="mapping-hole missing" data-hole="${esc(hole.id)}"><span><strong>${esc(hole.id)}</strong><small>E / N бүртгэгдээгүй</small></span></button>`).join('')}`:''}
+    </div></div><div class="map-legend"><span><i class="map-dot east"></i>Дорнын Төмөр</span><span><i class="map-dot west"></i>Замт Хөндий</span></div><p id="map-tile-status" class="sub" role="status" hidden>Суурь зургийг ачаалж чадсангүй. Цооногийн цэгүүд харагдаж байна.</p></section>`;
+}
+function fitMapping(){
+  if(!mappingMap)return;
+  const markers=[...mappingMarkers.values()];
+  if(markers.length)mappingMap.fitBounds(L.featureGroup(markers).getBounds(),{padding:[48,48],maxZoom:17});
+}
+function initMapping(){
+  const points=DrillingMap.points(holes());
+  mappingMap=L.map('mapping-map',{zoomControl:false,scrollWheelZoom:true}).setView([49.18,113.55],12);
+  L.control.zoom({zoomInTitle:'Ойртуулах',zoomOutTitle:'Холдуулах'}).addTo(mappingMap);
+  const streets=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+  const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community'});
+  for(const layer of [streets,satellite]){layer.on('tileerror',()=>{const notice=$('#map-tile-status');if(notice)notice.hidden=false;});layer.on('load',()=>{const notice=$('#map-tile-status');if(notice)notice.hidden=true;});}
+  satellite.addTo(mappingMap);
+  L.control.layers({'Газрын зураг':streets,'Сансрын зураг':satellite},null,{collapsed:false}).addTo(mappingMap);
+  L.control.scale({imperial:false,position:'bottomleft'}).addTo(mappingMap);
+  mappingMarkers=new Map();
+  for(const point of points){
+    const h=point.hole,color=areaOf(h)==='Дорнын Төмөр'?'#16b99a':'#f29b44';
+    const marker=L.circleMarker([point.lat,point.lng],{radius:8,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(mappingMap);
+    marker.bindTooltip(esc(h.id),{permanent:true,direction:h.id==='DTDH2602'?'right':'top',offset:[0,-8],className:'map-hole-label'});
+    marker.bindPopup(`<div class="map-popup"><h3>${esc(h.id)}</h3><p>${esc(areaOf(h))} · ${status(h)[0]}</p><dl><dt>Ээлжийн гүн</dt><dd>${fmt(depth(h.id))} м</dd><dt>Төлөвлөсөн</dt><dd>${fmt(h.plan)} м</dd><dt>E / N</dt><dd>${fmt(h.e,3)} / ${fmt(h.n,3)}</dd><dt>Өргөрөг / уртраг</dt><dd>${fmt(point.lat,6)} / ${fmt(point.lng,6)}</dd></dl><button class="button" data-popup-hole="${esc(h.id)}">Цооногийн мэдээлэл</button></div>`);
+    marker.on('popupopen',event=>{event.popup.getElement().querySelector('[data-popup-hole]')?.addEventListener('click',()=>openHole(h.id));});
+    const element=marker.getElement();if(element){element.setAttribute('role','button');element.setAttribute('tabindex','0');element.setAttribute('aria-label',h.id);element.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();marker.openPopup();}});}
+    mappingMarkers.set(h.id,marker);
+  }
+  fitMapping();
+  $('#map-fit').addEventListener('click',fitMapping);
+}
+function focusMappingHole(id){const marker=mappingMarkers.get(id);if(marker&&mappingMap){mappingMap.setView(marker.getLatLng(),Math.max(mappingMap.getZoom(),16));marker.openPopup();}}
 function render(){
   hideBarTooltip();
-  if(!D)return;let content=tab==='financial'?'':kpis();
+  if(mappingMap){mappingMap.remove();mappingMap=null;mappingMarkers.clear();}
+  if(!D)return;let content=['financial','mapping'].includes(tab)?'':kpis();
   if(tab==='financial')content+=renderFinancialTab();
+  if(tab==='mapping')content+=renderMapping();
   if(tab==='overview')content+='<div class="grid"><section class="panel" id="chart-panel">'+chart()+'</section><section class="panel"><h2>Өрмийн гүйцэтгэл</h2>'+rigs()+'</section></div>';
   if(tab==='holes')content+='<section class="panel"><div class="panel-head"><h2>Цооногийн ахиц</h2><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="'+esc(query)+'"></div><div id="table">'+holeTable()+'</div></section>';
   if(tab==='shifts')content+='<section class="panel"><div class="panel-head"><h2>Ээлжийн бүртгэл</h2><input class="search" aria-label="Ээлж хайх" placeholder="Цооног, нэр, огноо…" value="'+esc(query)+'"></div><div id="table">'+shiftTable()+'</div></section>';
   if(tab==='rop'||tab==='utilization')content+=performanceTable();if(tab==='sources')content+=sources();if(tab==='data-log')content+=logTable();
   $('#app').innerHTML=content;document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  if(tab==='mapping')initMapping();
   $('.search')?.addEventListener('input',e=>{query=e.target.value;$('#table').innerHTML=tab==='holes'?holeTable():shiftTable();});
 }
 function openHole(id){const h=D.collar.find(x=>x.id===id),folder=D.folderMap?.[id],state=status(h);$('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(h.id)}</h2><p>${SITE} · ${esc(areaOf(h))} · <span class="badge ${state[1]}">${state[0]}</span></p><div class="detail-grid">${[['Төлөвлөсөн гүн',fmt(h.plan)+' м'],['Ээлжийн сүүлийн гүн',fmt(depth(id))+' м'],['Collar эцсийн гүн',fmt(h.collarDepth)+' м'],['Эхэлсэн / дууссан',`${h.start||'—'} / ${h.finish||'—'}`],['E / N / Z',`${fmt(h.e,3)} / ${fmt(h.n,3)} / ${fmt(h.z,3)}`],['Азимут / хазайлт',`${fmt(h.az)}° / ${fmt(h.dip)}°`],['Керний гарц',h.recovery==null?'—':fmt(h.recovery)+'%'],['Керний хайрцаг',fmt(h.boxes,0)]].map(([label,value])=>`<div><small>${label}</small><strong>${esc(value)}</strong></div>`).join('')}</div><h3>Эх баримтууд</h3><div class="folder-links">${folder?folder.folders.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)} ↗</a>`).join(''):'Энэ цооногийн хавтас олдоогүй.'}</div>`;$('#detail').showModal();}
 document.addEventListener('click',e=>{
+  const mapHole=e.target.closest('[data-map-hole]');if(mapHole)focusMappingHole(mapHole.dataset.mapHole);
   const bar=e.target.closest('g[data-bar-index]');if(bar)openBarReports(chartBars[Number(bar.dataset.barIndex)]);
   const financialPeriod=e.target.closest('[data-financial-grain]');if(financialPeriod){financialGrain=financialPeriod.dataset.financialGrain;render();}
   const target=e.target.closest('[data-tab],[data-go]');if(target){e.preventDefault();tab=target.dataset.tab||target.dataset.go;query='';render();}

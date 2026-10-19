@@ -65,6 +65,7 @@ jobs:
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs
+          node test_mapping.cjs
       - name: Report collection failure
         if: steps.collection.outcome == 'failure'
         run: echo '::warning::Drive collection failed. Previous valid data and the failed attempt log are preserved.'

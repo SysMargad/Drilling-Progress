@@ -33,6 +33,7 @@ jobs:
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs
+          node test_mapping.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
