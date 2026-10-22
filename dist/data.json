@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-18",
-  "updatedAt": "2026-10-18T21:30:29+08:00",
-  "period": "2026-10-01 – 2026-10-17",
+  "asOf": "2026-10-22",
+  "updatedAt": "2026-10-22T14:54:31+08:00",
+  "period": "2026-10-01 – 2026-10-21",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1GmS3cGrwGdFaeoyMQT7yYu9mkQhpoAndwdEeGcDCoqo/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -65,25 +65,25 @@
       "az": 109.0,
       "dip": 60.0,
       "plan": 200.0,
-      "collarDepth": 200.0,
+      "collarDepth": 200.4,
       "start": "2026-10-14",
       "finish": "2026-10-16",
-      "recovery": null,
-      "boxes": null
+      "recovery": 89.71,
+      "boxes": 57.0
     },
     {
       "id": "DTDH2606",
       "site": "Нэргүй Өндөр",
       "targetArea": "Дорнын Төмөр",
-      "e": null,
-      "n": null,
-      "z": null,
+      "e": 686151.98,
+      "n": 5450727.71,
+      "z": 971.2,
       "az": 110.0,
       "dip": 60.0,
       "plan": 150.0,
-      "collarDepth": null,
+      "collarDepth": 161.4,
       "start": "2026-10-16",
-      "finish": "",
+      "finish": "2026-10-19",
       "recovery": null,
       "boxes": null
     },
@@ -115,6 +115,22 @@
       "plan": 420.0,
       "collarDepth": null,
       "start": "2026-10-15",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    },
+    {
+      "id": "ZHDH2603",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Замт Хөндий",
+      "e": 684071.45,
+      "n": 5453270.72,
+      "z": null,
+      "az": 90.55,
+      "dip": 65.0,
+      "plan": 350.0,
+      "collarDepth": null,
+      "start": "2026-10-19",
       "finish": "",
       "recovery": null,
       "boxes": null
@@ -1444,7 +1460,7 @@
     },
     {
       "rig": "CSD-1300",
-      "source": "20261014_n",
+      "source": "DTDH2605_Daily_report_20261014_n.JPG",
       "date": "2026-10-14",
       "shift": "Шөнө",
       "driller": "Д. Энхбаяр",
@@ -1456,7 +1472,7 @@
       "rt": null,
       "dt": 9.0,
       "hours": 12.0,
-      "notes": "20:00–08:00; PQ хоолой 0–12 м. Ээлжийн метр 51.00 м. Шийдвэрлэсэн 2026-10-15: 0–8.40 м-ийн өдрийн эх тайланг өмнөх мөрт нэмснээр гүний залгалт OK; шөнийн үндсэн утгуудыг өөрчлөөгүй.",
+      "notes": "20:00–08:00. PQ хоолой 0–12 м; өрөмдсөн метрт давхар нэмээгүй. Хэрэглэсэн зүйл: Бит 1; 650 1 (нэгж/нэр тодруулах). Захиалагчийн талбар, захиалагч ба ахлагчийн гарын үсэг хоосон.",
       "waterUsageM3": null,
       "reports": [
         {
@@ -1485,7 +1501,7 @@
       "rt": null,
       "dt": 2.5,
       "hours": 12.0,
-      "notes": "08:00–20:00; 0–8.40 м. Маягтын Rig C-1300; CSD-1300 фолдер ба залгах шөнийн тайлантай холбон CSD-1300 кодоор бүртгэв (баталгаажуулах). POLYMER 1, нэгж бичээгүй. Захиалагч, ахлагчийн гарын үсэг хоосон.",
+      "notes": "08:00–20:00. Маягтын Rig: C-1300; CSD-1300 фолдер, ижил цооногийн шөнийн тайлантай холбон CSD-1300 код хэрэглэв (баталгаажуулах). POLYMER 1, нэгж бичээгүй. Захиалагч, ахлагчийн гарын үсэг хоосон.",
       "waterUsageM3": null,
       "reports": [
         {
@@ -1590,7 +1606,7 @@
       "rt": null,
       "dt": 6.5,
       "hours": 7.0,
-      "notes": "10/15 08:00–14:00 (6 цагийн ХЭСЭГ). Эх зурагт PT=1/2, DT=6:30 (=6.5), кодын нийлбэр 7.0 цаг боловч ээлжийн хугацаа 6.0 цаг; цагийн зөрүү QA/QC-д. Маягтын Total 0.0 талбар бөглөгдөөгүй (хэвлэмэл). Rig хоосон, CSD-1300 эх фолдероор ангилсан; Бит 1. 14–20 цагийн тайлан ирээгүй.",
+      "notes": "10/15 ӨДӨР 08:00–14:00 (6 цагийн ХЭСЭГ). Маягтад PT=0.5, DT=6:30 буюу 6.5 гэж бичсэн: нийлбэр 7.0 цаг, ажилласан хугацаа 6.0 цаг — QA/QC цагийн зөрүү. Хэвлэмэл нийт цаг 0.0 талбар бөглөгдөөгүй. Rig хоосон; CSD-1300 фолдер ба DTDH2605 үргэлжлэлээр ангилсан. Бит 1; 14–20 тайлан ирээгүй. EOH үгүй; эхийг өөрчлөөгүй.",
       "waterUsageM3": null,
       "reports": [
         {
@@ -1712,6 +1728,258 @@
       "notes": "08:00–20:00; эхэд CSD-1300, DTDH2606. PT30мин=0.5ц, RP1, MM30мин=0.5ц, DT9, OT1=12ц. Ус ачсан жолоочийг хүлээсэн тухай OT тайлбар. Хэрэглэсэн зүйл650 —1 (нэр/нэгж баталгаажуулах). Захиалагч/ахлагчийн гарын үсэг хоосон; EOH бичээгүй.",
       "waterUsageM3": null,
       "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-18_DTDH2602_C1800_n.jpg",
+      "date": "2026-10-18",
+      "shift": "Шөнө",
+      "driller": "Анхболд",
+      "hole": "DTDH2602",
+      "from": 266.0,
+      "to": 266.0,
+      "meters": 0.0,
+      "st": null,
+      "rt": null,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "2026-10-18, Шөнө 20:00–08:00. HQ 266–266 м = 0 м. PT1/2=0.5ц, OT11½=11.5ц; нийт12ц. «OT: Өрөм дээр осол гарсан.» Эхэд ZHDH-2602; хэрэглэгчийн 2026-10-19 баталгаагаар энэ удаагаас DTDH2602 гэж бүртгэв. Өмнөх C-1800 / ZHDH2612-ийн үргэлжлэл; 221–266 м-ийн 45 м завсар, 10/18 өдрийн тайлан дутуу. CSD-1300-ийн хуучин DTDH2602-оос Rig-аар ялгана. OT-г BD болгож өөрчлөөгүй; захиалагч/ахлагчийн гарын үсэг хоосон. | DT=0: PT 0.5 + OT 11.5 accounts for all 12 hours.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-18_DTDH2606_n.jpg",
+      "date": "2026-10-18",
+      "shift": "Шөнө",
+      "driller": "Мөнхтөр",
+      "hole": "DTDH2606",
+      "from": 134.4,
+      "to": 161.4,
+      "meters": 27.0,
+      "st": null,
+      "rt": null,
+      "dt": 9.5,
+      "hours": 12.0,
+      "notes": "2026-10-18, 20:00–08:00. DTDH2606 HQ 134.4–161.4 м = 27 м. PT 30мин=0.5ц, DT9:30=9.5ц, BD2ц; нийт12ц. Моторын хөргөлтийн хоолой/шланк задарч засвар хийсэн тухай гар бичмэлтэй (нарийн үгийг баталгаажуулах). Өмнөх 107.4 м-ээс 27 м завсар; 10/18 өдрийн тайлан ирээгүй. Хоосон кодыг нөхөөгүй; захиалагч/ахлагчийн гарын үсэг хоосон. EOH бичээгүй.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-19_ZHDH2602_n.jpg",
+      "date": "2026-10-19",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 287.0,
+      "to": 326.0,
+      "meters": 39.0,
+      "st": null,
+      "rt": null,
+      "dt": 0.0,
+      "hours": 12.0,
+      "notes": "Ажлын цагийн код хоосон, маягтын нийт хугацаа 12ц; кодыг тодруулах. | Owner correction 2026-10-22: DT=0.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-19_ZHDH2602_d.jpg",
+      "date": "2026-10-19",
+      "shift": "Өдөр",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 266.0,
+      "to": 287.0,
+      "meters": 21.0,
+      "st": null,
+      "rt": null,
+      "dt": 6.5,
+      "hours": 12.0,
+      "notes": "266–287 м, 21 м; PT≈0.5ц, DT≈6.5ц, OT=5ц, нийт 12ц. OT-ийн гар бичмэл тайлбар, ажилтны нэрс тодруулах. Полимер 1 нэгж.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-19_ZHDH2603_n.jpg",
+      "date": "2026-10-19",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2603",
+      "from": 14.4,
+      "to": 60.4,
+      "meters": 46.0,
+      "st": null,
+      "rt": null,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "14.4–60.4м 46м; PT=0.5ц DT=11.5ц. Дараагийн ээлж 59.4м-ээс эхэлсэн 1м давхцал.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-19_ZHDH2603_d.jpg",
+      "date": "2026-10-19",
+      "shift": "Өдөр",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2603",
+      "from": 0.0,
+      "to": 14.4,
+      "meters": 14.4,
+      "st": null,
+      "rt": null,
+      "dt": 4.0,
+      "hours": 12.0,
+      "notes": "Шинэ цооног 0–14.4 м; casing 0–6 м. PQ/AQ-ийн багана тодорхойгүй. RP 2ц30мин, PT/MM тус бүр 30мин гэж уншив. Нийт 12ц.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-20_ZHDH2602_n.jpg",
+      "date": "2026-10-20",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 341.0,
+      "to": 383.0,
+      "meters": 42.0,
+      "st": null,
+      "rt": 2.0,
+      "dt": 6.5,
+      "hours": 11.0,
+      "notes": "2026-10-20 шөнийн ээлж гэж 20–21-ний тайлангийн дарааллаар ангилсан; эх маягтын DATE хоосон. 341–383м, 42м. PT=0.5ц, RP=2ц, RT=2ц, DT=6.5ц; нийлбэр 11ц, 1ц дутуу.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-20_ZHDH2602_d.jpg",
+      "date": "2026-10-20",
+      "shift": "Өдөр",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 326.0,
+      "to": 341.0,
+      "meters": 15.0,
+      "st": null,
+      "rt": 2.0,
+      "dt": 6.5,
+      "hours": 10.5,
+      "notes": "PT тэмдэглэгээ тодорхойгүй; RP=2ц, RT=2ц, DT=6.5ц, кодчилсон цаг бүрэн биш.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-20_ZHDH2603_n.jpg",
+      "date": "2026-10-20",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2603",
+      "from": 107.4,
+      "to": 146.4,
+      "meters": 39.0,
+      "st": null,
+      "rt": null,
+      "dt": 10.0,
+      "hours": 12.0,
+      "notes": "107.4–146.4м 39м; PT=0.5ц, DT=10ц, OT=1.5ц.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-20_ZHDH2603_d.jpg",
+      "date": "2026-10-20",
+      "shift": "Өдөр",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2603",
+      "from": 59.4,
+      "to": 107.4,
+      "meters": 48.0,
+      "st": null,
+      "rt": null,
+      "dt": 10.0,
+      "hours": 12.0,
+      "notes": "59.4–107.4м 48м; PT=0.5ц, DT=10ц, OT=1.5ц. Өмнөх To=60.4м.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-21_ZHDH2602_n.jpg",
+      "date": "2026-10-21",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 419.0,
+      "to": 432.0,
+      "meters": 13.0,
+      "st": null,
+      "rt": null,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "PT=0.5ц, DT=11.5ц. Нийт 12ц.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-21_ZHDH2602_d.jpg",
+      "date": "2026-10-21",
+      "shift": "Өдөр",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 383.0,
+      "to": 419.0,
+      "meters": 36.0,
+      "st": null,
+      "rt": null,
+      "dt": 11.0,
+      "hours": 12.0,
+      "notes": "PT=1ц, DT=11ц. Нийт 12ц.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-21_ZHDH2603_n.jpg",
+      "date": "2026-10-21",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2603",
+      "from": 194.4,
+      "to": 221.4,
+      "meters": 27.0,
+      "st": null,
+      "rt": null,
+      "dt": 9.0,
+      "hours": 12.0,
+      "notes": "194.4–221.4м 27м; PT=0.5ц, RP=2.5ц, DT=9ц.",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-21_ZHDH2603_d.jpg",
+      "date": "2026-10-21",
+      "shift": "Өдөр",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2603",
+      "from": 146.4,
+      "to": 194.4,
+      "meters": 48.0,
+      "st": null,
+      "rt": null,
+      "dt": 10.5,
+      "hours": 12.0,
+      "notes": "146.4–194.4м 48м; PT=0.5ц, DT=10.5ц, OT=1ц.",
+      "waterUsageM3": null,
+      "reports": []
     }
   ],
   "folderMap": {
@@ -1768,7 +2036,7 @@
         }
       ]
     },
-    "ZHDH2602": {
+    "ZHDH2612": {
       "url": "https://drive.google.com/drive/folders/1DJUceHvbJ5eFk498MNPalUT6KOJr92OE",
       "folders": [
         {
@@ -1814,6 +2082,104 @@
         {
           "name": "00. Pre-Drill Planning & Readiness",
           "url": "https://drive.google.com/drive/folders/1w8heKRUETRHytWMiaRzxds2YCTJLnSTF"
+        }
+      ]
+    },
+    "ZHDH2602": {
+      "url": "https://drive.google.com/drive/folders/1d77IaqiRy492K7339X2ct45ueXV1ismp",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1mG-wuRVm25yCrr2jsG0_EycZABaRSsaw"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1kAnZC8DHIcnDxG8Pl-cw3YSuMgXzLbwp"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/1pArNA5xQvw4KkjLXLwMwolTgdh6fROKO"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/12fJk7X1k7rpNop7dzzk7wYkMyEf1njlm"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1lQiKaq1pGb9NKTubBI4Z8wJqNCVJyJaT"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1ukOM3qCn43lOmO1-tmhn6uc_sPm4qILg"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1D2CxPMHv6KBGqVgGesgws8DX-1GsEOTc"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/18Fj_NzbJFRzXJ7HsLalshTT2NN1D0mFb"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/11QXQO-3Qi4Sw308hMGk_YyS_QXKKb7jd"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1K742nXBtEkxSNjtHajMKSDR6rgikpRK_"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1SAQZJr4tfaqI_oJEsL40-T1Zh8GEhqp4"
+        }
+      ]
+    },
+    "ZHDH2603": {
+      "url": "https://drive.google.com/drive/folders/1fGkbE1n122aYc6IsFNUy1rJvekwVvRS1",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1Ydlgz42C9aTd2MKFDrZY9A3MI_4vBB69"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1dOYSU1E-lamX2tBUzmykKodWfh4C3cJb"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/1OFyXbmXgwq3Mtj-PCdt5ou4IFHDSrzAN"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1DBbctCBY-VgvqIf7IYG5FqR3UOsXw4bo"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1MS4P8ebtln9MDAT3qazozNGp5wzZ6qUm"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/15CzfAdFfnW01t_7UnXFnaEJN22UKTqiA"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1yphmt_3Vt13PaIPHwQQ3L1eOmUWd3KyP"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1QHbuJiHlDpNP91mX84WcUGo0J-A9-JsO"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1IriNP9uPiDNdOFntUqhtus4y-Fb-aBDe"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1RT2KB2T_zSt3k2_V-rFIP01u6lb4TWW3"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1TmcITEsQNjml9UbxhJiHNg8YYtbxbs5t"
         }
       ]
     },
@@ -2027,6 +2393,7 @@
     "Shift conflict: CSD-1300 / 2026-10-14 / Шөнө / DTDH2605; newer file retained",
     "Shift conflict: CSD-1300 / 2026-10-14 / Өдөр / DTDH2605; newer file retained",
     "Shift conflict: CSD-1300 / 2026-10-15 / Өдөр / DTDH2605; newer file retained",
+    "Unreported time codes: DTDH2602 / 2026-10-18 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2603 / 2026-10-14 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: DTDH2603 / 2026-10-15 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2603 / 2026-10-15 / Өдөр / ST, RT; preserved as null",
@@ -2037,6 +2404,19 @@
     "Unreported time codes: DTDH2606 / 2026-10-16 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-17 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: DTDH2606 / 2026-10-18 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-19 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-19 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-20 / Шөнө / ST; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-20 / Өдөр / ST; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-21 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-21 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2603 / 2026-10-19 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2603 / 2026-10-19 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2603 / 2026-10-20 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2603 / 2026-10-20 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2603 / 2026-10-21 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2603 / 2026-10-21 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-16 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-17 / Өдөр / ST, RT; preserved as null"
@@ -2044,39 +2424,51 @@
   "sources": [
     {
       "name": "Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
+      "url": "https://docs.google.com/spreadsheets/d/1GmS3cGrwGdFaeoyMQT7yYu9mkQhpoAndwdEeGcDCoqo/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 4
+      "shiftRows": 6
+    },
+    {
+      "name": "Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1_OkJrPTpzYXXcz1et713sDyLgWeIlQN66zJgav2sXT4/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 6
+    },
+    {
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 13,
+      "shiftRows": 0
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 57
+      "shiftRows": 59
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1jVCDlWGsx9EYqLmuA9ciIx0L21935DFy1JCkzNUG5Iw/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 57
-    },
-    {
-      "name": "Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1zKwVkfUrOkTY-W9B4IZlqO4R83RChDk6r-vXIP4-PR0/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 57
+      "shiftRows": 59
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 57
+      "shiftRows": 59
     },
     {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 12,
-      "shiftRows": 0
+      "name": "Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1zKwVkfUrOkTY-W9B4IZlqO4R83RChDk6r-vXIP4-PR0/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 59
+    },
+    {
+      "name": "Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 4
     },
     {
       "name": "NUDH_COLLAR.xlsx",
@@ -2202,6 +2594,34 @@
       },
       {
         "date": "2026-10-17",
+        "laborCost": 0.0,
+        "foodCost": 735000.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-18",
+        "laborCost": 0.0,
+        "foodCost": 735000.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-19",
+        "laborCost": 0.0,
+        "foodCost": 735000.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-20",
+        "laborCost": 0.0,
+        "foodCost": 735000.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-21",
         "laborCost": 0.0,
         "foodCost": 735000.0,
         "bonusCost": 0.0,
@@ -2814,6 +3234,150 @@
       },
       {
         "date": "2026-10-17",
+        "rig": "CSD-1300",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-18",
+        "rig": "C-1800",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-18",
+        "rig": "C-1800",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-18",
+        "rig": "CSD-1300",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-18",
+        "rig": "CSD-1300",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-19",
+        "rig": "C-1800",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-19",
+        "rig": "C-1800",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-19",
+        "rig": "CSD-1300",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-19",
+        "rig": "CSD-1300",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-20",
+        "rig": "C-1800",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-20",
+        "rig": "C-1800",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-20",
+        "rig": "CSD-1300",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-20",
+        "rig": "CSD-1300",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-21",
+        "rig": "C-1800",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-21",
+        "rig": "C-1800",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-21",
+        "rig": "CSD-1300",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-21",
         "rig": "CSD-1300",
         "shift": "Өдөр",
         "laborCost": 0.0,
@@ -3642,34 +4206,18 @@
         {
           "date": "2026-10-18",
           "rig": "C-1800",
-          "shift": "Өдөр",
-          "hole": "",
-          "litres": 150.0,
-          "cost": 810000.0
-        },
-        {
-          "date": "2026-10-18",
-          "rig": "C-1800",
           "shift": "Шөнө",
-          "hole": "",
-          "litres": 150.0,
-          "cost": 810000.0
-        },
-        {
-          "date": "2026-10-18",
-          "rig": "CSD-1300",
-          "shift": "Өдөр",
-          "hole": "",
-          "litres": 150.0,
-          "cost": 810000.0
+          "hole": "DTDH2602",
+          "litres": 300.0,
+          "cost": 1620000.0
         },
         {
           "date": "2026-10-18",
           "rig": "CSD-1300",
           "shift": "Шөнө",
-          "hole": "",
-          "litres": 150.0,
-          "cost": 810000.0
+          "hole": "DTDH2606",
+          "litres": 300.0,
+          "cost": 1620000.0
         }
       ]
     }
