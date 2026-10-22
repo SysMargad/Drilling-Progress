@@ -51,6 +51,14 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'dt'):
             parse_shifts([headers,other])
 
+    def test_zero_metre_incident_shift_requires_fully_accounted_hours(self):
+        headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','DT','Total','PT','OT']
+        row=['C-1800','photo','2026-10-18','Шөнө','DTDH2602','266','266','0','','12','0.5','11.5']
+        self.assertEqual(parse_shifts([headers,row])[0]['dt'],0)
+        incomplete=row.copy();incomplete[-1]='10'
+        with self.assertRaisesRegex(ValueError,'dt'):
+            parse_shifts([headers,incomplete])
+
     def test_drive_read_retries_transient_errors_only(self):
         drive=object.__new__(Drive)
         drive.credentials=SimpleNamespace(valid=True,token='unit-test-placeholder')

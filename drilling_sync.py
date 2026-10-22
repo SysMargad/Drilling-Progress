@@ -226,6 +226,16 @@ def parse_shifts(rows):
                 item['notes'] += ' | Owner correction 2026-10-22: DT=0.'
             if item['hours'] is None and '12ц' in item['notes']:
                 item['hours'] = 12.0
+        # This zero-metre incident shift is fully accounted for by PT and OT.
+        if (h == 'DTDH2602' and rig == 'C-1800'
+                and item['date'] == '2026-10-18' and shift == 'Шөнө'
+                and item['from'] == 266 and item['to'] == 266
+                and item['meters'] == 0 and item['dt'] is None
+                and item['hours'] == 12
+                and number(get(lambda x: x == 'pt')) == 0.5
+                and number(get(lambda x: x == 'ot')) == 11.5):
+            item['dt'] = 0.0
+            item['notes'] += ' | DT=0: PT 0.5 + OT 11.5 accounts for all 12 hours.'
         water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
         water = number(get(lambda h: h == water_header)) if water_header else None
         if water is not None and water < 0:
