@@ -20,6 +20,10 @@ let html=vm.runInContext('renderMapping()',context);
 assert.equal((html.match(/data-map-hole=/g)||[]).length,points.length);
 for(const h of data.collar.filter(h=>!model.point(h)))assert.ok(html.includes(`data-hole="${h.id}"`));
 area='Замт Хөндий';html=vm.runInContext('renderMapping()',context);assert.ok(!html.includes('data-map-hole="DTDH'));
-area='';rig='C-1800';html=vm.runInContext('renderMapping()',context);assert.ok(!html.includes('data-map-hole="DTDH2602"'));
+area='';rig='C-1800';html=vm.runInContext('renderMapping()',context);
+for(const point of points){
+ const hasRig=data.shifts.some(s=>s.hole===point.id&&s.rig===rig);
+ assert.equal(html.includes(`data-map-hole="${point.id}"`),hasRig);
+}
 console.log('Mapping verified: UTM 49N placement, round trips, missing coordinates, planned holes and filters.');
 
