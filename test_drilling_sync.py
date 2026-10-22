@@ -2,6 +2,8 @@ import io
 import json
 import unittest
 import tempfile
+import urllib.error
+from types import SimpleNamespace
 from unittest.mock import patch
 from subprocess import CompletedProcess
 import zipfile
@@ -11,7 +13,7 @@ from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
                            finance_aggregates, mud_aggregates, fuel_aggregates, FinanceSourceError, load_json,
                            local_sources, parse_shifts, publish, signature,
                            workbook_rows, report_metadata, attach_reports, drive_sources,
-                           XLSX_MIME)
+                           XLSX_MIME, Drive)
 
 ROOT = Path(__file__).resolve().parent
 
@@ -30,6 +32,28 @@ class PipelineTests(unittest.TestCase):
         data=self.seed.copy();data['shifts']=[parsed]
         from validate_data import validate
         validate(data)
+
+    def test_total_code_hours_header_keeps_reported_value(self):
+        headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','ST','RT','DT','Total code hrs']
+        row=['C-1800','photo','2026-10-20','Өдөр','ZHDH2603','59.4','107.4','48','','','10','12']
+        self.assertEqual(parse_shifts([headers,row])[0]['hours'],12)
+        with self.assertRaisesRegex(ValueError,'hours'):
+            parse_shifts([headers,[*row[:-1],'']])
+
+    def test_drive_read_retries_transient_errors_only(self):
+        drive=object.__new__(Drive)
+        drive.credentials=SimpleNamespace(valid=True,token='unit-test-placeholder')
+        def error(status):
+            return urllib.error.HTTPError('https://www.googleapis.com/unit-test',status,'test',{},None)
+        with patch('drilling_sync.urllib.request.urlopen',side_effect=[error(500),io.BytesIO(b'ok')]) as request, patch('drilling_sync.time.sleep') as sleep:
+            self.assertEqual(drive.request('https://www.googleapis.com/unit-test'),b'ok')
+            self.assertEqual(request.call_count,2)
+            sleep.assert_called_once_with(1)
+        for status,attempts in [(500,3),(403,1)]:
+            with patch('drilling_sync.urllib.request.urlopen',side_effect=error(status)) as request, patch('drilling_sync.time.sleep'):
+                with self.assertRaises(urllib.error.HTTPError):
+                    drive.request('https://www.googleapis.com/unit-test')
+                self.assertEqual(request.call_count,attempts)
 
     def test_water_volume_is_not_a_cost_and_preserves_missing_values(self):
         headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','ST','RT','DT','Total','Water consumption (L)']

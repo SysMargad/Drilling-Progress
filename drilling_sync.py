@@ -214,7 +214,7 @@ def parse_shifts(rows):
                 "st": number(get(lambda x: x == "st")),
                 "rt": number(get(lambda x: x == "rt")),
                 "dt": number(get(lambda x: x == "dt")),
-                "hours": number(get(lambda x: x.endswith("total"))),
+                "hours": number(get(lambda x: x.endswith("total") or x == "total code hrs")),
                 "notes": get(lambda x: "work notes" in x)}
         water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
         water = number(get(lambda h: h == water_header)) if water_header else None
@@ -436,11 +436,18 @@ class Drive:
         if not self.credentials.valid:
             self.credentials.refresh(self.refresh_request)
         req = urllib.request.Request(url, headers={"Authorization": "Bearer " + self.credentials.token})
-        with urllib.request.urlopen(req, timeout=90) as response:
-            content = response.read(25_000_001)
-            if len(content) > 25_000_000:
-                raise ValueError("Drive file exceeds 25 MB download limit")
-            return content
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(req, timeout=90) as response:
+                    content = response.read(25_000_001)
+                    if len(content) > 25_000_000:
+                        raise ValueError("Drive file exceeds 25 MB download limit")
+                    return content
+            except urllib.error.HTTPError as error:
+                if error.code not in {429, 500, 502, 503, 504} or attempt == 2:
+                    raise
+                LOG.warning("Temporary Drive read error HTTP %s; retrying", error.code)
+                time.sleep(2 ** attempt)
 
     def files(self, folder):
         token = None
