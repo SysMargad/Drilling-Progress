@@ -216,6 +216,16 @@ def parse_shifts(rows):
                 "dt": number(get(lambda x: x == "dt")),
                 "hours": number(get(lambda x: x.endswith("total") or x == "total code hrs")),
                 "notes": get(lambda x: "work notes" in x)}
+        # Owner correction (2026-10-22): this uncoded shift has DT=0;
+        # its source work notes explicitly report a 12-hour shift.
+        if (h == 'ZHDH2602' and rig == 'C-1800'
+                and item['date'] == '2026-10-19' and shift == 'Шөнө'
+                and item['from'] == 287 and item['to'] == 326):
+            if item['dt'] is None:
+                item['dt'] = 0.0
+                item['notes'] += ' | Owner correction 2026-10-22: DT=0.'
+            if item['hours'] is None and '12ц' in item['notes']:
+                item['hours'] = 12.0
         water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
         water = number(get(lambda h: h == water_header)) if water_header else None
         if water is not None and water < 0:

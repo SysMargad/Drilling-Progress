@@ -40,6 +40,17 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'hours'):
             parse_shifts([headers,[*row[:-1],'']])
 
+    def test_owner_correction_only_applies_to_designated_shift(self):
+        headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','DT','Total code hrs','Work notes']
+        row=['C-1800','photo','2026-10-19','Шөнө','ZHDH2602','287','326','39','','','маягтын нийт хугацаа 12ц']
+        parsed=parse_shifts([headers,row])[0]
+        self.assertEqual((parsed['meters'],parsed['dt'],parsed['hours']),(39,0,12))
+        actual=row.copy();actual[8:10]=['8','11']
+        self.assertEqual((parse_shifts([headers,actual])[0]['dt'],parse_shifts([headers,actual])[0]['hours']),(8,11))
+        other=row.copy();other[2]='2026-10-20'
+        with self.assertRaisesRegex(ValueError,'dt'):
+            parse_shifts([headers,other])
+
     def test_drive_read_retries_transient_errors_only(self):
         drive=object.__new__(Drive)
         drive.credentials=SimpleNamespace(valid=True,token='unit-test-placeholder')
