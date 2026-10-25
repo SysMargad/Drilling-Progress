@@ -308,6 +308,14 @@
       "status": "failed",
       "completedAt": "2026-10-25T10:42:29+08:00",
       "error": "ValueError"
+    },
+    {
+      "id": "39d8aa58-2ce0-47fb-b77a-766d84b48f6e",
+      "source": "drive",
+      "startedAt": "2026-10-25T12:01:02+08:00",
+      "status": "failed",
+      "completedAt": "2026-10-25T12:01:55+08:00",
+      "error": "ValueError"
     }
   ]
 }
