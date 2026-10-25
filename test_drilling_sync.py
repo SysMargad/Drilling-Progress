@@ -9,7 +9,7 @@ from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
 from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
-                           append_data_log, assemble, drive_finance_aggregates,
+                           append_data_log, assemble, drive_finance_aggregates, apply_uploaded_fuel,
                            finance_aggregates, mud_aggregates, fuel_aggregates, FinanceSourceError, load_json,
                            local_sources, parse_shifts, publish, signature,
                            workbook_rows, report_metadata, attach_reports, drive_sources,
@@ -18,6 +18,27 @@ from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
 ROOT = Path(__file__).resolve().parent
 
 class PipelineTests(unittest.TestCase):
+    def test_uploaded_fuel_survives_stale_drive_without_double_counting(self):
+        finance = {'period': '2026-10', 'fuel': {'daily': [
+            {'date': '2026-10-16', 'litres': 620, 'cost': 3348000},
+            {'date': '2026-10-19', 'litres': None, 'cost': None}], 'allocations': []}}
+        shifts = [{'date': '2026-10-19', 'rig': 'C-1800', 'shift': 'Өдөр', 'hole': 'X', 'hours': 12}]
+        supplement = {'period': '2026-10', 'daily': [
+            {'date': '2026-10-16', 'litres': 620, 'cost': 3348000},
+            {'date': '2026-10-19', 'litres': 500, 'cost': 2700000}]}
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'fuel.json'
+            path.write_text(json.dumps(supplement), encoding='utf-8')
+            result = apply_uploaded_fuel(finance, shifts, path)
+            self.assertEqual(sum(row['litres'] for row in result['fuel']['daily']), 1120)
+            self.assertEqual(result, apply_uploaded_fuel(result, shifts, path))
+            self.assertIsNone(finance['fuel']['daily'][1]['litres'])
+            changed = apply_uploaded_fuel(result, [{**shifts[0], 'rig': 'CSD-1300'}], path)
+            allocation = next(row for row in changed['fuel']['allocations'] if row['date'] == '2026-10-19')
+            self.assertEqual(allocation['rig'], 'CSD-1300')
+            self.assertEqual(allocation['litres'], 500)
+            self.assertEqual(apply_uploaded_fuel({**finance, 'period': '2026-11'}, shifts, path)['period'], '2026-11')
+
     def test_blank_optional_time_codes_remain_unknown(self):
         headers=['Rig','Source','Date','Shift','Driller','Hole ID','From','To','Drilled','ST','RT','DT','Total','Work notes']
         row=['CSD-1300','photo','2026-10-14','Өдөр','x','DTDH2605','0','8.4','8.4','','','2.5','12','']

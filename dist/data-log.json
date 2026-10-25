@@ -288,6 +288,18 @@
       "shifts": 77,
       "meters": 2059.3,
       "note": "36 source conflicts"
+    },
+    {
+      "id": "676f3828-10b1-42ec-b2be-462ecc324fcf",
+      "source": "local",
+      "startedAt": "2026-10-25T10:40:54+08:00",
+      "completedAt": "2026-10-25T10:40:54+08:00",
+      "status": "updated",
+      "files": 1,
+      "holes": 9,
+      "shifts": 77,
+      "meters": 2059.3,
+      "note": "Imported drilling fuel ledger 2026-10-16 through 2026-10-22: 3958 L; replaced overlapping dates, preserved earlier records; unit price 5400 MNT/L confirmed by user. Other vehicle fuel excluded."
     }
   ]
 }

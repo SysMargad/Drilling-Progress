@@ -657,6 +657,29 @@ def fuel_aggregates(sheets, shifts, period):
     return {'daily': sorted(daily, key=lambda row: row['date']), 'allocations': allocations}
 
 
+def apply_uploaded_fuel(finance, shifts, upload_path=None):
+    """Retain explicitly supplied ledger issues across scheduled Drive refreshes."""
+    upload_path = Path(upload_path) if upload_path is not None else ROOT / 'input' / 'fuel-supplement.json'
+    if finance is None or not upload_path.exists():
+        return finance
+    supplement = load_json(upload_path)
+    if supplement['period'] != finance['period']:
+        return finance
+    from validate_data import validate_fuel
+    daily = {row['date']: dict(row) for row in finance['fuel']['daily']}
+    uploaded = supplement['daily']
+    if len({row['date'] for row in uploaded}) != len(uploaded):
+        raise ValueError('Duplicate uploaded fuel date')
+    daily.update({row['date']: dict(row) for row in uploaded})
+    rows = [['Огноо', 'Зарлага (өрөм) (л)', 'Өрөмийн Зардал (Төгрөг)']]
+    rows.extend([row['date'], '' if row['litres'] is None else str(row['litres']),
+                 '' if row['cost'] is None else str(row['cost'])]
+                for row in sorted(daily.values(), key=lambda row: row['date']))
+    fuel = fuel_aggregates([('merged ledger', rows)], shifts, finance['period'])
+    validate_fuel(fuel, finance['period'])
+    return {**finance, 'fuel': fuel}
+
+
 def drive_finance_aggregates(credentials_path, shifts):
     drive = Drive(credentials_path)
     pending, seen, files = [FINANCE_FOLDER_ID], set(), {}
@@ -879,6 +902,8 @@ def main():
                     report_file = args.input / "report-index.json"
                     report_index = load_json(report_file) if report_file.exists() else None
                     data = assemble(records, seed, folders, report_index, seed.get("finance"))
+                if data.get('finance') is not None:
+                    data['finance'] = apply_uploaded_fuel(data['finance'], data['shifts'])
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.

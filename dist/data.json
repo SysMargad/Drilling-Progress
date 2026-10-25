@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-24",
-  "updatedAt": "2026-10-24T12:01:16+08:00",
+  "asOf": "2026-10-25",
+  "updatedAt": "2026-10-25T10:40:54+08:00",
   "period": "2026-10-01 – 2026-10-23",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1GmS3cGrwGdFaeoyMQT7yYu9mkQhpoAndwdEeGcDCoqo/edit?usp=drivesdk",
@@ -3996,6 +3996,26 @@
           "date": "2026-10-18",
           "litres": 600.0,
           "cost": 3240000.0
+        },
+        {
+          "date": "2026-10-19",
+          "litres": 500.0,
+          "cost": 2700000.0
+        },
+        {
+          "date": "2026-10-20",
+          "litres": 628.0,
+          "cost": 3391200.0
+        },
+        {
+          "date": "2026-10-21",
+          "litres": 600.0,
+          "cost": 3240000.0
+        },
+        {
+          "date": "2026-10-22",
+          "litres": 400.0,
+          "cost": 2160000.0
         }
       ],
       "allocations": [
@@ -4422,6 +4442,134 @@
           "hole": "DTDH2606",
           "litres": 300.0,
           "cost": 1620000.0
+        },
+        {
+          "date": "2026-10-19",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "ZHDH2602",
+          "litres": 125.0,
+          "cost": 675000.0
+        },
+        {
+          "date": "2026-10-19",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "ZHDH2602",
+          "litres": 125.0,
+          "cost": 675000.0
+        },
+        {
+          "date": "2026-10-19",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "ZHDH2603",
+          "litres": 125.0,
+          "cost": 675000.0
+        },
+        {
+          "date": "2026-10-19",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "ZHDH2603",
+          "litres": 125.0,
+          "cost": 675000.0
+        },
+        {
+          "date": "2026-10-20",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "ZHDH2602",
+          "litres": 151.82417582,
+          "cost": 819850.55
+        },
+        {
+          "date": "2026-10-20",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "ZHDH2602",
+          "litres": 144.92307692,
+          "cost": 782584.62
+        },
+        {
+          "date": "2026-10-20",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "ZHDH2603",
+          "litres": 165.62637363,
+          "cost": 894382.42
+        },
+        {
+          "date": "2026-10-20",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "ZHDH2603",
+          "litres": 165.62637363,
+          "cost": 894382.41
+        },
+        {
+          "date": "2026-10-21",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "ZHDH2602",
+          "litres": 150.0,
+          "cost": 810000.0
+        },
+        {
+          "date": "2026-10-21",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "ZHDH2602",
+          "litres": 150.0,
+          "cost": 810000.0
+        },
+        {
+          "date": "2026-10-21",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "ZHDH2603",
+          "litres": 150.0,
+          "cost": 810000.0
+        },
+        {
+          "date": "2026-10-21",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "ZHDH2603",
+          "litres": 150.0,
+          "cost": 810000.0
+        },
+        {
+          "date": "2026-10-22",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "ZHDH2602",
+          "litres": 100.0,
+          "cost": 540000.0
+        },
+        {
+          "date": "2026-10-22",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "ZHDH2602",
+          "litres": 100.0,
+          "cost": 540000.0
+        },
+        {
+          "date": "2026-10-22",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "ZHDH2603",
+          "litres": 100.0,
+          "cost": 540000.0
+        },
+        {
+          "date": "2026-10-22",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "ZHDH2603",
+          "litres": 100.0,
+          "cost": 540000.0
         }
       ]
     }

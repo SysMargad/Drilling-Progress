@@ -1,0 +1,44 @@
+{
+  "period": "2026-10",
+  "sourceFile": "НЭРГҮЙ_ӨНДӨР_ШАТАХУУНЫБҮРТГЭЛ_10.16-31(1).xlsx",
+  "sourceSha256": "9b10e9b9d4446ffccd4b7e5f6c178524358cfbdfbcb31ed60c82e8801ea4e085",
+  "pricePerLitre": 5400.0,
+  "costBasis": "User-confirmed continuation of existing dashboard unit price; source workbook contains litres only.",
+  "daily": [
+    {
+      "date": "2026-10-16",
+      "litres": 620.0,
+      "cost": 3348000.0
+    },
+    {
+      "date": "2026-10-17",
+      "litres": 610.0,
+      "cost": 3294000.0
+    },
+    {
+      "date": "2026-10-18",
+      "litres": 600.0,
+      "cost": 3240000.0
+    },
+    {
+      "date": "2026-10-19",
+      "litres": 500.0,
+      "cost": 2700000.0
+    },
+    {
+      "date": "2026-10-20",
+      "litres": 628.0,
+      "cost": 3391200.0
+    },
+    {
+      "date": "2026-10-21",
+      "litres": 600.0,
+      "cost": 3240000.0
+    },
+    {
+      "date": "2026-10-22",
+      "litres": 400.0,
+      "cost": 2160000.0
+    }
+  ]
+}
