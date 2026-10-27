@@ -340,6 +340,18 @@
       "status": "failed",
       "completedAt": "2026-10-27T15:17:26+08:00",
       "error": "ValueError"
+    },
+    {
+      "id": "0ef78cfe-f9c5-4209-9642-19f93c30bf40",
+      "source": "drive",
+      "startedAt": "2026-10-27T15:19:14+08:00",
+      "status": "updated",
+      "completedAt": "2026-10-27T15:20:34+08:00",
+      "files": 13,
+      "holes": 12,
+      "shifts": 89,
+      "meters": 2468.3,
+      "note": "53 source conflicts"
     }
   ]
 }
