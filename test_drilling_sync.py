@@ -46,7 +46,7 @@ class PipelineTests(unittest.TestCase):
         self.assertIsNone(parsed['st'])
         self.assertIsNone(parsed['rt'])
         self.assertEqual(parsed['dt'],2.5)
-        for index,value in [(9,'#REF!'),(9,'-1'),(11,''),(11,'13')]:
+        for index,value in [(9,'#REF!'),(9,'-1'),(11,'13')]:
             bad=row.copy();bad[index]=value
             with self.assertRaises(ValueError):
                 parse_shifts([headers,bad])
@@ -58,8 +58,7 @@ class PipelineTests(unittest.TestCase):
         headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','ST','RT','DT','Total code hrs']
         row=['C-1800','photo','2026-10-20','Өдөр','ZHDH2603','59.4','107.4','48','','','10','12']
         self.assertEqual(parse_shifts([headers,row])[0]['hours'],12)
-        with self.assertRaisesRegex(ValueError,'hours'):
-            parse_shifts([headers,[*row[:-1],'']])
+        self.assertEqual(parse_shifts([headers,[*row[:-1],'']])[0]['hours'],12)
 
     def test_owner_correction_only_applies_to_designated_shift(self):
         headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','DT','Total code hrs','Work notes']
@@ -69,16 +68,32 @@ class PipelineTests(unittest.TestCase):
         actual=row.copy();actual[8:10]=['8','11']
         self.assertEqual((parse_shifts([headers,actual])[0]['dt'],parse_shifts([headers,actual])[0]['hours']),(8,11))
         other=row.copy();other[2]='2026-10-20'
-        with self.assertRaisesRegex(ValueError,'dt'):
-            parse_shifts([headers,other])
+        parsed_other = parse_shifts([headers,other])[0]
+        self.assertEqual((parsed_other['dt'],parsed_other['hours']),(12,12))
 
     def test_zero_metre_incident_shift_requires_fully_accounted_hours(self):
         headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','DT','Total','PT','OT']
         row=['C-1800','photo','2026-10-18','Шөнө','DTDH2602','266','266','0','','12','0.5','11.5']
         self.assertEqual(parse_shifts([headers,row])[0]['dt'],0)
         incomplete=row.copy();incomplete[-1]='10'
+        self.assertEqual(parse_shifts([headers,incomplete])[0]['dt'],12)
+
+    def test_blank_required_hours_use_owner_default_without_replacing_zero(self):
+        headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','ST','RT','DT','Total']
+        row=['CSD-1300','photo','2026-10-25','Шөнө','ZHDH2605','59.4','128.4','69','','','','']
+        parsed=parse_shifts([headers,row])[0]
+        self.assertEqual((parsed['dt'],parsed['hours']),(12,12))
+        self.assertIsNone(parsed['st'])
+        self.assertIsNone(parsed['rt'])
+        self.assertIn('source blank; estimated',parsed['notes'])
+        zero=row.copy();zero[10:12]=['0','0']
+        self.assertEqual((parse_shifts([headers,zero])[0]['dt'],parse_shifts([headers,zero])[0]['hours']),(0,0))
+        malformed=row.copy();malformed[10]='#REF!'
         with self.assertRaisesRegex(ValueError,'dt'):
-            parse_shifts([headers,incomplete])
+            parse_shifts([headers,malformed])
+        conflict=row.copy();conflict[8]='1'
+        with self.assertRaisesRegex(ValueError,'hours mismatch'):
+            parse_shifts([headers,conflict])
 
     def test_drive_read_retries_transient_errors_only(self):
         drive=object.__new__(Drive)

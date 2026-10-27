@@ -236,6 +236,16 @@ def parse_shifts(rows):
                 and number(get(lambda x: x == 'ot')) == 11.5):
             item['dt'] = 0.0
             item['notes'] += ' | DT=0: PT 0.5 + OT 11.5 accounts for all 12 hours.'
+        # Owner policy 2026-10-27: genuinely blank DT/total hours use 12 h.
+        # Keep explicit zero, malformed values and previously verified corrections.
+        assumed = []
+        for key, match in (('dt', lambda x: x == 'dt'),
+                           ('hours', lambda x: x.endswith('total') or x == 'total code hrs')):
+            if item[key] is None and not str(get(match)).strip():
+                item[key] = 12.0
+                assumed.append('DT' if key == 'dt' else 'TOTAL')
+        if assumed:
+            item['notes'] += ' | User default 2026-10-27: ' + ', '.join(assumed) + '=12 h (source blank; estimated).'
         water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
         water = number(get(lambda h: h == water_header)) if water_header else None
         if water is not None and water < 0:
@@ -777,6 +787,8 @@ def assemble(records, seed, folders=None, report_index=None, finance=None):
         report_index = [report for row in seed.get("shifts", []) for report in row.get("reports", [])]
     attach_reports(list(shifts.values()), report_index)
     for item in shifts.values():
+        if 'User default 2026-10-27:' in item.get('notes', ''):
+            warnings.append(f"Estimated time: {item['hole']} / {item['date']} / {item['shift']}; blank DT/total uses owner-approved 12 h")
         missing = [key.upper() for key in ("st", "rt") if item[key] is None]
         if missing:
             warnings.append(f"Unreported time codes: {item['hole']} / {item['date']} / {item['shift']} / {', '.join(missing)}; preserved as null")
