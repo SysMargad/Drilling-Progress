@@ -107,3 +107,39 @@ const increased=vm.runInContext('renderFinancialTab()',context);
 assert.ok(increased.includes('kpi financial-trend up'));
 assert.ok(increased.includes('2026-10-01 · Шөнө · ▲ 100%'));
 console.log('Cost trends verified: red increase, green decrease, last recorded drilling period and trailing zero-metre costs.');
+
+context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
+const diamond=context.fixture.finance.diamond;
+assert.equal(diamond.ratePerMeter,diamond.totalBudget/diamond.plannedMeters);
+const diamondMeters=context.fixture.shifts.filter(r=>r.date.startsWith(context.fixture.finance.period)).reduce((n,r)=>n+r.meters,0);
+const diamondTotal=diamondMeters*diamond.ratePerMeter;
+for(const rig of ['', 'C-1800', 'CSD-1300']){
+ selectedRig=rig;
+ const expected=context.fixture.shifts.filter(r=>r.date.startsWith(context.fixture.finance.period)&&(!rig||r.rig===rig)).reduce((n,r)=>n+r.meters*diamond.ratePerMeter,0);
+ for(const period of ['shift','day','week','month']){
+  context.grainUnderTest=period;
+  vm.runInContext('D=fixture',context);
+  const rows=vm.runInContext('financialRows(grainUnderTest)',context);
+  near(rows.reduce((n,r)=>n+r.diamondCost,0),expected);
+  for(const row of rows)near(row.totalCost,row.allCosts.reduce((n,c)=>n+c.value,0));
+  const points=vm.runInContext('financialRigSeries(grainUnderTest)',context).flatMap(s=>s.points);
+  near(points.reduce((n,p)=>n+(p.diamondCost||0),0),expected);
+  const html=vm.runInContext('financialGrain=grainUnderTest;renderFinancialTab()',context);
+  assert.ok(html.includes('Алмазан хошуу + reaming shell (тооцоот)'));
+  assert.ok(html.includes('бодит солилт/элэгдэл биш'));
+ }
+}
+selectedRig='';
+vm.runInContext('D=fixture',context);
+const withDiamond=vm.runInContext("financialRows('month').reduce((n,r)=>n+r.totalCost,0)",context);
+delete context.fixture.finance.diamond;
+const withoutDiamond=vm.runInContext("financialRows('month').reduce((n,r)=>n+r.totalCost,0)",context);
+near(withDiamond-withoutDiamond,diamondTotal);
+const split=require('./dist/financial-costs.js').records([
+ {date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',meters:10,hours:6},
+ {date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'B',meters:20,hours:6},
+ {date:'2026-10-02',rig:'C-1800',shift:'Өдөр',hole:'B',meters:0,hours:12}
+],['C-1800'],null,null,diamond);
+near(split.reduce((n,r)=>n+r.diamondCost,0),30*diamond.ratePerMeter);
+assert.ok(split.filter(r=>!r.meters).every(r=>r.diamondCost===0));
+console.log('Diamond estimates reconcile across four periods and both rigs; totals include them exactly once; split shifts and zero metres verified.');

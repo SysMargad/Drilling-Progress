@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-10-27",
-  "updatedAt": "2026-10-27T15:20:25+08:00",
+  "updatedAt": "2026-10-27T15:29:02+08:00",
   "period": "2026-10-01 – 2026-10-26",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
@@ -5151,6 +5151,12 @@
           "cost": 540000.0
         }
       ]
+    },
+    "diamond": {
+      "plannedMeters": 10000,
+      "totalBudget": 72180000,
+      "ratePerMeter": 7218,
+      "sourceUrl": "https://docs.google.com/spreadsheets/d/1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8/edit#gid=672180000"
     }
   }
 }

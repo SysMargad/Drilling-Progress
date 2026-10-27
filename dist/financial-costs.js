@@ -3,7 +3,7 @@
   // Existing daily assumptions; water volume is carried separately from costs.
   const DAILY_LABOR=Object.freeze({'C-1800':1180000,'CSD-1300':980000}),DAILY_FOOD=735000;
   const MUD_BAG_KG=25,MUD_PRICE_PER_BAG=330000;
-  function records(rows,rigs=Object.keys(DAILY_LABOR),mud=null,fuel=null){
+  function records(rows,rigs=Object.keys(DAILY_LABOR),mud=null,fuel=null,diamond=null){
     if(!rows.length)return [];
     const dates=[...rows.map(row=>row.date),...(fuel?.daily||[]).map(row=>row.date)].sort(),end=Date.parse(dates.at(-1)+'T00:00:00Z'),groups=new Map(),result=[];
     const mudByKey=new Map(),fuelByKey=new Map();
@@ -23,7 +23,7 @@
           const mudUsageBags=(mudByKey.get([date,rig,shift,row.hole].join('|'))||0)*weight(row)/matching.reduce((n,item)=>n+weight(item),0);
           const mudUsageKg=mudUsageBags*(mud?.bagKg||MUD_BAG_KG);
           result.push({...row,recorded:!!actual.length,fuelRecorded:!!fuelEntry,fuelUsageL,mudUsageKg,mudUsageBags,
-            fuelCost,mudCost:mudUsageBags*(mud?.pricePerBag||MUD_PRICE_PER_BAG),waterUsageM3:row.waterUsageM3??null,
+            fuelCost,mudCost:mudUsageBags*(mud?.pricePerBag||MUD_PRICE_PER_BAG),diamondCost:diamond?meters*diamond.ratePerMeter:0,waterUsageM3:row.waterUsageM3??null,
             laborCost:DAILY_LABOR[rig]/2*fraction,foodCost:DAILY_FOOD/Object.keys(DAILY_LABOR).length/2*fraction});
         }
       }

@@ -9,7 +9,7 @@ from subprocess import CompletedProcess
 import zipfile
 from pathlib import Path
 from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
-                           append_data_log, assemble, drive_finance_aggregates, apply_uploaded_fuel,
+                           append_data_log, assemble, drive_finance_aggregates, apply_uploaded_fuel, diamond_budget,
                            finance_aggregates, mud_aggregates, fuel_aggregates, FinanceSourceError, load_json,
                            local_sources, parse_shifts, publish, signature,
                            workbook_rows, report_metadata, attach_reports, drive_sources,
@@ -18,6 +18,23 @@ from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
 ROOT = Path(__file__).resolve().parent
 
 class PipelineTests(unittest.TestCase):
+    def test_diamond_budget_excludes_reusable_tools_and_validates_rate(self):
+        sheets=[('quote', [['№','Нэршил','Тоо хэмжээ','Нэгж үнэ ТӨГ','Нийт үнэ ТӨГ'],
+                          ['1','PQ drill rod 3m','100','720000','72000000'],
+                          ['2','PQ drill bit Y3','7','930000','6510000'],
+                          ['3','HQ reaming shell','20','545000','10900000']]),
+                ('model', [['Төлөвлөсөн метр','10000']])]
+        model=diamond_budget(sheets)
+        self.assertEqual(model['totalBudget'],17410000)
+        self.assertEqual(model['ratePerMeter'],1741)
+        finance={**self.seed['finance'],'diamond':model}
+        from validate_data import validate_finance
+        validate_finance(finance)
+        with self.assertRaisesRegex(ValueError,'unit rate'):
+            validate_finance({**finance,'diamond':{**model,'ratePerMeter':1}})
+        with self.assertRaisesRegex(ValueError,'planned'):
+            diamond_budget(sheets[:1])
+
     def test_uploaded_fuel_survives_stale_drive_without_double_counting(self):
         finance = {'period': '2026-10', 'fuel': {'daily': [
             {'date': '2026-10-16', 'litres': 620, 'cost': 3348000},

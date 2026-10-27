@@ -34,6 +34,7 @@ NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 RIGS = {"C-1800", "CSD-1300"}
 FINANCE_FOLDER_ID = "1j8QjgqCHBh50pJwl68hBpTCvTu1tUYgj"
+DIAMOND_SHEET_ID = "1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8"
 FINANCE_SHEET_MIME = "application/vnd.google-apps.spreadsheet"
 XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 FOLDER_MIME = "application/vnd.google-apps.folder"
@@ -694,6 +695,41 @@ def apply_uploaded_fuel(finance, shifts, upload_path=None):
     return {**finance, 'fuel': fuel}
 
 
+def diamond_budget(sheets):
+    """Only drill bits and reaming shells; never reusable tools or spare parts."""
+    planned = None
+    for _, rows in sheets:
+        for row in rows:
+            if row and norm(row[0]) == norm('Төлөвлөсөн метр'):
+                planned = _finance_number(_finance_cell(row, 1))
+    if planned is None or planned <= 0:
+        raise ValueError('Diamond budget has no positive planned metres')
+    _, rows, index, headers = _find_finance_table(sheets, ('нэршил', 'тоо хэмжээ', 'нэгж үнэ төг'))
+    total, count = 0.0, 0
+    for row in rows[index + 1:]:
+        name = _finance_cell(row, headers.index('нэршил'))
+        if not re.search(r'\b(?:drill bit|reaming shell)\b', name, re.I):
+            continue
+        quantity = _finance_number(_finance_cell(row, headers.index('тоо хэмжээ')))
+        price = _finance_number(_finance_cell(row, headers.index('нэгж үнэ төг')))
+        if quantity is None or price is None or quantity < 0 or price < 0:
+            raise ValueError('Invalid diamond budget item')
+        total += quantity * price
+        count += 1
+    if not count or total <= 0:
+        raise ValueError('Diamond budget has no eligible items')
+    return {'plannedMeters': planned, 'totalBudget': total, 'ratePerMeter': total / planned,
+            'sourceUrl': f'https://docs.google.com/spreadsheets/d/{DIAMOND_SHEET_ID}/edit#gid=672180000'}
+
+
+def apply_diamond_budget(finance):
+    if finance is not None and 'diamond' not in finance:
+        path = ROOT / 'input' / 'diamond-budget.json'
+        if path.exists():
+            return {**finance, 'diamond': load_json(path)}
+    return finance
+
+
 def drive_finance_aggregates(credentials_path, shifts):
     drive = Drive(credentials_path)
     pending, seen, files = [FINANCE_FOLDER_ID], set(), {}
@@ -716,7 +752,7 @@ def drive_finance_aggregates(credentials_path, shifts):
             elif file["mimeType"] in {FINANCE_SHEET_MIME, XLSX_MIME}:
                 files[file["id"]] = file
 
-    salary_sheets = attendance_sheets = products_sheets = fuel_sheets = None
+    salary_sheets = attendance_sheets = products_sheets = fuel_sheets = diamond_sheets = None
     for file in sorted(files.values(), key=lambda item: item.get("modifiedTime", ""), reverse=True):
         try:
             content = drive.download(file)
@@ -725,6 +761,8 @@ def drive_finance_aggregates(credentials_path, shifts):
                 continue
             raise FinanceSourceError("workbook in shared finance folder", error.code) from error
         sheets = workbook_rows(content, ".xlsx")
+        if file['id'] == DIAMOND_SHEET_ID:
+            diamond_sheets = sheets
         if salary_sheets is None and _finance_has_headers(
                 sheets, ("албан тушаал", "ажилтны тоо", "нэрлэсэн цалин")):
             _salary_table(sheets)
@@ -737,7 +775,7 @@ def drive_finance_aggregates(credentials_path, shifts):
             products_sheets = sheets
         if fuel_sheets is None and _finance_has_headers(sheets, ('зарлага (өрөм) (л)', 'өрөмийн зардал (төгрөг)')):
             fuel_sheets = sheets
-        if salary_sheets is not None and attendance_sheets is not None and products_sheets is not None and fuel_sheets is not None:
+        if salary_sheets is not None and attendance_sheets is not None and products_sheets is not None and fuel_sheets is not None and diamond_sheets is not None:
             break
     if salary_sheets is None:
         raise FinanceSourceError("salary workbook in shared finance folder", 404)
@@ -750,6 +788,8 @@ def drive_finance_aggregates(credentials_path, shifts):
     if fuel_sheets is None:
         raise FinanceSourceError('drilling fuel ledger with cost', 404)
     result['fuel'] = fuel_aggregates(fuel_sheets, shifts, result['period'])
+    if diamond_sheets is not None:
+        result['diamond'] = diamond_budget(diamond_sheets)
     return result
 
 
@@ -920,6 +960,7 @@ def main():
                     data = assemble(records, seed, folders, report_index, seed.get("finance"))
                 if data.get('finance') is not None:
                     data['finance'] = apply_uploaded_fuel(data['finance'], data['shifts'])
+                    data['finance'] = apply_diamond_budget(data['finance'])
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.

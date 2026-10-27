@@ -55,7 +55,7 @@ def validate(data):
 
 
 def validate_finance(finance):
-    if set(finance) not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
+    if set(finance) - {'diamond'} not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
         raise ValueError('Finance data must contain aggregate fields only')
     if not isinstance(finance['period'], str) or not re.fullmatch(r'\d{4}-\d{2}', finance['period']):
         raise ValueError('Invalid finance period')
@@ -63,6 +63,18 @@ def validate_finance(finance):
         validate_fuel(finance['fuel'], finance['period'])
     if 'mud' in finance:
         validate_mud(finance['mud'])
+    if 'diamond' in finance:
+        diamond = finance['diamond']
+        if set(diamond) != {'plannedMeters', 'totalBudget', 'ratePerMeter', 'sourceUrl'}:
+            raise ValueError('Unexpected diamond budget fields')
+        for key in ('plannedMeters', 'totalBudget', 'ratePerMeter'):
+            if not isinstance(diamond[key], (int, float)) or not math.isfinite(diamond[key]) or diamond[key] <= 0:
+                raise ValueError('Invalid diamond budget amount')
+        if not math.isclose(diamond['ratePerMeter'] * diamond['plannedMeters'], diamond['totalBudget'], abs_tol=0.01):
+            raise ValueError('Diamond unit rate does not reconcile')
+        source = urlparse(diamond['sourceUrl'])
+        if source.scheme != 'https' or source.hostname != 'docs.google.com' or not source.path.startswith('/spreadsheets/d/'):
+            raise ValueError('Invalid diamond budget source')
     daily = {}
     for row in finance['daily']:
         if set(row) not in ({'date', 'laborCost', 'foodCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost'}, {'date', 'laborCost', 'foodCost', 'bonusCost', 'incentiveCost'}):
