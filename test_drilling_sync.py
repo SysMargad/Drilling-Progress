@@ -60,6 +60,14 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(parse_shifts([headers,row])[0]['hours'],12)
         self.assertEqual(parse_shifts([headers,[*row[:-1],'']])[0]['hours'],12)
 
+    def test_source_shift_duration_precedes_partial_code_subtotal(self):
+        headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','DT','Total code hrs','Shift hours (source)']
+        row=['C-1800','photo','2026-10-23','Шөнө','ZHDH2604','0','11','11','','6','12']
+        result=parse_shifts([headers,row])[0]
+        self.assertEqual((result['dt'],result['hours']),(12,12))
+        row[-1]='0';row[-3]='0'
+        self.assertEqual(parse_shifts([headers,row])[0]['hours'],0)
+
     def test_owner_correction_only_applies_to_designated_shift(self):
         headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','DT','Total code hrs','Work notes']
         row=['C-1800','photo','2026-10-19','Шөнө','ZHDH2602','287','326','39','','','маягтын нийт хугацаа 12ц']

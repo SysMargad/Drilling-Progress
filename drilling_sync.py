@@ -214,8 +214,12 @@ def parse_shifts(rows):
                 "st": number(get(lambda x: x == "st")),
                 "rt": number(get(lambda x: x == "rt")),
                 "dt": number(get(lambda x: x == "dt")),
-                "hours": number(get(lambda x: x.endswith("total") or x == "total code hrs")),
+                "hours": number(get(lambda x: x == "shift hours (source)")),
                 "notes": get(lambda x: "work notes" in x)}
+        # The source shift duration is distinct from the subtotal of filled codes.
+        # Partially coded shifts may have a 6 h code subtotal but a 12 h duration.
+        if item['hours'] is None:
+            item['hours'] = number(get(lambda x: x.endswith('total') or x == 'total code hrs'))
         # Owner correction (2026-10-22): this uncoded shift has DT=0;
         # its source work notes explicitly report a 12-hour shift.
         if (h == 'ZHDH2602' and rig == 'C-1800'
@@ -240,7 +244,7 @@ def parse_shifts(rows):
         # Keep explicit zero, malformed values and previously verified corrections.
         assumed = []
         for key, match in (('dt', lambda x: x == 'dt'),
-                           ('hours', lambda x: x.endswith('total') or x == 'total code hrs')):
+                           ('hours', lambda x: x == 'shift hours (source)' or x.endswith('total') or x == 'total code hrs')):
             if item[key] is None and not str(get(match)).strip():
                 item[key] = 12.0
                 assumed.append('DT' if key == 'dt' else 'TOTAL')
