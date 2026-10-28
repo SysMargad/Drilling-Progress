@@ -441,7 +441,10 @@ function render(){
   $('.search')?.addEventListener('input',e=>{query=e.target.value;$('#table').innerHTML=tab==='holes'?holeTable():shiftTable();});
 }
 function openHole(id){const h=D.collar.find(x=>x.id===id),folder=D.folderMap?.[id],state=status(h);$('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(h.id)}</h2><p>${SITE} · ${esc(areaOf(h))} · <span class="badge ${state[1]}">${state[0]}</span></p><div class="detail-grid">${[['Төлөвлөсөн гүн',fmt(h.plan)+' м'],['Ээлжийн сүүлийн гүн',fmt(depth(id))+' м'],['Collar эцсийн гүн',fmt(h.collarDepth)+' м'],['Эхэлсэн / дууссан',`${h.start||'—'} / ${h.finish||'—'}`],['E / N / Z',`${fmt(h.e,3)} / ${fmt(h.n,3)} / ${fmt(h.z,3)}`],['Азимут / хазайлт',`${fmt(h.az)}° / ${fmt(h.dip)}°`],['Керний гарц',h.recovery==null?'—':fmt(h.recovery)+'%'],['Керний хайрцаг',fmt(h.boxes,0)]].map(([label,value])=>`<div><small>${label}</small><strong>${esc(value)}</strong></div>`).join('')}</div><h3>Эх баримтууд</h3><div class="folder-links">${folder?folder.folders.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)} ↗</a>`).join(''):'Энэ цооногийн хавтас олдоогүй.'}</div>`;$('#detail').showModal();}
+function savedTheme(){try{const theme=localStorage.getItem('drilling-theme');return theme==='light'||theme==='dark'?theme:null;}catch{return null;}}
+function setTheme(theme,save){document.documentElement.dataset.theme=theme;$('#dark-theme').media=theme==='dark'?'all':'not all';document.querySelectorAll('[data-theme-choice]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.themeChoice===theme));if(save)try{localStorage.setItem('drilling-theme',theme);}catch{}}
 document.addEventListener('click',e=>{
+  const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice)setTheme(themeChoice.dataset.themeChoice,true);
   const mapHole=e.target.closest('[data-map-hole]');if(mapHole)focusMappingHole(mapHole.dataset.mapHole);
   const bar=e.target.closest('g[data-bar-index]');if(bar)openBarReports(chartBars[Number(bar.dataset.barIndex)]);
   const financialPeriod=e.target.closest('[data-financial-grain]');if(financialPeriod){financialGrain=financialPeriod.dataset.financialGrain;render();}
@@ -460,4 +463,5 @@ $('#export').addEventListener('click',()=>{
 });
 async function refreshLog(){try{const r=await fetch('data-log.json',{cache:'no-store'});if(!r.ok)throw Error();const log=await r.json();dataLog=log.entries||[];logError='';}catch{logError='Дата татсан түүхийг ачаалж чадсангүй.';}if(D&&tab==='data-log')render();}
 async function refreshData(){try{const r=await fetch('data.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json(),changed=JSON.stringify(data)!==JSON.stringify(D);D=data;$('.period strong').textContent=D.period;$('#load-error').hidden=true;if(changed)render();}catch(e){$('#load-error').hidden=false;$('#load-error').textContent=D?'Өгөгдөл ачаалж чадсангүй. Өмнөх өгөгдлийг харуулж байна.':'Өгөгдөл ачаалж чадсангүй.';}}
+setTheme(document.documentElement.dataset.theme);matchMedia('(prefers-color-scheme: light)').addEventListener('change',e=>{if(!savedTheme())setTheme(e.matches?'light':'dark');});
 refreshData();refreshLog();setInterval(()=>{refreshData();refreshLog();},60000);

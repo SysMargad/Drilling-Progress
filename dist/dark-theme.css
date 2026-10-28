@@ -1,3 +1,6 @@
+/* Dark palette, layered over the light base styles. Active only while the dark theme is on:
+   index.html and setTheme() in app.js switch this stylesheet's media attribute. */
+
 :root {
   color-scheme: dark;
   --ink: #f5f5f7;
@@ -69,10 +72,6 @@ nav button:hover,
   color: var(--ink);
 }
 
-.cost-label { gap: 12px; align-items: flex-start; }
-.cost-label > span { min-width: 0; overflow-wrap: anywhere; }
-.cost-label > strong { flex-shrink: 0; white-space: nowrap; }
-
 th {
   background: #262628;
   border-color: #38383a;
@@ -129,42 +128,14 @@ td {
   color: #dedee2;
 }
 
-.chart-period-button {
-  border: 0;
-  border-radius: 5px;
-  padding: 7px 13px;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-}
-
-.chart-period-button.active {
+.chart-periods button[aria-pressed=true] {
   background: #414144;
   color: #fff;
-}
-
-.financial-panel .chart-periods button.chart-period-button.active {
-  background: #414144;
-  color: #fff;
+  box-shadow: none;
 }
 
 .chart-period-button:hover {
   color: #fff;
-}
-
-.cost-change {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-  font-size: 12px;
-}
-
-.cost-change small {
-  color: var(--muted);
-  text-align: right;
 }
 
 .cost-change.up {
@@ -173,10 +144,6 @@ td {
 
 .cost-change.down {
   color: #39d98a;
-}
-
-.cost-change.flat {
-  color: var(--muted);
 }
 
 .kpi.financial-trend.up .value,
@@ -189,51 +156,8 @@ td {
   color: #39d98a;
 }
 
-.kpi.financial-trend.flat .value,
-.kpi.financial-trend.flat .note {
-  color: var(--muted);
-}
-
-.financial-panel svg line {
+.panel svg line {
   stroke: #3b3b3e;
-}
-
-.financial-panel svg {
-  max-height: none;
-  min-height: 300px;
-}
-
-.financial-details-table {
-  table-layout: fixed;
-  min-width: 1040px;
-  white-space: normal;
-  width: 100%;
-}
-
-.financial-details-table th,
-.financial-details-table td {
-  padding: 10px 8px;
-  overflow-wrap: anywhere;
-  vertical-align: top;
-}
-
-.financial-details-table th:nth-child(1) { width: 10%; }
-.financial-details-table th:nth-child(2) { width: 10%; }
-.financial-details-table th:nth-child(3) { width: 9%; }
-.financial-details-table th:nth-child(4) { width: 13%; }
-.financial-details-table th:nth-child(5) { width: 7%; }
-.financial-details-table th:nth-child(6) { width: 10%; }
-.financial-details-table th:nth-child(7) { width: 10%; }
-.financial-details-table th:nth-child(8) { width: 9%; }
-.financial-details-table th:nth-child(9) { width: 12%; }
-.financial-details-table th:nth-child(10) { width: 10%; }
-
-.legend .rig-orange {
-  background: #dc8a3b;
-}
-
-.legend .rig-green {
-  background: #128875;
 }
 
 svg text {
@@ -260,61 +184,21 @@ footer {
   color: #d0d0d4;
 }
 
+.mapping-hole {
+  background: #242426;
+}
+
+.mapping-hole:hover,
+.mapping-hole:focus-visible {
+  background: #2c3431;
+}
+
 @media (max-width: 700px) {
-  .financial-details-scroll {
-    overflow: visible;
-  }
-
-  .financial-details-table {
-    min-width: 0;
-    display: block;
-    white-space: normal;
-  }
-
-  .financial-details-table thead {
-    display: none;
-  }
-
-  .financial-details-table tbody {
-    display: grid;
-    gap: 10px;
-  }
-
   .financial-details-table tr {
-    display: grid;
-    padding: 8px 12px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
     background: #242426;
   }
 
   .financial-details-table td {
-    display: grid;
-    grid-template-columns: minmax(88px, 34%) minmax(0, 1fr);
-    gap: 10px;
-    padding: 7px 0;
-    border-bottom: 1px solid #303032;
-  }
-
-  .financial-details-table td::before {
-    content: attr(data-label);
-    color: var(--muted);
-    font-size: 11px;
-  }
-
-  .financial-details-table tr td:last-child {
-    border-bottom: 0;
-  }
-
-  .cost-change {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .cost-change small {
-    text-align: left;
+    border-bottom-color: #303032;
   }
 }
-
-.cost-usage { margin: 5px 0 8px; }
