@@ -45,6 +45,9 @@ const markup=vm.runInContext('renderFinancialTab()',context);
 assert.ok(markup.includes('Өрөмд олгосон:'));
 assert.ok(markup.includes('Түлш (л, олголт)'));
 assert.ok(markup.includes('Шавар (кг, хуваарилсан)'));
+const detailDates=[...markup.matchAll(/data-label="Хугацаа">([^<]+)</g)].map(match=>match[1]);
+assert.ok(new Set(detailDates).size>1);
+assert.deepEqual(detailDates,[...detailDates].sort().reverse(),'details table lists the latest period first');
 console.log('Consumption dashboard verified: four periods, rig filter, details and chart consistency.');
 
 selectedRig='';

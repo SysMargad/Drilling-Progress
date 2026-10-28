@@ -270,7 +270,7 @@ function renderFinancialTab(){
       <div class="table-scroll financial-details-scroll">
         <table class="financial-details-table">
           <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Түлш (л, олголт)</th><th>Шавар (кг, хуваарилсан)</th><th>Усны хэрэглээ</th><th>Алмазан хошуу ₮ (тооцоот)</th><th>Дүн ₮ </th><th>₮/м </th></tr></thead>
-          <tbody>${rows.map(r=>`<tr>
+          <tbody>${[...rows].reverse().map(r=>`<tr>
             <td data-label="Хугацаа">${r.date}</td>
             <td data-label="Өрөм">${esc(r.rigs||'—')}</td>
             <td data-label="Ээлж">${esc(r.shiftLabel||'—')}</td>
