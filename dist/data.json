@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-27",
-  "updatedAt": "2026-10-27T15:29:02+08:00",
-  "period": "2026-10-01 – 2026-10-26",
+  "asOf": "2026-10-28",
+  "updatedAt": "2026-10-28T12:57:13+08:00",
+  "period": "2026-10-01 – 2026-10-27",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1jHSTh2SHQwaM96Pn7TruI4NPCal4tCA5O83cEjVReDU/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -2352,6 +2352,42 @@
       "notes": "2026-10-26 өдөр, CSD-1300, ZHDH2605 HQ 128.4–170м. Тооцоолсон ахиц 41.6м; эх маягтын Drilled=42м гэж бүхэлдүүлэн бичсэн, 0.4м-ийн зөрүү. PT=0.5ц, RP=1.5ц, DT=9ц, OT=1ц; нийт 12ц. Өмнөх To=128.4м-тэй таарсан.",
       "waterUsageM3": null,
       "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "2026-10-27_ZHDH2604_n_281-293.jpg",
+      "date": "2026-10-27",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2604",
+      "from": 281.0,
+      "to": 293.0,
+      "meters": 12.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "2026-10-27 шөнө 20:00–08:00, HQ 281–293м = 12м; эх маягтын нийт хугацаа 12ц, PT/DT болон бусад ажлын код хоосон. Өмнөх бүртгэл 206–230м (10/26 шөнө); 230–281м (51м) завсрын ээлжийн тайлан байхгүй. 11–50м (39м) өмнөх дутуу интервал ч нээлттэй. | User default 2026-10-27: DT=12 h (source blank; estimated).",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "2026-10-27_ZHDH2606_n_74.4-134.4.jpg",
+      "date": "2026-10-27",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2606",
+      "from": 74.4,
+      "to": 134.4,
+      "meters": 60.0,
+      "st": null,
+      "rt": null,
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "2026-10-27 шөнө 20:00–08:00, HQ 74.4–134.4м = 60м; PT=0.5ц, DT=11.5ц, нийлбэр 12ц. Өмнөх 10/24 0–26.4м-ийн дараа 26.4–74.4м (48м) тайлан дутуу. 10/26 0–23.4м зураг QAQC HOLD хэвээр, цооногийн дугаар/гүний маргаан баталгаажаагүй.",
+      "waterUsageM3": null,
+      "reports": []
     }
   ],
   "folderMap": {
@@ -2857,6 +2893,10 @@
       "url": "https://drive.google.com/drive/folders/11xOJrhCxTQGkrA-nU8y-NGD4MeMHy-Oz",
       "folders": [
         {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1nKAFN-W5Y4ouTJ7jgonB20gF7UMZ2dtN"
+        },
+        {
           "name": "10. pXRF",
           "url": "https://drive.google.com/drive/folders/1r8ZzpK4icDxT8E28FplIRt71xmNOJQh0"
         },
@@ -2875,10 +2915,6 @@
         {
           "name": "06. Sampling & Dispatch",
           "url": "https://drive.google.com/drive/folders/1M7GOUJNiNqgzIHKw4yxG7Bp8wZOH-5PV"
-        },
-        {
-          "name": "05. Core & RC Photography",
-          "url": "https://drive.google.com/drive/folders/1nKAFN-W5Y4ouTJ7jgonB20gF7UMZ2dtN"
         },
         {
           "name": "04. Geological Logging",
@@ -2906,6 +2942,14 @@
       "url": "https://drive.google.com/drive/folders/12YEGUNXipTmjQO5aEeycDpwgCYghXJgi",
       "folders": [
         {
+          "name": "Geological Log",
+          "url": "https://drive.google.com/drive/folders/1p_fg1xxDGgfOLWDENML62pgP3JRvjGM4"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1PUu_w279yW0PuNTmmisQj0OikrajBguv"
+        },
+        {
           "name": "10.pXRF",
           "url": "https://drive.google.com/drive/folders/1FUwDB7tCrUh1UszpVn7x1V1o503nKDLU"
         },
@@ -2921,6 +2965,7 @@
     "Estimated time: ZHDH2604 / 2026-10-24 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2604 / 2026-10-25 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2604 / 2026-10-26 / Шөнө; blank DT/total uses owner-approved 12 h",
+    "Estimated time: ZHDH2604 / 2026-10-27 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2605 / 2026-10-25 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Shift conflict: CSD-1300 / 2026-10-14 / Шөнө / DTDH2605; newer file retained",
     "Shift conflict: CSD-1300 / 2026-10-14 / Өдөр / DTDH2605; newer file retained",
@@ -2963,15 +3008,29 @@
     "Unreported time codes: ZHDH2604 / 2026-10-25 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2604 / 2026-10-26 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2604 / 2026-10-26 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2604 / 2026-10-27 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2605 / 2026-10-25 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2605 / 2026-10-25 / Өдөр / RT; preserved as null",
     "Unreported time codes: ZHDH2605 / 2026-10-26 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2606 / 2026-10-24 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2606 / 2026-10-27 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-16 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2612 / 2026-10-17 / Өдөр / ST, RT; preserved as null"
   ],
   "sources": [
+    {
+      "name": "ZHDH2606 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1jHSTh2SHQwaM96Pn7TruI4NPCal4tCA5O83cEjVReDU/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 2
+    },
+    {
+      "name": "ZHDH2604 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 7
+    },
     {
       "name": "NUDH_COLLAR.xlsx",
       "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
@@ -3009,22 +3068,10 @@
       "shiftRows": 59
     },
     {
-      "name": "ZHDH2606 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1jHSTh2SHQwaM96Pn7TruI4NPCal4tCA5O83cEjVReDU/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 1
-    },
-    {
       "name": "ZHDH2605 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1BHakUu770Px7vHxvwQwnEFs-fWroQsQ1c4AzoD6z0Yg/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 3
-    },
-    {
-      "name": "ZHDH2604 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 6
     },
     {
       "name": "Drilling Shift Report Table",
@@ -3225,6 +3272,13 @@
       },
       {
         "date": "2026-10-26",
+        "laborCost": 0.0,
+        "foodCost": 735000.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-27",
         "laborCost": 0.0,
         "foodCost": 735000.0,
         "bonusCost": 0.0,
@@ -4161,6 +4215,42 @@
       },
       {
         "date": "2026-10-26",
+        "rig": "CSD-1300",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-27",
+        "rig": "C-1800",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-27",
+        "rig": "C-1800",
+        "shift": "Өдөр",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-27",
+        "rig": "CSD-1300",
+        "shift": "Шөнө",
+        "laborCost": 0.0,
+        "foodCost": 183750.0,
+        "bonusCost": 0.0,
+        "incentiveCost": 0.0
+      },
+      {
+        "date": "2026-10-27",
         "rig": "CSD-1300",
         "shift": "Өдөр",
         "laborCost": 0.0,
@@ -5153,9 +5243,9 @@
       ]
     },
     "diamond": {
-      "plannedMeters": 10000,
-      "totalBudget": 72180000,
-      "ratePerMeter": 7218,
+      "plannedMeters": 10000.0,
+      "totalBudget": 72180000.0,
+      "ratePerMeter": 7218.0,
       "sourceUrl": "https://docs.google.com/spreadsheets/d/1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8/edit#gid=672180000"
     }
   }
