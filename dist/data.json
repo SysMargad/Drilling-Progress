@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-10-30",
-  "updatedAt": "2026-10-30T13:08:51+08:00",
+  "updatedAt": "2026-10-30T16:27:26+08:00",
   "period": "2026-10-01 – 2026-10-29",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1jHSTh2SHQwaM96Pn7TruI4NPCal4tCA5O83cEjVReDU/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -2517,6 +2517,24 @@
     },
     {
       "rig": "C-1800",
+      "source": "2026-10-29_ZHDH2604_n_395-428.jpg",
+      "date": "2026-10-29",
+      "shift": "Шөнө",
+      "driller": "Нэр баталгаажаагүй",
+      "hole": "ZHDH2604",
+      "from": 395.0,
+      "to": 428.0,
+      "meters": 33.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "2026-10-29 шөнийн ээлж (20:00–08:00), HQ 395–428 м (33 м), C-1800. Нийт ээлж 12 цаг; PT/MN/SU/PD/RP/DT болон бусад ажлын цагийн код эх зурагт хоосон, TOTAL HOURS доод нүд 0.0 (бөглөөгүй). DT баталгаажаагүй. Полимер 1 (нэгж бичигдээгүй). Ижил тайлангийн хоёр фото: үндсэн эх зураг ба alt. EST_DT=12 зөвхөн нөхцөлт 12−0, бодит DT биш. | User default 2026-10-27: DT=12 h (source blank; estimated).",
+      "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
       "source": "2026-10-29_ZHDH2604_d_365-395.jpg",
       "date": "2026-10-29",
       "shift": "Өдөр",
@@ -3104,6 +3122,10 @@
       "url": "https://drive.google.com/drive/folders/12YEGUNXipTmjQO5aEeycDpwgCYghXJgi",
       "folders": [
         {
+          "name": "06. Sampling",
+          "url": "https://drive.google.com/drive/folders/1yPeJy-lsEaUY-AdFx8hBQc2dUDspZncx"
+        },
+        {
           "name": "05. Core & RC Photography",
           "url": "https://drive.google.com/drive/folders/1PUu_w279yW0PuNTmmisQj0OikrajBguv"
         },
@@ -3133,6 +3155,7 @@
     "Estimated time: ZHDH2604 / 2026-10-25 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2604 / 2026-10-26 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2604 / 2026-10-27 / Шөнө; blank DT/total uses owner-approved 12 h",
+    "Estimated time: ZHDH2604 / 2026-10-29 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2605 / 2026-10-25 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2606 / 2026-10-26 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Shift conflict: CSD-1300 / 2026-10-14 / Шөнө / DTDH2605; newer file retained",
@@ -3181,6 +3204,7 @@
     "Unreported time codes: ZHDH2604 / 2026-10-27 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2604 / 2026-10-28 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2604 / 2026-10-28 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2604 / 2026-10-29 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2604 / 2026-10-29 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2605 / 2026-10-25 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2605 / 2026-10-25 / Өдөр / RT; preserved as null",
@@ -3197,16 +3221,16 @@
   ],
   "sources": [
     {
+      "name": "ZHDH2604 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 13
+    },
+    {
       "name": "ZHDH2606 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1jHSTh2SHQwaM96Pn7TruI4NPCal4tCA5O83cEjVReDU/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 6
-    },
-    {
-      "name": "ZHDH2604 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 12
     },
     {
       "name": "NUDH_COLLAR.xlsx",
