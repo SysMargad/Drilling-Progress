@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-30",
-  "updatedAt": "2026-10-30T16:27:26+08:00",
+  "asOf": "2026-10-31",
+  "updatedAt": "2026-10-31T12:54:46+08:00",
   "period": "2026-10-01 – 2026-10-29",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
@@ -144,7 +144,7 @@
       "z": null,
       "az": 52.0,
       "dip": 64.0,
-      "plan": 450.0,
+      "plan": 500.0,
       "collarDepth": null,
       "start": "2026-10-24",
       "finish": "",
@@ -177,9 +177,9 @@
       "az": 73.0,
       "dip": 60.0,
       "plan": 230.0,
-      "collarDepth": null,
+      "collarDepth": 233.4,
       "start": "2026-10-26",
-      "finish": "",
+      "finish": "2026-10-29",
       "recovery": null,
       "boxes": null
     },
@@ -3221,6 +3221,12 @@
   ],
   "sources": [
     {
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 16,
+      "shiftRows": 0
+    },
+    {
       "name": "ZHDH2604 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
       "collarRows": 0,
@@ -3231,12 +3237,6 @@
       "url": "https://docs.google.com/spreadsheets/d/1jHSTh2SHQwaM96Pn7TruI4NPCal4tCA5O83cEjVReDU/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 6
-    },
-    {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 16,
-      "shiftRows": 0
     },
     {
       "name": "Drilling Shift Report Table",
