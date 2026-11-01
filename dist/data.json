@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-31",
-  "updatedAt": "2026-10-31T12:54:46+08:00",
+  "asOf": "2026-11-01",
+  "updatedAt": "2026-11-01T13:22:06+08:00",
   "period": "2026-10-01 – 2026-10-29",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
@@ -116,7 +116,7 @@
       "collarDepth": 489.3,
       "start": "2026-10-15",
       "finish": "2026-10-23",
-      "recovery": null,
+      "recovery": 100.0,
       "boxes": 131.0
     },
     {
@@ -132,7 +132,7 @@
       "collarDepth": 350.4,
       "start": "2026-10-19",
       "finish": "2026-10-24",
-      "recovery": null,
+      "recovery": 100.0,
       "boxes": 93.0
     },
     {
@@ -164,7 +164,7 @@
       "collarDepth": 170.4,
       "start": "2026-10-24",
       "finish": "2026-10-26",
-      "recovery": null,
+      "recovery": 100.0,
       "boxes": 49.0
     },
     {
