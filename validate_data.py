@@ -55,12 +55,27 @@ def validate(data):
 
 
 def validate_finance(finance):
-    if set(finance) - {'diamond'} not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
+    if set(finance) - {'diamond', 'water'} not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
         raise ValueError('Finance data must contain aggregate fields only')
     if not isinstance(finance['period'], str) or not re.fullmatch(r'\d{4}-\d{2}', finance['period']):
         raise ValueError('Invalid finance period')
     if 'fuel' in finance:
         validate_fuel(finance['fuel'], finance['period'])
+    if 'water' in finance:
+        water = finance['water']
+        if set(water) != {'litresPerTrip', 'estimated', 'records'} or water['estimated'] is not True:
+            raise ValueError('Water conversion must be explicitly estimated')
+        if not isinstance(water['litresPerTrip'], (int, float)) or not math.isfinite(water['litresPerTrip']) or water['litresPerTrip'] <= 0:
+            raise ValueError('Invalid water trip capacity')
+        seen_water = set()
+        for row in water['records']:
+            key = (row['date'], row['rig'], row['shift'])
+            if set(row) != {'date', 'rig', 'shift', 'hole', 'trips', 'litres'} or key in seen_water or not row['date'].startswith(finance['period'] + '-') or row['rig'] not in {'C-1800', 'CSD-1300'} or row['shift'] not in {'Өдөр', 'Шөнө'}:
+                raise ValueError('Invalid water delivery record')
+            seen_water.add(key)
+            date.fromisoformat(row['date'])
+            if not all(isinstance(row[k], (int, float)) and math.isfinite(row[k]) and row[k] >= 0 for k in ('trips', 'litres')) or not math.isclose(row['litres'], row['trips'] * water['litresPerTrip'], abs_tol=0.01):
+                raise ValueError('Water trips and litres do not reconcile')
     if 'mud' in finance:
         validate_mud(finance['mud'])
     if 'diamond' in finance:
@@ -134,8 +149,13 @@ def validate_mud(mud):
 
 
 def validate_fuel(fuel, period):
-    if set(fuel) != {'daily', 'allocations'}:
+    if set(fuel) - {'coverage'} != {'daily', 'allocations'}:
         raise ValueError('Unexpected fuel fields')
+    coverage_dates = set()
+    for row in fuel.get('coverage', []):
+        if set(row) != {'date', 'recordedShifts', 'expectedShifts'} or row['date'] in coverage_dates or not row['date'].startswith(period + '-') or row['expectedShifts'] != 4 or not isinstance(row['recordedShifts'], int) or not 0 <= row['recordedShifts'] <= 4:
+            raise ValueError('Invalid fuel coverage')
+        coverage_dates.add(row['date'])
     daily = {}
     for row in fuel['daily']:
         if set(row) != {'date', 'litres', 'cost'} or row['date'] in daily or not row['date'].startswith(period+'-'):

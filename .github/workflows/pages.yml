@@ -29,6 +29,7 @@ jobs:
         run: |
           python -B -m unittest test_drilling_sync -v
           python -B -m unittest test_chat_report -v
+          python -B -m unittest test_consumption_model -v
           python -B validate_data.py
           node --check dist/app.js
           node test_chart.cjs

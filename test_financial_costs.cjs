@@ -35,6 +35,21 @@ assert.equal(sum(all.filter(r=>!r.recorded),'fuelUsageL'),0);
 assert.equal(sum(all.filter(r=>!r.recorded),'mudUsageKg'),0);
 console.log('Consumption verified: units reconcile with cost, both rigs, split rows and empty periods.');
 
+const waterModel={litresPerTrip:5000,estimated:true,records:[
+ {date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',trips:1,litres:5000},
+ {date:'2026-10-03',rig:'CSD-1300',shift:'Шөнө',hole:'NEW',trips:1,litres:5000}]};
+const waterRows=records([
+ {date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',meters:10,hours:6,waterUsageM3:5,waterUsageEstimated:true},
+ {date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',meters:20,hours:6,waterUsageM3:5,waterUsageEstimated:true},
+ {date:'2026-10-02',rig:'C-1800',shift:'Өдөр',hole:'A',meters:0,hours:12,waterUsageM3:null}
+],['C-1800','CSD-1300'],null,null,null,waterModel);
+assert.equal(waterRows.reduce((n,r)=>n+(r.waterUsageM3||0)*1000,0),10000);
+assert.equal(waterRows.filter(r=>r.waterRecorded).length,3);
+assert.ok(waterRows.some(r=>r.date==='2026-10-02'&&r.waterUsageM3===null));
+assert.equal(waterRows.reduce((n,r)=>n+r.fuelCost,0),0);
+assert.ok(waterRows.some(r=>r.hole==='NEW'&&!r.recorded&&r.waterEstimated));
+console.log('Water estimates verified: litres, split records without duplicate deliveries, missing reports retained, no water-truck fuel.');
+
 const mud={totalBags:17,bagKg:25,pricePerBag:330000,allocations:[{date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'A',bags:17}]};
 const divided=records([row('2026-10-01','C-1800','Өдөр',10,'A',6),row('2026-10-01','C-1800','Өдөр',20,'A',6),row('2026-10-02','C-1800','Өдөр',100,'B')],undefined,mud);
 assert.ok(Math.abs(sum(divided,'mudUsageBags')-17)<1e-9);

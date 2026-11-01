@@ -9,6 +9,8 @@ on:
       - 'drilling_sync.py'
       - 'validate_data.py'
       - 'requirements.txt'
+      - 'consumption_model.py'
+      - 'input/consumption-corrections.json'
   schedule:
     # Same daily timing as Drone Track: 08:00 Asia/Shanghai.
     - cron: '0 0 * * *'
@@ -69,6 +71,7 @@ jobs:
           python -B validate_data.py
           python -B -m unittest test_drilling_sync -v
           python -B -m unittest test_chat_report -v
+          python -B -m unittest test_consumption_model -v
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs

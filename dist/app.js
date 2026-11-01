@@ -13,12 +13,17 @@ function status(h){if(h.finish)return ['Дууссан',''];if(D.shifts.some(s=>
 let financialGrain='shift';
 const financialGrainLabel=()=>({shift:'Ээлжийн',day:'Өдрийн',week:'7 хоногийн',month:'Сарын'}[financialGrain]);
 const currency=(value,digits=0)=>value==null||Number.isNaN(Number(value))?'—':`₮ ${Number(value).toLocaleString('en-US',{minimumFractionDigits:digits,maximumFractionDigits:digits})}`;
+function financialWater(){
+  if(!D.finance?.water)return null;
+  const area=$('#area').value,ids=new Set(holes().map(h=>h.id));
+  return {...D.finance.water,records:D.finance.water.records.filter(r=>!area||ids.has(r.hole))};
+}
 function financialRows(grain=financialGrain){
   if(!D||!D.shifts?.length)return [];
   const financeAvailable=Boolean(D.finance?.period&&Array.isArray(D.finance.rigShifts));
   const rigs=$('#rig').value?[$('#rig').value]:['C-1800','CSD-1300'];
   const operationRows=shifts().filter(row=>!financeAvailable||row.date.startsWith(D.finance.period));
-  const sourceRows=DrillingCosts.records(operationRows,rigs,D.finance?.mud,D.finance?.fuel,D.finance?.diamond);
+  const sourceRows=DrillingCosts.records(operationRows,rigs,D.finance?.mud,D.finance?.fuel,D.finance?.diamond,financialWater());
   const groupMap=new Map();
   const periodStart=date=>{
     const day=new Date(`${date}T00:00:00Z`);
@@ -30,10 +35,10 @@ function financialRows(grain=financialGrain){
     const shiftKey=`${row.date}|${row.rig}|${row.shift}`;
     const period=grain==='shift'?row.date+'|'+row.shift:grain==='day'?row.date:periodStart(row.date);
     const periodDate=grain==='shift'?row.date:period.split('|')[0];
-    const entry=groupMap.get(period)||{date:periodDate,endDate:periodDate,shiftOrder:row.shift==='Өдөр'?0:1,drilledMeters:0,fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,rigs:new Set(),shifts:new Set(),shiftLabels:new Set(),holes:new Set()};
+    const entry=groupMap.get(period)||{date:periodDate,endDate:periodDate,shiftOrder:row.shift==='Өдөр'?0:1,drilledMeters:0,fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,waterKnownRecords:0,waterKnownLitres:0,waterEstimated:false,laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,rigs:new Set(),shifts:new Set(),shiftLabels:new Set(),holes:new Set()};
     const meters=Number(row.meters||0);
     entry.drilledMeters+=meters;
-    if(row.recorded){entry.waterUsageRecords++;if(row.waterUsageM3==null)entry.waterUsageKnown=false;else entry.waterUsageM3+=Number(row.waterUsageM3);}
+    if(row.recorded||row.waterRecorded){entry.waterUsageRecords++;if(row.waterUsageM3==null)entry.waterUsageKnown=false;else{entry.waterUsageM3+=Number(row.waterUsageM3);entry.waterKnownLitres+=Number(row.waterUsageM3)*1000;entry.waterKnownRecords++;entry.waterEstimated||=!!row.waterEstimated;}}
     entry.rigs.add(row.rig);
     if(row.recorded)entry.shifts.add(shiftKey);
     entry.shiftLabels.add(row.shift);
@@ -55,7 +60,7 @@ function financialRows(grain=financialGrain){
       const period=grain==='shift'?`${row.date}|${row.shift}`:grain==='day'?row.date:periodStart(row.date);
       const entry=groupMap.get(period)||{
         date:grain==='shift'?row.date:period.split('|')[0],endDate:period.split('|')[0],
-        shiftOrder:row.shift==='Өдөр'?0:1,drilledMeters:0,fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,
+        shiftOrder:row.shift==='Өдөр'?0:1,drilledMeters:0,fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,waterKnownRecords:0,waterKnownLitres:0,waterEstimated:false,
         laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,rigs:new Set(),shifts:new Set(),shiftLabels:new Set(),holes:new Set(),
       };
       entry.laborCost+=Number(row.laborCost||0);
@@ -85,7 +90,7 @@ function financialRows(grain=financialGrain){
       fuelCost:entry.fuelCost,
       mudCost:entry.mudCost,diamondCost:entry.diamondCost,
       fuelUsageL:entry.fuelUsageL,fuelRecords:entry.fuelRecords,mudUsageKg:entry.mudUsageKg,mudUsageBags:entry.mudUsageBags,
-      waterUsageM3:entry.waterUsageKnown&&entry.waterUsageRecords>0?entry.waterUsageM3:null,
+      waterUsageM3:entry.waterUsageKnown&&entry.waterUsageRecords>0?entry.waterUsageM3:null,waterKnownRecords:entry.waterKnownRecords,waterKnownLitres:entry.waterKnownLitres,waterPartial:!entry.waterUsageKnown,waterEstimated:entry.waterEstimated,
       laborCost:financeAvailable?entry.laborCost:null,
       foodCost:financeAvailable?entry.foodCost:null,
       bonusCost:financeAvailable?entry.bonusCost:null,
@@ -114,7 +119,7 @@ function financialRigSeries(grain=financialGrain){
   const financeAvailable=Boolean(D.finance?.period&&Array.isArray(D.finance.rigShifts));
   const rigs=$('#rig').value?[$('#rig').value]:['C-1800','CSD-1300'];
   const operationRows=shifts().filter(row=>!financeAvailable||row.date.startsWith(D.finance.period));
-  const sourceRows=DrillingCosts.records(operationRows,rigs,D.finance?.mud,D.finance?.fuel,D.finance?.diamond),groups=new Map();
+  const sourceRows=DrillingCosts.records(operationRows,rigs,D.finance?.mud,D.finance?.fuel,D.finance?.diamond,financialWater()),groups=new Map();
   const periodStart=date=>{
     const day=new Date(`${date}T00:00:00Z`);
     if(grain==='week')day.setUTCDate(day.getUTCDate()-((day.getUTCDay()+6)%7));
@@ -128,7 +133,7 @@ function financialRigSeries(grain=financialGrain){
     const groupKey=`${key}|${row.rig}`;
     const meters=Number(row.meters||0),entry=groups.get(groupKey)||{
       key,date:start,shiftOrder,shift:row.shift,rig:row.rig,meters:0,
-      fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,
+      fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,waterKnownRecords:0,waterKnownLitres:0,waterEstimated:false,laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,
       holes:new Set(),
     };
     entry.meters+=meters;
@@ -151,7 +156,7 @@ function financialRigSeries(grain=financialGrain){
       const groupKey=`${key}|${row.rig}`;
       const entry=groups.get(groupKey)||{
         key,date:start,shiftOrder,shift:row.shift,rig:row.rig,meters:0,
-        fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,holes:new Set(),
+        fuelCost:0,mudCost:0,diamondCost:0,fuelUsageL:0,fuelRecords:0,mudUsageKg:0,mudUsageBags:0,waterUsageM3:0,waterUsageKnown:true,waterUsageRecords:0,waterKnownRecords:0,waterKnownLitres:0,waterEstimated:false,laborCost:0,foodCost:0,bonusCost:0,incentiveCost:0,holes:new Set(),
       };
       entry.laborCost+=Number(row.laborCost||0);
       entry.foodCost+=Number(row.foodCost||0);
@@ -263,13 +268,15 @@ function renderFinancialTab(){
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
       <div class="cost-breakdown">${costRows}</div>
+      <p class="sub">Усны бүртгэлтэй хэмжээ: ${fmt(rows.reduce((n,r)=>n+r.waterKnownLitres,0),0)} л${rows.some(r=>r.waterEstimated)?' · рейсээс тооцсон таамаг':''}. ${D.finance?.water?'1 рейс = '+fmt(D.finance.water.litresPerTrip,0)+' л (багтаамж баталгаажаагүй). ':''}Тайлангүй усны хэрэглээг 0 гэж үзээгүй. Усны машины түлшийг өртөгт оруулаагүй.</p>
+      ${(D.finance?.fuel?.coverage||[]).some(r=>r.recordedShifts<r.expectedShifts)?'<p class="sub">Түлш: зарим өдөр ээлжийн олголт дутуу. Нийт нь зөвхөн бүртгэлтэй олголт; дутуу ээлжийг 0 гэж үзээгүй.</p>':''}
       ${D.finance?.diamond?`<p class="sub">Алмазан хошуу + reaming shell: ${currency(D.finance.diamond.ratePerMeter,0)}/м × бүртгэлтэй метр. ${fmt(D.finance.diamond.plannedMeters,0)} м төлөвлөгөөний ${currency(D.finance.diamond.totalBudget,0)} төсвийг хуваарилсан тооцоо; бодит солилт/элэгдэл биш. <a href="${esc(D.finance.diamond.sourceUrl)}" target="_blank" rel="noopener noreferrer">Эх тооцоо</a></p>`:''}
     </section>
     <section class="panel">
       <h2>Дэлгэрэнгүй бүртгэл</h2>
       <div class="table-scroll financial-details-scroll">
         <table class="financial-details-table">
-          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Түлш (л, олголт)</th><th>Шавар (кг, хуваарилсан)</th><th>Усны хэрэглээ</th><th>Алмазан хошуу ₮ (тооцоот)</th><th>Дүн ₮ </th><th>₮/м </th></tr></thead>
+          <thead><tr><th>Хугацаа</th><th>Өрөм</th><th>Ээлж</th><th>Цооног</th><th>Метр</th><th>Түлш (л, олголт)</th><th>Шавар (кг, хуваарилсан)</th><th>Усны хэрэглээ (л)</th><th>Алмазан хошуу ₮ (тооцоот)</th><th>Дүн ₮ </th><th>₮/м </th></tr></thead>
           <tbody>${[...rows].reverse().map(r=>`<tr>
             <td data-label="Хугацаа">${r.date}</td>
             <td data-label="Өрөм">${esc(r.rigs||'—')}</td>
@@ -278,7 +285,7 @@ function renderFinancialTab(){
             <td data-label="Метр">${fmt(r.drilledMeters,1)} м</td>
             <td data-label="Түлш (л, олголт)">${r.fuelRecords?fmt(r.fuelUsageL,2):'—'}</td>
             <td data-label="Шавар (кг, хуваарилсан)">${fmt(r.mudUsageKg,2)}</td>
-            <td data-label="Усны хэрэглээ">${r.waterUsageM3==null?'—':fmt(r.waterUsageM3,2)+' м³'}</td>
+            <td data-label="Усны хэрэглээ (л)">${r.waterKnownRecords?(r.waterPartial?'≥ ':'')+fmt(r.waterKnownLitres,0)+' л'+(r.waterEstimated?' · таамаг':''):'—'}</td>
             <td data-label="Алмазан хошуу ₮ (тооцоот)">${currency(r.diamondCost,0)}</td>
             <td data-label="Нийт зардал">${currency(r.totalCost,0)}</td>
             <td data-label="₮/м">${r.dailyCostPerMeter==null?'N/A':currency(r.dailyCostPerMeter,0)}</td>

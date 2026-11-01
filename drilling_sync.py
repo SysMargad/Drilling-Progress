@@ -961,6 +961,15 @@ def main():
                 if data.get('finance') is not None:
                     data['finance'] = apply_uploaded_fuel(data['finance'], data['shifts'])
                     data['finance'] = apply_diamond_budget(data['finance'])
+                    from consumption_model import load_corrections, apply_corrections
+                    correction_config = load_corrections()
+                    if args.source == 'drive':
+                        try:
+                            correction_config = load_corrections(Drive(args.credentials), workbook_rows)
+                        except Exception as correction_error:
+                            finance_note = '; '.join(filter(None, (finance_note,
+                                'Consumption Sheet refresh failed; verified snapshot used (' + type(correction_error).__name__ + ')')))
+                    data = apply_corrections(data, correction_config)
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.

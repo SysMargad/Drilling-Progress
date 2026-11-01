@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "pricePerLitre": 5400,
+  "litresPerTrip": 5000,
+  "waterEstimated": true,
+  "sourceSpreadsheetId": "1xQTv-Hc7hpq2S7HmdMaPKHcg7IyGMkAAcWNK9OLk_QY",
+  "fuelIssues": [
+    {
+      "date": "2026-10-23",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 86.89,
+      "source": "tttt1.jpg",
+      "sourceRow": 2,
+      "expression": "86.89"
+    },
+    {
+      "date": "2026-10-23",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 151.18,
+      "source": "tttt1.jpg",
+      "sourceRow": 3,
+      "expression": "108.18+43"
+    },
+    {
+      "date": "2026-10-24",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 40,
+      "source": "tttt1.jpg",
+      "sourceRow": 4,
+      "expression": "40"
+    },
+    {
+      "date": "2026-10-24",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 111.21,
+      "source": "tttt1.jpg",
+      "sourceRow": 5,
+      "expression": "111.21"
+    },
+    {
+      "date": "2026-10-25",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 150,
+      "source": "tttt1.jpg",
+      "sourceRow": 6,
+      "expression": "150"
+    },
+    {
+      "date": "2026-10-25",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 248.15,
+      "source": "tttt1.jpg",
+      "sourceRow": 7,
+      "expression": "148.14+100.01"
+    },
+    {
+      "date": "2026-10-26",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 190.12,
+      "source": "tttt1.jpg",
+      "sourceRow": 8,
+      "expression": "66.11+124.01"
+    },
+    {
+      "date": "2026-10-26",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 163,
+      "source": "tttt1.jpg",
+      "sourceRow": 9,
+      "expression": "80+83"
+    },
+    {
+      "date": "2026-10-27",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 158.12,
+      "source": "tttt1.jpg",
+      "sourceRow": 10,
+      "expression": "68.11+90.01"
+    },
+    {
+      "date": "2026-10-27",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 143.01,
+      "source": "tttt1.jpg",
+      "sourceRow": 11,
+      "expression": "73.01+70"
+    },
+    {
+      "date": "2026-10-28",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 88,
+      "source": "tttt1.jpg",
+      "sourceRow": 12,
+      "expression": "88"
+    },
+    {
+      "date": "2026-10-28",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 137.01,
+      "source": "tttt1.jpg",
+      "sourceRow": 13,
+      "expression": "137.01"
+    },
+    {
+      "date": "2026-10-29",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 220.06,
+      "source": "tttt1.jpg",
+      "sourceRow": 14,
+      "expression": "90+130.06"
+    },
+    {
+      "date": "2026-10-29",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 118.21,
+      "source": "tttt1.jpg",
+      "sourceRow": 15,
+      "expression": "118.21"
+    },
+    {
+      "date": "2026-10-30",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 65.12,
+      "source": "tttt2.jpg",
+      "sourceRow": 1,
+      "expression": "65.12"
+    },
+    {
+      "date": "2026-10-30",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 130,
+      "source": "tttt2.jpg",
+      "sourceRow": 2,
+      "expression": "130"
+    },
+    {
+      "date": "2026-10-31",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "litres": 203,
+      "source": "tttt2.jpg",
+      "sourceRow": 3,
+      "expression": "110+93"
+    },
+    {
+      "date": "2026-10-31",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "litres": 56,
+      "source": "tttt2.jpg",
+      "sourceRow": 4,
+      "expression": "56"
+    },
+    {
+      "date": "2026-10-23",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 82.71,
+      "source": "tttt5.jpg",
+      "sourceRow": 2,
+      "expression": "82.71"
+    },
+    {
+      "date": "2026-10-23",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 205.13,
+      "source": "tttt5.jpg",
+      "sourceRow": 3,
+      "expression": "113.13+92"
+    },
+    {
+      "date": "2026-10-24",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 106.39,
+      "source": "tttt5.jpg",
+      "sourceRow": 4,
+      "expression": "106.39"
+    },
+    {
+      "date": "2026-10-24",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 70,
+      "source": "tttt5.jpg",
+      "sourceRow": 5,
+      "expression": "70"
+    },
+    {
+      "date": "2026-10-25",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 57.61,
+      "source": "tttt5.jpg",
+      "sourceRow": 6,
+      "expression": "57.61"
+    },
+    {
+      "date": "2026-10-25",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 116.01,
+      "source": "tttt5.jpg",
+      "sourceRow": 7,
+      "expression": "116.01"
+    },
+    {
+      "date": "2026-10-26",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 187,
+      "source": "tttt5.jpg",
+      "sourceRow": 8,
+      "expression": "107+80"
+    },
+    {
+      "date": "2026-10-26",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 53,
+      "source": "tttt5.jpg",
+      "sourceRow": 9,
+      "expression": "53"
+    },
+    {
+      "date": "2026-10-27",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 91.22,
+      "source": "tttt5.jpg",
+      "sourceRow": 10,
+      "expression": "40.21+51.01"
+    },
+    {
+      "date": "2026-10-27",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 42.02,
+      "source": "tttt5.jpg",
+      "sourceRow": 11,
+      "expression": "42.02"
+    },
+    {
+      "date": "2026-10-28",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 117,
+      "source": "tttt5.jpg",
+      "sourceRow": 12,
+      "expression": "117"
+    },
+    {
+      "date": "2026-10-28",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 110.04,
+      "source": "tttt5.jpg",
+      "sourceRow": 13,
+      "expression": "110.04"
+    },
+    {
+      "date": "2026-10-29",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "litres": 196.02,
+      "source": "tttt5.jpg",
+      "sourceRow": 14,
+      "expression": "116.02+80"
+    },
+    {
+      "date": "2026-10-30",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "litres": 200,
+      "source": "tttt5.jpg",
+      "sourceRow": 15,
+      "expression": "200"
+    }
+  ],
+  "waterTrips": [
+    {
+      "date": "2026-10-29",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "hole": "ZHDH2604",
+      "trips": 2,
+      "source": "2_Ээлжийн_бүртгэл!Z17",
+      "note": "Эх Google Sheet-ийн Z17: ус 2 рейс."
+    },
+    {
+      "date": "2026-10-29",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "hole": "ZHDH2606",
+      "trips": 1,
+      "source": "ffff1.jpg"
+    },
+    {
+      "date": "2026-10-31",
+      "rig": "C-1800",
+      "shift": "Өдөр",
+      "hole": "ZHDH2604",
+      "trips": 1,
+      "source": "ffff6.jpg"
+    },
+    {
+      "date": "2026-10-31",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "hole": "UGDH2601",
+      "trips": 1,
+      "source": "ffff9.jpg"
+    }
+  ],
+  "review": [
+    [
+      "Түлш",
+      "tttt1.jpg",
+      "1",
+      "2026-10-22",
+      "C-1800",
+      "81.6 л; ээлж бичигдээгүй. 10/22-ны хуучин хоногийн дүн дээр давхар нэмээгүй."
+    ],
+    [
+      "Түлш",
+      "tttt5.jpg",
+      "1",
+      "2026-10-22",
+      "CSD-1300",
+      "104.26 л; ээлж бичигдээгүй. 10/22-ны хуучин хоногийн дүн дээр давхар нэмээгүй."
+    ],
+    [
+      "Түлш",
+      "tttt3.jpg",
+      "1",
+      "2026-10-31",
+      "CSD-1300",
+      "Шөнийн ээлж боловч литр хоосон; 0 гэж үзээгүй."
+    ],
+    [
+      "Түлш",
+      "tttt5.jpg",
+      "",
+      "2026-10-29/31",
+      "CSD-1300",
+      "10/29 шөнө, 10/30 өдөр, 10/31 өдөр/шөнө: олголтын баталгаатай хэмжээ байхгүй."
+    ],
+    [
+      "Ээлж",
+      "ffff2.jpg / ffff3.jpg",
+      "",
+      "2026-10-29",
+      "C-1800",
+      "Нэг шөнийн ээлжийн давхардсан хоёр зураг: нэг удаа тоолно."
+    ],
+    [
+      "Ээлж",
+      "ffff4.jpg",
+      "",
+      "2026-10-30",
+      "CSD-1300",
+      "12 цаг ST, усны машин эвдэрсэн; цооног/гүн хоосон. Цооног таагаагүй."
+    ],
+    [
+      "Ээлж",
+      "ffff7.jpg / ffff9.jpg",
+      "",
+      "2026-10-31",
+      "CSD-1300",
+      "UGDH2601 шинэ цооног; Collar-д байхгүй тул ахицын датад цооног зохиож нэмээгүй. Усны рейсийг тусдаа хадгалсан."
+    ],
+    [
+      "Ээлж",
+      "ffff8.jpg",
+      "",
+      "2026-10-31",
+      "C-1800",
+      "461 м-ээс 15 м гэж бичсэн; дууссан гүний бичвэрийг тодруулах шаардлагатай."
+    ]
+  ]
+}

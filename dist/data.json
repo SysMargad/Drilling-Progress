@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-01",
-  "updatedAt": "2026-11-01T13:22:06+08:00",
-  "period": "2026-10-01 – 2026-10-29",
+  "updatedAt": "2026-11-01T20:41:57+08:00",
+  "period": "2026-10-01 – 2026-10-31",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
@@ -2548,8 +2548,9 @@
       "dt": 11.5,
       "hours": 12.0,
       "notes": "2026-10-29 өдөр 08:00–20:00; HQ 365–395м (30м), PT=0.5ц, DT=11.5ц, нийт 12ц; полимер 1 (нэгж тэмдэглээгүй), ус 2 рейс.",
-      "waterUsageM3": null,
-      "reports": []
+      "waterUsageM3": 10.0,
+      "reports": [],
+      "waterUsageEstimated": true
     },
     {
       "rig": "CSD-1300",
@@ -2566,7 +2567,45 @@
       "dt": 8.0,
       "hours": 12.0,
       "notes": "2026-10-29 өдөр 08:00–20:00; HQ 200.4–233.4м (33м). PT=0.5ц, RP=2.5ц, DT=8ц, OT=1ц, нийт 12ц. Полимер 1 уут, бит 1ш, ус 1 рейс. Өмнөх 200.4м-тэй таарна.",
+      "waterUsageM3": 5.0,
+      "reports": [],
+      "waterUsageEstimated": true
+    },
+    {
+      "rig": "C-1800",
+      "source": "ffff5.jpg",
+      "date": "2026-10-30",
+      "shift": "Шөнө",
+      "driller": "",
+      "hole": "ZHDH2604",
+      "from": 431.0,
+      "to": 446.0,
+      "meters": 15.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "ZIP new schedule / ffff5.jpg; water truck wait; source ST blank; missing 428-431 m not inferred. | User default 2026-10-27: DT=12 h (source blank; estimated).",
       "waterUsageM3": null,
+      "reports": []
+    },
+    {
+      "rig": "C-1800",
+      "source": "ffff6.jpg",
+      "date": "2026-10-31",
+      "shift": "Өдөр",
+      "driller": "",
+      "hole": "ZHDH2604",
+      "from": 446.0,
+      "to": 461.0,
+      "meters": 15.0,
+      "st": 3.0,
+      "rt": null,
+      "dt": 6.5,
+      "hours": 12.0,
+      "notes": "ZIP new schedule / ffff6.jpg; PT=0.5, RP=2, ST=3, DT=6.5; water 1 trip, estimated at 5000 L/trip.",
+      "waterUsageM3": 5.0,
+      "waterUsageEstimated": true,
       "reports": []
     }
   ],
@@ -4972,6 +5011,51 @@
           "date": "2026-10-22",
           "litres": 400.0,
           "cost": 2160000.0
+        },
+        {
+          "date": "2026-10-23",
+          "litres": 525.91,
+          "cost": 2839914.0
+        },
+        {
+          "date": "2026-10-24",
+          "litres": 327.6,
+          "cost": 1769040.0
+        },
+        {
+          "date": "2026-10-25",
+          "litres": 571.77,
+          "cost": 3087558.0
+        },
+        {
+          "date": "2026-10-26",
+          "litres": 593.12,
+          "cost": 3202848.0
+        },
+        {
+          "date": "2026-10-27",
+          "litres": 434.37,
+          "cost": 2345598.0
+        },
+        {
+          "date": "2026-10-28",
+          "litres": 452.05,
+          "cost": 2441070.0
+        },
+        {
+          "date": "2026-10-29",
+          "litres": 534.29,
+          "cost": 2885166.0
+        },
+        {
+          "date": "2026-10-30",
+          "litres": 395.12,
+          "cost": 2133648.0
+        },
+        {
+          "date": "2026-10-31",
+          "litres": 259,
+          "cost": 1398600
         }
       ],
       "allocations": [
@@ -5526,6 +5610,309 @@
           "hole": "ZHDH2603",
           "litres": 100.0,
           "cost": 540000.0
+        },
+        {
+          "date": "2026-10-23",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 86.89,
+          "cost": 469206.0
+        },
+        {
+          "date": "2026-10-23",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 151.18,
+          "cost": 816372.0
+        },
+        {
+          "date": "2026-10-23",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 82.71,
+          "cost": 446634.0
+        },
+        {
+          "date": "2026-10-23",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 205.13,
+          "cost": 1107702.0
+        },
+        {
+          "date": "2026-10-24",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 40,
+          "cost": 216000
+        },
+        {
+          "date": "2026-10-24",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 111.21,
+          "cost": 600534.0
+        },
+        {
+          "date": "2026-10-24",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 106.39,
+          "cost": 574506.0
+        },
+        {
+          "date": "2026-10-24",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 70,
+          "cost": 378000
+        },
+        {
+          "date": "2026-10-25",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 150,
+          "cost": 810000
+        },
+        {
+          "date": "2026-10-25",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 248.15,
+          "cost": 1340010.0
+        },
+        {
+          "date": "2026-10-25",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 57.61,
+          "cost": 311094.0
+        },
+        {
+          "date": "2026-10-25",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 116.01,
+          "cost": 626454.0
+        },
+        {
+          "date": "2026-10-26",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 190.12,
+          "cost": 1026648.0
+        },
+        {
+          "date": "2026-10-26",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 163,
+          "cost": 880200
+        },
+        {
+          "date": "2026-10-26",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 187,
+          "cost": 1009800
+        },
+        {
+          "date": "2026-10-26",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 53,
+          "cost": 286200
+        },
+        {
+          "date": "2026-10-27",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 158.12,
+          "cost": 853848.0
+        },
+        {
+          "date": "2026-10-27",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 143.01,
+          "cost": 772254.0
+        },
+        {
+          "date": "2026-10-27",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 91.22,
+          "cost": 492588.0
+        },
+        {
+          "date": "2026-10-27",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 42.02,
+          "cost": 226908.0
+        },
+        {
+          "date": "2026-10-28",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 88,
+          "cost": 475200
+        },
+        {
+          "date": "2026-10-28",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 137.01,
+          "cost": 739854.0
+        },
+        {
+          "date": "2026-10-28",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 117,
+          "cost": 631800
+        },
+        {
+          "date": "2026-10-28",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 110.04,
+          "cost": 594216.0
+        },
+        {
+          "date": "2026-10-29",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 220.06,
+          "cost": 1188324.0
+        },
+        {
+          "date": "2026-10-29",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 118.21,
+          "cost": 638334.0
+        },
+        {
+          "date": "2026-10-29",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 196.02,
+          "cost": 1058508.0
+        },
+        {
+          "date": "2026-10-30",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 65.12,
+          "cost": 351648.0
+        },
+        {
+          "date": "2026-10-30",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 130,
+          "cost": 702000
+        },
+        {
+          "date": "2026-10-30",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 200,
+          "cost": 1080000
+        },
+        {
+          "date": "2026-10-31",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "",
+          "litres": 203,
+          "cost": 1096200
+        },
+        {
+          "date": "2026-10-31",
+          "rig": "C-1800",
+          "shift": "Шөнө",
+          "hole": "",
+          "litres": 56,
+          "cost": 302400
+        }
+      ],
+      "coverage": [
+        {
+          "date": "2026-10-23",
+          "recordedShifts": 4,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-24",
+          "recordedShifts": 4,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-25",
+          "recordedShifts": 4,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-26",
+          "recordedShifts": 4,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-27",
+          "recordedShifts": 4,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-28",
+          "recordedShifts": 4,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-29",
+          "recordedShifts": 3,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-30",
+          "recordedShifts": 3,
+          "expectedShifts": 4
+        },
+        {
+          "date": "2026-10-31",
+          "recordedShifts": 2,
+          "expectedShifts": 4
         }
       ]
     },
@@ -5534,6 +5921,44 @@
       "totalBudget": 72180000.0,
       "ratePerMeter": 7218.0,
       "sourceUrl": "https://docs.google.com/spreadsheets/d/1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8/edit#gid=672180000"
+    },
+    "water": {
+      "litresPerTrip": 5000,
+      "estimated": true,
+      "records": [
+        {
+          "date": "2026-10-29",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "ZHDH2604",
+          "trips": 2,
+          "litres": 10000
+        },
+        {
+          "date": "2026-10-29",
+          "rig": "CSD-1300",
+          "shift": "Өдөр",
+          "hole": "ZHDH2606",
+          "trips": 1,
+          "litres": 5000
+        },
+        {
+          "date": "2026-10-31",
+          "rig": "C-1800",
+          "shift": "Өдөр",
+          "hole": "ZHDH2604",
+          "trips": 1,
+          "litres": 5000
+        },
+        {
+          "date": "2026-10-31",
+          "rig": "CSD-1300",
+          "shift": "Шөнө",
+          "hole": "UGDH2601",
+          "trips": 1,
+          "litres": 5000
+        }
+      ]
     }
   }
 }

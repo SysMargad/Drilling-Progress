@@ -460,6 +460,18 @@
       "shifts": 101,
       "meters": 2912.3,
       "note": "69 source conflicts"
+    },
+    {
+      "id": "cab24c6a-3e40-4e89-8760-4b8d6c40fe01",
+      "source": "local",
+      "startedAt": "2026-11-01T20:41:57+08:00",
+      "completedAt": "2026-11-01T20:41:57+08:00",
+      "status": "updated",
+      "files": 24,
+      "holes": 12,
+      "shifts": 103,
+      "meters": 2942.3,
+      "note": "Applied 32 verified shift fuel issues (4093.23 L); replaced overlapping daily allocations; water deliveries 5 trips at assumed 5000 L/trip; water-truck fuel excluded. Added 2 readable C-1800 reports. Uncertain and duplicate rows held for review."
     }
   ]
 }

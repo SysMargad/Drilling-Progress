@@ -146,3 +146,23 @@ const split=require('./dist/financial-costs.js').records([
 near(split.reduce((n,r)=>n+r.diamondCost,0),30*diamond.ratePerMeter);
 assert.ok(split.filter(r=>!r.meters).every(r=>r.diamondCost===0));
 console.log('Diamond estimates reconcile across four periods and both rigs; totals include them exactly once; split shifts and zero metres verified.');
+
+context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
+vm.runInContext('D=fixture',context);
+for(const rig of ['', 'C-1800','CSD-1300']){
+ selectedRig=rig;
+ const expectedWater=context.fixture.finance.water.records.filter(r=>!rig||r.rig===rig).reduce((n,r)=>n+r.litres,0);
+ const expectedFuel=context.fixture.finance.fuel.allocations.filter(r=>!rig||r.rig===rig).reduce((n,r)=>n+r.litres,0);
+ for(const period of ['shift','day','week','month']){
+  context.grainUnderTest=period;
+  const rows=vm.runInContext('financialRows(grainUnderTest)',context);
+  near(rows.reduce((n,r)=>n+r.waterKnownLitres,0),expectedWater);
+  near(rows.reduce((n,r)=>n+r.fuelUsageL,0),expectedFuel);
+  const html=vm.runInContext('financialGrain=grainUnderTest;renderFinancialTab()',context);
+  assert.ok(html.includes('Усны хэрэглээ (л)'));
+  assert.ok(html.includes('Усны машины түлшийг өртөгт оруулаагүй'));
+  assert.ok(html.includes('таамаг'));
+ }
+}
+selectedRig='';
+console.log('New consumption data reconciles across grains and rig filters; water estimates remain separate from costs.');
