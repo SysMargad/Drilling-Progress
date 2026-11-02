@@ -1,0 +1,264 @@
+{
+  "litresPerTrip": 5000,
+  "capacityConfirmedByOwner": "2026-11-02",
+  "shifts": [
+    {
+      "date": "2026-11-01",
+      "rig": "C-1800",
+      "shift": "Шөнө",
+      "hole": "ZHDH2604",
+      "from": 500,
+      "to": 503,
+      "meters": 3,
+      "dt": 12,
+      "hours": 12,
+      "st": null,
+      "rt": null,
+      "waterUsageM3": null,
+      "notes": "pppp1.jpg; DT=12 confirmed by owner 2026-11-02.",
+      "reports": [],
+      "driller": ""
+    },
+    {
+      "date": "2026-11-01",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "hole": "UGDH2601",
+      "from": 65.4,
+      "to": 98.4,
+      "meters": 33,
+      "dt": 7,
+      "hours": 12,
+      "st": null,
+      "rt": null,
+      "waterUsageM3": 5,
+      "notes": "pppp2.jpg; PT=0.5 h; RP=3.5 h; DT=7 h; OT=1 h. Water=1 trip.",
+      "reports": [],
+      "driller": ""
+    }
+  ],
+  "waterDaily": [
+    {
+      "date": "2026-10-15",
+      "rig": "C-1800",
+      "trips": 2,
+      "litres": 10000
+    },
+    {
+      "date": "2026-10-15",
+      "rig": "CSD-1300",
+      "trips": 2,
+      "litres": 10000
+    },
+    {
+      "date": "2026-10-16",
+      "rig": "C-1800",
+      "trips": 3,
+      "litres": 15000
+    },
+    {
+      "date": "2026-10-16",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-17",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-17",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-18",
+      "rig": "C-1800",
+      "trips": 0,
+      "litres": 0
+    },
+    {
+      "date": "2026-10-18",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-19",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-19",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-20",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-20",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-21",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-21",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-22",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-22",
+      "rig": "CSD-1300",
+      "trips": 0,
+      "litres": 0
+    },
+    {
+      "date": "2026-10-23",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-23",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-24",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-24",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-25",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-25",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-26",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-26",
+      "rig": "CSD-1300",
+      "trips": 2,
+      "litres": 10000
+    },
+    {
+      "date": "2026-10-27",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-27",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-28",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-28",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-29",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-29",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-30",
+      "rig": "C-1800",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-30",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    },
+    {
+      "date": "2026-10-31",
+      "rig": "C-1800",
+      "trips": 0,
+      "litres": 0
+    },
+    {
+      "date": "2026-10-31",
+      "rig": "CSD-1300",
+      "trips": 1,
+      "litres": 5000
+    }
+  ],
+  "collar": [
+    {
+      "id": "UGDH2601",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Уртын гол",
+      "e": null,
+      "n": null,
+      "z": null,
+      "az": null,
+      "dip": null,
+      "plan": null,
+      "collarDepth": null,
+      "start": null,
+      "finish": null,
+      "recovery": null,
+      "boxes": null
+    }
+  ]
+}

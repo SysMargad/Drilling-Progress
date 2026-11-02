@@ -151,7 +151,7 @@ context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
 vm.runInContext('D=fixture',context);
 for(const rig of ['', 'C-1800','CSD-1300']){
  selectedRig=rig;
- const expectedWater=context.fixture.finance.water.records.filter(r=>!rig||r.rig===rig).reduce((n,r)=>n+r.litres,0);
+ const expectedWater=[...context.fixture.finance.water.records,...(context.fixture.finance.water.dailyRecords||[])].filter(r=>!rig||r.rig===rig).reduce((n,r)=>n+r.litres,0);
  const expectedFuel=context.fixture.finance.fuel.allocations.filter(r=>!rig||r.rig===rig).reduce((n,r)=>n+r.litres,0);
  for(const period of ['shift','day','week','month']){
   context.grainUnderTest=period;
@@ -161,7 +161,7 @@ for(const rig of ['', 'C-1800','CSD-1300']){
   const html=vm.runInContext('financialGrain=grainUnderTest;renderFinancialTab()',context);
   assert.ok(html.includes('Усны хэрэглээ (л)'));
   assert.ok(html.includes('Усны машины түлшийг өртөгт оруулаагүй'));
-  assert.ok(html.includes('таамаг'));
+  assert.equal(html.includes('(багтаамж баталгаажаагүй)'),context.fixture.finance.water.estimated);
  }
 }
 selectedRig='';

@@ -29,13 +29,20 @@
           const waterEntry=delivery?.hole===row.hole?delivery:null;
           const waterFraction=fuelWeight(row)/matching.reduce((n,item)=>n+fuelWeight(item),0);
           const measuredWater=row.waterUsageM3!=null&&!row.waterUsageEstimated;
-          const waterUsageM3=measuredWater?row.waterUsageM3:waterEntry?waterEntry.litres/1000*waterFraction:row.waterUsageM3??null;
+          const dailyWater=(water?.dailyRecords||[]).some(r=>r.date===date&&r.rig===rig);
+          const waterUsageM3=dailyWater?null:measuredWater?row.waterUsageM3:waterEntry?waterEntry.litres/1000*waterFraction:row.waterUsageM3??null;
           result.push({...row,recorded:actual.includes(row),fuelRecorded:!!fuelEntry&&!row.waterOnly,fuelUsageL,mudUsageKg,mudUsageBags,
             fuelCost,mudCost:mudUsageBags*(mud?.pricePerBag||MUD_PRICE_PER_BAG),diamondCost:diamond?meters*diamond.ratePerMeter:0,waterUsageM3,
-            waterRecorded:!!waterEntry,waterEstimated:!measuredWater&&!!waterEntry,
+            waterRecorded:!dailyWater&&!!waterEntry,waterEstimated:!dailyWater&&!!water?.estimated&&!measuredWater&&!!waterEntry,
             laborCost:DAILY_LABOR[rig]/2*fraction,foodCost:DAILY_FOOD/Object.keys(DAILY_LABOR).length/2*fraction});
         }
       }
+    }
+    for(const r of water?.dailyRecords||[]){
+      if(!rigs.includes(r.rig))continue;
+      result.push({date:r.date,rig:r.rig,shift:'Өдрийн нийт',hole:'',meters:0,hours:0,recorded:false,
+        fuelRecorded:false,fuelUsageL:0,fuelCost:0,mudUsageKg:0,mudUsageBags:0,mudCost:0,diamondCost:0,
+        laborCost:0,foodCost:0,waterUsageM3:r.litres/1000,waterRecorded:true,waterEstimated:!!water.estimated});
     }
     return result;
   }

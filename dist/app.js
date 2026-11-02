@@ -16,7 +16,8 @@ const currency=(value,digits=0)=>value==null||Number.isNaN(Number(value))?'—':
 function financialWater(){
   if(!D.finance?.water)return null;
   const area=$('#area').value,ids=new Set(holes().map(h=>h.id));
-  return {...D.finance.water,records:D.finance.water.records.filter(r=>!area||ids.has(r.hole))};
+  return {...D.finance.water,records:D.finance.water.records.filter(r=>!area||ids.has(r.hole)),
+    dailyRecords:(D.finance.water.dailyRecords||[]).filter(r=>!area||D.shifts.some(s=>s.date===r.date&&s.rig===r.rig&&ids.has(s.hole)))};
 }
 function financialRows(grain=financialGrain){
   if(!D||!D.shifts?.length)return [];
@@ -268,7 +269,7 @@ function renderFinancialTab(){
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
       <div class="cost-breakdown">${costRows}</div>
-      <p class="sub">Усны бүртгэлтэй хэмжээ: ${fmt(rows.reduce((n,r)=>n+r.waterKnownLitres,0),0)} л${rows.some(r=>r.waterEstimated)?' · рейсээс тооцсон таамаг':''}. ${D.finance?.water?'1 рейс = '+fmt(D.finance.water.litresPerTrip,0)+' л (багтаамж баталгаажаагүй). ':''}Тайлангүй усны хэрэглээг 0 гэж үзээгүй. Усны машины түлшийг өртөгт оруулаагүй.</p>
+      <p class="sub">Усны бүртгэлтэй хэмжээ: ${fmt(rows.reduce((n,r)=>n+r.waterKnownLitres,0),0)} л${rows.some(r=>r.waterEstimated)?' · рейсээс тооцсон таамаг':''}. ${D.finance?.water?'1 рейс = '+fmt(D.finance.water.litresPerTrip,0)+' л'+(D.finance.water.estimated?' (багтаамж баталгаажаагүй)':'')+'. ':''}Тайлангүй усны хэрэглээг 0 гэж үзээгүй. Усны машины түлшийг өртөгт оруулаагүй.</p>
       ${(D.finance?.fuel?.coverage||[]).some(r=>r.recordedShifts<r.expectedShifts)?'<p class="sub">Түлш: зарим өдөр ээлжийн олголт дутуу. Нийт нь зөвхөн бүртгэлтэй олголт; дутуу ээлжийг 0 гэж үзээгүй.</p>':''}
       ${D.finance?.diamond?`<p class="sub">Алмазан хошуу + reaming shell: ${currency(D.finance.diamond.ratePerMeter,0)}/м × бүртгэлтэй метр. ${fmt(D.finance.diamond.plannedMeters,0)} м төлөвлөгөөний ${currency(D.finance.diamond.totalBudget,0)} төсвийг хуваарилсан тооцоо; бодит солилт/элэгдэл биш. <a href="${esc(D.finance.diamond.sourceUrl)}" target="_blank" rel="noopener noreferrer">Эх тооцоо</a></p>`:''}
     </section>

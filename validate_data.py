@@ -13,7 +13,7 @@ def validate(data):
     for h in data['collar']:
         if h.get('site') != 'Нэргүй Өндөр':
             raise ValueError('All holes must belong to Нэргүй Өндөр')
-        if h.get('targetArea') not in {'Дорнын Төмөр', 'Замт Хөндий'}:
+        if h.get('targetArea') not in {'Дорнын Төмөр', 'Замт Хөндий', 'Уртын гол'}:
             raise ValueError('Unknown drilling area')
         if h['id'] in ids:
             raise ValueError('Duplicate hole ID')
@@ -63,12 +63,22 @@ def validate_finance(finance):
         validate_fuel(finance['fuel'], finance['period'])
     if 'water' in finance:
         water = finance['water']
-        if set(water) != {'litresPerTrip', 'estimated', 'records'} or water['estimated'] is not True:
+        if set(water) - {'dailyRecords'} != {'litresPerTrip', 'estimated', 'records'} or not isinstance(water['estimated'], bool):
             raise ValueError('Water conversion must be explicitly estimated')
         if not isinstance(water['litresPerTrip'], (int, float)) or not math.isfinite(water['litresPerTrip']) or water['litresPerTrip'] <= 0:
             raise ValueError('Invalid water trip capacity')
         seen_water = set()
+        for row in water.get('dailyRecords', []):
+            key = (row['date'], row['rig'])
+            if set(row) != {'date', 'rig', 'trips', 'litres'} or key in seen_water or row['rig'] not in {'C-1800','CSD-1300'} or not row['date'].startswith(finance['period'] + '-'):
+                raise ValueError('Invalid daily water record')
+            seen_water.add(key)
+            date.fromisoformat(row['date'])
+            if not all(isinstance(row[k], (int,float)) and math.isfinite(row[k]) and row[k] >= 0 for k in ('trips','litres')) or not math.isclose(row['litres'], row['trips'] * water['litresPerTrip'], abs_tol=0.01):
+                raise ValueError('Daily water trips do not reconcile')
         for row in water['records']:
+            if (row['date'],row['rig']) in seen_water:
+                raise ValueError('Water daily and shift records overlap')
             key = (row['date'], row['rig'], row['shift'])
             if set(row) != {'date', 'rig', 'shift', 'hole', 'trips', 'litres'} or key in seen_water or not row['date'].startswith(finance['period'] + '-') or row['rig'] not in {'C-1800', 'CSD-1300'} or row['shift'] not in {'Өдөр', 'Шөнө'}:
                 raise ValueError('Invalid water delivery record')

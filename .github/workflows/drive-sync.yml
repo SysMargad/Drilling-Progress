@@ -72,6 +72,7 @@ jobs:
           python -B -m unittest test_drilling_sync -v
           python -B -m unittest test_chat_report -v
           python -B -m unittest test_consumption_model -v
+          python -B -m unittest test_photo_import -v
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs

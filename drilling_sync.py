@@ -153,7 +153,7 @@ def date(value):
 
 def hole_id(value):
     h = str(value).strip().upper().replace("-", "")
-    return h if re.fullmatch(r"(?:DTDH|ZHDH)\d{4,}", h) else None
+    return h if re.fullmatch(r"(?:DTDH|ZHDH|UGDH)\d{4,}", h) else None
 
 
 def parse_collar(rows):
@@ -173,7 +173,7 @@ def parse_collar(rows):
         if not h:
             continue
         output.append({"id": h, "site": "Нэргүй Өндөр",
-                       "targetArea": "Дорнын Төмөр" if h.startswith("DT") else "Замт Хөндий",
+                       "targetArea": "Уртын гол" if h.startswith('UGDH') else "Дорнын Төмөр" if h.startswith("DT") else "Замт Хөндий",
                        "e": number(get(lambda x: x == "e")),
                        "n": number(get(lambda x: x == "n")),
                        "z": number(get(lambda x: x == "z")),
@@ -826,6 +826,13 @@ def assemble(records, seed, folders=None, report_index=None, finance=None):
         raise ValueError("No recognized collar and shift records; previous dashboard data preserved")
     unknown = {s["hole"] for s in shifts.values()} - set(collar)
     if unknown:
+        from photo_import import PATH
+        if PATH.exists():
+            for h in load_json(PATH)['collar']:
+                if h['id'] in unknown:
+                    collar[h['id']] = h
+        unknown -= set(collar)
+    if unknown:
         raise ValueError("Shift holes missing from collar: " + ", ".join(sorted(unknown)))
     if report_index is None:
         report_index = [report for row in seed.get("shifts", []) for report in row.get("reports", [])]
@@ -943,6 +950,8 @@ def main():
                 if args.source == "drive":
                     records, folders, report_index = drive_sources(args.folder_id, args.credentials)
                     data = assemble(records, seed, folders, report_index, seed.get("finance"))
+                    from photo_import import apply_photos
+                    data = apply_photos(data)
                     try:
                         data["finance"] = drive_finance_aggregates(args.credentials, data["shifts"])
                     except Exception as finance_error:
@@ -958,6 +967,8 @@ def main():
                     report_file = args.input / "report-index.json"
                     report_index = load_json(report_file) if report_file.exists() else None
                     data = assemble(records, seed, folders, report_index, seed.get("finance"))
+                from photo_import import apply_photos, apply_daily_water
+                data = apply_photos(data)
                 if data.get('finance') is not None:
                     data['finance'] = apply_uploaded_fuel(data['finance'], data['shifts'])
                     data['finance'] = apply_diamond_budget(data['finance'])
@@ -970,6 +981,7 @@ def main():
                             finance_note = '; '.join(filter(None, (finance_note,
                                 'Consumption Sheet refresh failed; verified snapshot used (' + type(correction_error).__name__ + ')')))
                     data = apply_corrections(data, correction_config)
+                    data = apply_daily_water(data)
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.
