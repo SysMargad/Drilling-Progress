@@ -496,6 +496,18 @@
       "shifts": 105,
       "meters": 2978.3,
       "note": "Owner-verified photos: 2026-11-01 night 36 m; Oct 15-31 daily water 36 trips / 180000 L; 5000 L/trip confirmed."
+    },
+    {
+      "id": "4aed54a4-ec68-4cb9-9105-3e75651e4e9a",
+      "source": "drive",
+      "startedAt": "2026-11-02T13:20:06+08:00",
+      "status": "updated",
+      "completedAt": "2026-11-02T13:21:16+08:00",
+      "files": 13,
+      "holes": 13,
+      "shifts": 105,
+      "meters": 2978.3,
+      "note": "72 source conflicts"
     }
   ]
 }

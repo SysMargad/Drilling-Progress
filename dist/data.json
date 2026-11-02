@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-02",
-  "updatedAt": "2026-11-02T10:33:45+08:00",
+  "updatedAt": "2026-11-02T13:21:09+08:00",
   "period": "2026-10-01 – 2026-11-01",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
@@ -184,6 +184,22 @@
       "boxes": null
     },
     {
+      "id": "UGDH2601",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Уртын гол",
+      "e": 681440.0,
+      "n": 5457495.0,
+      "z": null,
+      "az": 270.0,
+      "dip": 60.0,
+      "plan": 200.0,
+      "collarDepth": null,
+      "start": "2026-10-31",
+      "finish": "",
+      "recovery": null,
+      "boxes": null
+    },
+    {
       "id": "ZHDH2612",
       "site": "Нэргүй Өндөр",
       "targetArea": "Замт Хөндий",
@@ -196,22 +212,6 @@
       "collarDepth": null,
       "start": "",
       "finish": "",
-      "recovery": null,
-      "boxes": null
-    },
-    {
-      "id": "UGDH2601",
-      "site": "Нэргүй Өндөр",
-      "targetArea": "Уртын гол",
-      "e": null,
-      "n": null,
-      "z": null,
-      "az": null,
-      "dip": null,
-      "plan": null,
-      "collarDepth": null,
-      "start": null,
-      "finish": null,
       "recovery": null,
       "boxes": null
     }
@@ -3321,7 +3321,7 @@
     {
       "name": "NUDH_COLLAR.xlsx",
       "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 16,
+      "collarRows": 17,
       "shiftRows": 0
     },
     {
