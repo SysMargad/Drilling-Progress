@@ -508,6 +508,18 @@
       "shifts": 105,
       "meters": 2978.3,
       "note": "72 source conflicts"
+    },
+    {
+      "id": "b40d817c-6693-4ba6-b572-5b18035e4775",
+      "source": "local",
+      "startedAt": "2026-11-03T10:34:20+08:00",
+      "completedAt": "2026-11-03T10:34:20+08:00",
+      "status": "updated",
+      "files": 2,
+      "holes": 13,
+      "shifts": 107,
+      "meters": 3065.3,
+      "note": "2026-11-02 UGDH2601 verified photos: day 39 m, night 48 m, total 87 m; night water 5000 L; blank day DT uses owner-approved estimated 12 h."
     }
   ]
 }

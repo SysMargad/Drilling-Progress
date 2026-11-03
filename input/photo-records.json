@@ -35,6 +35,40 @@
       "notes": "pppp2.jpg; PT=0.5 h; RP=3.5 h; DT=7 h; OT=1 h. Water=1 trip.",
       "reports": [],
       "driller": ""
+    },
+    {
+      "date": "2026-11-02",
+      "rig": "CSD-1300",
+      "shift": "Өдөр",
+      "hole": "UGDH2601",
+      "from": 98.4,
+      "to": 137.4,
+      "meters": 39,
+      "dt": 12,
+      "hours": 12,
+      "st": null,
+      "rt": null,
+      "waterUsageM3": null,
+      "notes": "jjjj2.jpg; source DT blank; owner policy 2026-10-27 uses estimated DT=12 h. Total shift=12 h. Finish normalized to 137.4 m from 98.4 + 39, confirmed by next shift start 137.4; handwritten finish omits decimal. Polymer 1: package mass not reported, no kg/cost assumed.",
+      "reports": [],
+      "driller": ""
+    },
+    {
+      "date": "2026-11-02",
+      "rig": "CSD-1300",
+      "shift": "Шөнө",
+      "hole": "UGDH2601",
+      "from": 137.4,
+      "to": 185.4,
+      "meters": 48,
+      "dt": 10.5,
+      "hours": 12,
+      "st": null,
+      "rt": null,
+      "waterUsageM3": 5,
+      "notes": "jjjj1.jpg; PT=0.5 h; DT=10.5 h; OT=1 h; total=12 h. Water 1 trip = 5000 L (owner-confirmed capacity). Polymer 1 unit: package mass not reported, no kg/cost assumed.",
+      "reports": [],
+      "driller": ""
     }
   ],
   "waterDaily": [
