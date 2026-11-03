@@ -35,6 +35,7 @@ SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 RIGS = {"C-1800", "CSD-1300"}
 FINANCE_FOLDER_ID = "1j8QjgqCHBh50pJwl68hBpTCvTu1tUYgj"
 DIAMOND_SHEET_ID = "1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8"
+SALARY_SOURCE_ID = "1pIjJeUEM86RkUy4TIvgboWBlq8-scGIy"
 FINANCE_SHEET_MIME = "application/vnd.google-apps.spreadsheet"
 XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 FOLDER_MIME = "application/vnd.google-apps.folder"
@@ -315,6 +316,60 @@ def _finance_has_headers(sheets, required_headers, exact=False):
 
 
 def _salary_table(sheets):
+    # The revised file supplies take-home monthly rates in its role summary.
+    # Read that summary once; employee/contract tabs must never be combined.
+    if _finance_has_headers(sheets, ('албан тушаалын нэрс', 'гарт авах цалин')):
+        _, rows, header_index, headers = _find_finance_table(sheets, ('албан тушаалын нэрс', 'гарт авах цалин'))
+        title_col = next(i for i,h in enumerate(headers) if h == 'албан тушаалын нэрс')
+        monthly_col = next(i for i,h in enumerate(headers) if h == 'гарт авах цалин')
+        count_col = next(i for i,h in enumerate(headers) if h in {'албан тушаалын тоо', 'тоо'})
+        extra_col = next((i for i,h in enumerate(headers) if h == 'нэмэгдэл цалингийн мэдээлэл'), -1)
+        aliases = {
+            'өрөмдлөгийн ахлах ажилтан': 'супервайзер',
+            'өрөмдлөгийн өдрийн ээлжийн мастер': 'өрмийн мастер',
+            'өрөмдлөгийн шөнийн ээлжийн мастер': 'өрмийн мастер',
+            'өрөмдлөгийн ээлжийн мастер': 'өрмийн мастер',
+            'өрөмдлөгийн өдрийн ээлжийн туслах': 'өрмийн туслах',
+            'өрөмдлөгийн шөнийн ээлжийн туслах': 'өрмийн туслах',
+            'өрөмдлөгийн ээлжийн туслах': 'өрмийн туслах',
+            'өрөмдлөгийн өдрийн ээлжийн жолооч': 'усны жолооч',
+            'өрөмдлөгийн шөнийн ээлжийн жолооч': 'усны жолооч',
+            'өрөмдлөгийн усны ээлжийн жолооч': 'усны жолооч',
+            'түлшний нярав, механикч, жолооч': 'механик, түлшний жолооч',
+            'экскаватор, үйлчилгээний жолооч': 'унагалдай оператор, үйлчилгээний жолооч',
+            'өрмийн дээж зүсэгч': 'дээж зүсэгч',
+            'хабэаа, кэмп менежер': 'хаб, кемп менежер',
+            'туслах тогооч': 'тогоочийн туслах',
+            'угаагч, үйлчилгээний ажилтан': 'туслах угаагч',
+            'кэмпийн ажилтан, галч': 'кемп бой',
+            'сэлбэг, хангамж бэлтгэх нярав': 'нярав',
+        }
+        result = {}
+        for row in rows[header_index + 1:]:
+            title = norm(_finance_cell(row,title_col))
+            count = _finance_number(_finance_cell(row,count_col))
+            if not title or title.startswith('нийт') or count is None:
+                continue
+            key = aliases.get(title,title)
+            note = _finance_cell(row,extra_col)
+            bonus = re.search(r'1\s*метр\s*тутамд\s*([\d, ]+)\s*төгрөг',note,re.I)
+            position = {'headcount':count,'monthlySalary':_finance_number(_finance_cell(row,monthly_col)),
+                        'incentiveDailyRate':None,'bonusPerMeter':_finance_number(bonus[1]) if bonus else None}
+            alone = re.search(r'30\s*хоногт\s*([\d, ]+)\s*төгрөг',note,re.I) if 'ганцаараа' in note else None
+            if alone and key == 'өрмийн туслах':
+                position['singleAssistantDailyExtra'] = _finance_number(alone[1]) / 30
+            if key in result:
+                old = result[key]
+                if any(old[k] != position[k] for k in ('monthlySalary','bonusPerMeter')):
+                    raise ValueError('Conflicting day/night compensation rates')
+                old['headcount'] += count
+                if 'singleAssistantDailyExtra' in position:
+                    old['singleAssistantDailyExtra'] = position['singleAssistantDailyExtra']
+            else:
+                result[key] = position
+        if not result:
+            raise ValueError('Revised compensation summary has no rates')
+        return result
     _, rows, header_index, headers = _find_finance_table(
         sheets, ("албан тушаал", "ажилтны тоо", "нэрлэсэн цалин"))
     title_col = next(i for i, value in enumerate(headers) if "албан тушаал" in value)
@@ -407,6 +462,19 @@ def finance_aggregates(salary_sheets, attendance_sheets, shifts):
     for row in period_shifts:
         key = (row['date'], row['rig'], row['shift'])
         meters[key] = meters.get(key, 0.0) + row['meters']
+    # Only explicitly assigned assistant attendance can prove one-person staffing.
+    assistant_counts = {}
+    role = ''
+    for row in rows[day_header_index + 1:]:
+        if not _finance_cell(row, name_col):
+            continue
+        role = _finance_cell(row, role_col) or role
+        if ATTENDANCE_ROLE_ALIASES.get(norm(role),norm(role)) != 'өрмийн туслах':
+            continue
+        for column, day in zip(day_columns[:last_day], range(1,last_day+1)):
+            code = _finance_cell(row,column).upper()
+            if re.fullmatch(r'C(13|18)(D|N)',code):
+                assistant_counts[(day,code)] = assistant_counts.get((day,code),0) + 1
     role = ''
     for row in rows[day_header_index + 1:]:
         if not _finance_cell(row, name_col):
@@ -432,6 +500,8 @@ def finance_aggregates(salary_sheets, attendance_sheets, shifts):
                         for shift in ('Өдөр', 'Шөнө')]
             base = position['monthlySalary'] / month_days
             incentive = position['incentiveDailyRate'] or 0.0
+            if match and assistant_counts.get((day,code)) == 1 and position_key == 'өрмийн туслах':
+                incentive += position.get('singleAssistantDailyExtra',0.0)
             for key in keys:
                 bonus = (position['bonusPerMeter'] or 0.0) * meters.get(key, 0.0) if match else 0.0
                 # Apply the user's 13% loading to each person's components once.
@@ -730,7 +800,7 @@ def apply_diamond_budget(finance):
     return finance
 
 
-def drive_finance_aggregates(credentials_path, shifts):
+def drive_finance_aggregates(credentials_path, shifts, salary_source_id=SALARY_SOURCE_ID):
     drive = Drive(credentials_path)
     pending, seen, files = [FINANCE_FOLDER_ID], set(), {}
     while pending:
@@ -753,6 +823,12 @@ def drive_finance_aggregates(credentials_path, shifts):
                 files[file["id"]] = file
 
     salary_sheets = attendance_sheets = products_sheets = fuel_sheets = diamond_sheets = None
+    if salary_source_id:
+        try:
+            salary_sheets = workbook_rows(drive.download({'id':salary_source_id,'mimeType':XLSX_MIME}),'.xlsx')
+            _salary_table(salary_sheets)
+        except urllib.error.HTTPError as error:
+            raise FinanceSourceError('selected compensation workbook',error.code) from error
     for file in sorted(files.values(), key=lambda item: item.get("modifiedTime", ""), reverse=True):
         try:
             content = drive.download(file)

@@ -520,6 +520,18 @@
       "shifts": 107,
       "meters": 3065.3,
       "note": "2026-11-02 UGDH2601 verified photos: day 39 m, night 48 m, total 87 m; night water 5000 L; blank day DT uses owner-approved estimated 12 h."
+    },
+    {
+      "id": "619c6ad0-23f2-4826-8d05-27e6e90bac84",
+      "source": "drive",
+      "startedAt": "2026-11-03T12:37:01+08:00",
+      "completedAt": "2026-11-03T12:37:01+08:00",
+      "status": "updated",
+      "files": 2,
+      "holes": 13,
+      "shifts": 107,
+      "meters": 3065.3,
+      "note": "Recalculated October compensation from selected source and attendance; previous daily incentive removed; single-assistant extra applied; 13% loading once."
     }
   ]
 }

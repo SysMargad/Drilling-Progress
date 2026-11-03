@@ -18,6 +18,28 @@ from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
 ROOT = Path(__file__).resolve().parent
 
 class PipelineTests(unittest.TestCase):
+    def test_revised_compensation_deduplicates_tabs_and_applies_single_assistant_extra(self):
+        from drilling_sync import _salary_table
+        headers=['Албан тушаалын нэрс','Албан тушаалын тоо','Гарт авах цалин','Нэмэгдэл цалингийн мэдээлэл']
+        rows=[headers,
+              ['Өрөмдлөгийн өдрийн ээлжийн мастер','2','3100000','1 метр тутамд 1,200 төгрөгийн нэмэгдэл цалин олгоно'],
+              ['Өрөмдлөгийн шөнийн ээлжийн мастер','2','3100000','1 метр тутамд 1,200 төгрөгийн нэмэгдэл цалин олгоно'],
+              ['Өрөмдлөгийн өдрийн ээлжийн туслах','4','3100000','ганцаараа ажилласан тохиолдолд 30 хоногт 300,000 төгрөг'],
+              ['Өрөмдлөгийн шөнийн ээлжийн туслах','4','3100000','']]
+        sheets=[('summary',rows),('contract duplicate',rows)]
+        parsed=_salary_table(sheets)
+        self.assertEqual(parsed['өрмийн мастер']['headcount'],4)
+        self.assertEqual(parsed['өрмийн мастер']['bonusPerMeter'],1200)
+        self.assertIsNone(parsed['өрмийн мастер']['incentiveDailyRate'])
+        attendance=[['2026 оны 10-р сар'],['№','Нэр','Албан тушаал','1','2',*[str(i) for i in range(3,32)]]]
+        attendance.extend([['1','TEST_A','Өрмийн туслах','C13D','C13D'],['2','TEST_B','','','C13D']])
+        shifts=[{'date':f'2026-10-0{day}','rig':'CSD-1300','shift':'Өдөр','meters':10} for day in (1,2)]
+        result=finance_aggregates(sheets,[('attendance',attendance)],shifts)
+        self.assertAlmostEqual(sum(r['incentiveCost'] for r in result['daily']),11300)
+        conflict=[r.copy() for r in rows];conflict[2][2]='3200000'
+        with self.assertRaisesRegex(ValueError,'Conflicting'):
+            _salary_table([('summary',conflict)])
+
     def test_diamond_budget_excludes_reusable_tools_and_validates_rate(self):
         sheets=[('quote', [['№','Нэршил','Тоо хэмжээ','Нэгж үнэ ТӨГ','Нийт үнэ ТӨГ'],
                           ['1','PQ drill rod 3m','100','720000','72000000'],
@@ -323,7 +345,7 @@ class PipelineTests(unittest.TestCase):
             drive.return_value.download.side_effect = lambda file: (
                 b'salary' if file['id'] == 'salary-file' else b'products' if file['id']=='products-file' else b'fuel' if file['id']=='fuel-file' else b'attendance'
             )
-            result=drive_finance_aggregates(None, [])
+            result=drive_finance_aggregates(None, [], salary_source_id=None)
             self.assertEqual(result['mud']['totalBags'],17)
             self.assertEqual(result['mud']['totalBags']*result['mud']['bagKg'],425)
         aggregate.assert_called_once_with(salary_sheets, attendance_sheets, [])
