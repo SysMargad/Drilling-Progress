@@ -63,27 +63,28 @@ Local watch ажиллахад компьютер асаалттай, проце
 
 ## Google Chat өдөр тутмын мэдээ
 
-Drive синк шинэ ээлж нэмэх бүрд `chat_report.py` Google Chat space руу карт илгээнэ. Картад:
+`.github/workflows/chat-report.yml` нь **өдөр бүр 20:00 (UTC+8)** цагт Chat-д хараахан илгээгээгүй бүх ээлжийг `chat_report.py`-оор Google Chat space руу нэг карт болгон илгээнэ. Drive синк эсвэл local `[skip ci]` commit-оор орсон эсэхээс үл хамаарна. GitHub хуваарьт ажлыг хоцроож эхлүүлдэг тул workflow 19:40-д эхэлж, 20:00 хүртэл хүлээгээд илгээнэ; GitHub-ийн ачаалал ихтэй үед хэдэн минут хоцорч болно. Шинэ ээлж ороогүй өдөр сүүлийн ээлжийг заасан богино мэдэгдэл илгээнэ. Картад:
 - шинэ ээлжүүдийг цооногийн дугаараар бүлэглэсэн жагсаалт: гүний интервал, метр, DT/ST, ROP, өрөмдөгч, тайлангийн зураг;
 - өдрийн дүн: өрөм тус бүрийн метрийг 60 м/өдөр нормтой харьцуулна, мэдээ ороогүй ээлжийг тэмдэглэнэ;
 - бүх цооногийн ахиц;
 - тайлант хугацааны өрмийн гүйцэтгэл.
 
-Санхүүгийн үзүүлэлт картад орохгүй. Ээлжийг өрөм + огноо + ээлж + цооногоор синкийн өмнөх `data.json`-той харьцуулдаг тул нэг ээлж нэг л удаа илгээгдэнэ. Хожим нөхөгдсөн ээлж дараагийн карт дээр гарна.
+Санхүүгийн үзүүлэлт картад орохгүй. Илгээсэн ээлж бүрийг өрөм + огноо + ээлж + цооногоор `chat-posted.json`-д бүртгэж commit хийдэг тул нэг ээлж нэг л удаа илгээгдэнэ. Илгээлт амжилтгүй бол бүртгэхгүй, дараагийн удаа дахин оролдоно. Хожим нөхөгдсөн ээлж дараагийн карт дээр гарна.
 
 Нэг удаагийн тохиргоо:
 
 1. Google Chat space → нэр ▾ → Apps & integrations → Webhooks → Add webhook (жишээ нь `Өрөмдлөгийн явц`) → URL-ийг хуулна.
 2. Repository → Settings → Secrets and variables → Actions → `GOOGLE_CHAT_WEBHOOK_URL` secret-д URL-ийг хадгална. Webhook URL нь нууц тул repository файлд хийхгүй.
-3. Шалгах: Actions → Sync drilling data from Google Drive → Run workflow → `chat_date`-д огноо (жишээ нь `2026-10-29`) бичнэ. Тухайн өдрийн бүх ээлжийг илгээнэ.
+3. Шалгах: Actions → Post drilling progress to Google Chat → Run workflow. Хоосон орхивол илгээгээгүй ээлжүүдийг, `chat_date`-д огноо (жишээ нь `2026-11-02`) бичвэл тухайн өдрийн бүх ээлжийг дахин илгээнэ.
 
-Local-аар урьдчилж харах, илгээх:
+Дараагийн картыг local-аар урьдчилж харах (юу ч илгээхгүй, бүртгэхгүй):
 
 ```powershell
-py -3 chat_report.py --date 2026-10-29 --dry-run
-$env:GOOGLE_CHAT_WEBHOOK_URL = 'https://chat.googleapis.com/v1/spaces/...'
-py -3 chat_report.py --date 2026-10-29
+py -3 chat_report.py --dry-run
+py -3 chat_report.py --date 2026-11-02 --dry-run
 ```
+
+Илгээлтийг workflow-оор хийнэ: local-аар илгээвэл `chat-posted.json`-ийг commit хийхгүй бол workflow дахин илгээнэ.
 
 ## Өгөгдлийн шалгалт
 
@@ -105,7 +106,8 @@ py -3 -B validate_data.py
 - `input/`: эх CSV болон local XLSX
 - `.github/workflows/pages.yml`: push → Pages deploy
 - `.github/workflows/drive-sync.yml`: Drive → шалгалт → push → Pages deploy
-- `chat_report.py`: шинэ ээлж → Google Chat карт
+- `chat_report.py`, `chat-posted.json`: илгээгээгүй ээлж → Google Chat карт; илгээсэн ээлжийн бүртгэл
+- `.github/workflows/chat-report.yml`: өдөр бүр 20:00 → Google Chat
 - `test_drilling_sync.py`, `test_chat_report.py`, `validate_data.py`: шалгалт
 - `requirements.txt`: Drive authentication package
 

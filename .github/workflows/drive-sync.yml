@@ -15,10 +15,6 @@ on:
     # Same daily timing as Drone Track: 08:00 Asia/Shanghai.
     - cron: '0 0 * * *'
   workflow_dispatch:
-    inputs:
-      chat_date:
-        description: 'Google Chat руу дахин илгээх огноо (YYYY-MM-DD). Хоосон бол зөвхөн шинэ ээлжийг илгээнэ.'
-        required: false
 
 permissions:
   contents: write
@@ -41,8 +37,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Keep pre-sync data for the Google Chat report
-        run: cp dist/data.json "$RUNNER_TEMP/previous-data.json"
       - name: Check Drive authentication
         id: credentials
         env:
@@ -92,24 +86,10 @@ jobs:
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add -- dist/data.json dist/data-log.json
             git commit -m 'Sync validated drilling data from Drive'
+            # chat-report.yml may have recorded posted shifts since checkout.
+            git pull --rebase --autostash -q origin main
             git push origin HEAD:main
             echo 'changed=true' >> "$GITHUB_OUTPUT"
-          fi
-      - name: Post new shifts to Google Chat
-        # A failed post must not hold back the Pages deploy of the synced data.
-        if: steps.commit.outputs.changed == 'true' || inputs.chat_date
-        continue-on-error: true
-        env:
-          GOOGLE_CHAT_WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
-          CHAT_DATE: ${{ inputs.chat_date }}
-        shell: bash
-        run: |
-          if [[ -z "$GOOGLE_CHAT_WEBHOOK_URL" ]]; then
-            echo '::notice::Configure GOOGLE_CHAT_WEBHOOK_URL to post daily drilling progress to Google Chat.'
-          elif [[ -n "$CHAT_DATE" ]]; then
-            python -B chat_report.py --date "$CHAT_DATE"
-          else
-            python -B chat_report.py --previous "$RUNNER_TEMP/previous-data.json"
           fi
   deploy:
     needs: sync

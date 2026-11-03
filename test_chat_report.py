@@ -1,10 +1,12 @@
+import io
 import json
 import re
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from chat_report import build_message, new_shifts, post
+from chat_report import build_message, main, post, shift_key
 
 ROOT = Path(__file__).resolve().parent
 
@@ -36,11 +38,47 @@ class ChatReportTests(unittest.TestCase):
             {'id': 'ZHDH2612', 'targetArea': 'Замт Хөндий', 'plan': None, 'start': '', 'finish': ''}],
             'finance': {'daily': [{'date': '2026-10-29', 'laborCost': 1731451.62}]}}
 
-    def test_only_shifts_added_since_previous_sync_are_reported(self):
-        corrected = {**self.old[1], 'to': 161.0}
-        self.assertEqual(new_shifts({'shifts': self.old}, {'shifts': [self.old[0], corrected] + self.added}),
-                         self.added)
-        self.assertEqual(new_shifts({'shifts': self.old + self.added}, self.data), [])
+    def run_report(self, folder, *args, fail=False):
+        data, ledger = Path(folder) / 'data.json', Path(folder) / 'chat-posted.json'
+        data.write_text(json.dumps(self.data, ensure_ascii=False), encoding='utf-8')
+        argv = ['chat_report.py', '--data', str(data), '--ledger', str(ledger), *args]
+        with patch('sys.argv', argv), patch.dict('os.environ', {'GOOGLE_CHAT_WEBHOOK_URL': 'https://chat.googleapis.com/x'}), \
+                patch('chat_report.post', side_effect=OSError('HTTP 500') if fail else None) as sent, \
+                patch('sys.stdout', io.StringIO()):
+            try:
+                main()
+            except OSError:
+                pass
+        posted = json.loads(ledger.read_text(encoding='utf-8'))['posted'] if ledger.exists() else None
+        return sent, posted
+
+    def test_every_unposted_shift_is_posted_once_however_it_arrived(self):
+        with tempfile.TemporaryDirectory() as folder:
+            sent, posted = self.run_report(folder)
+            sent.assert_not_called()  # First run records history instead of flooding the space.
+            self.assertEqual(len(posted), 4)
+            ledger = Path(folder) / 'chat-posted.json'
+            ledger.write_text(json.dumps({'posted': [list(shift_key(row)) for row in self.old]}), encoding='utf-8')
+            self.data['shifts'][1] = {**self.old[1], 'to': 161.0}  # A corrected shift is not news.
+            sent, posted = self.run_report(folder, fail=True)
+            self.assertEqual(len(posted), 2, 'a failed post must be retried next run')
+            sent, posted = self.run_report(folder)
+            self.assertIn('2 шинэ ээлж', sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'])
+            self.assertEqual(posted[-2:], [['C-1800', '2026-10-28', 'Шөнө', 'ZHDH2604'],
+                                           ['C-1800', '2026-10-29', 'Өдөр', 'ZHDH2604']])
+            sent, unchanged = self.run_report(folder)
+            quiet = sent.call_args.args[1]
+            self.assertEqual(quiet['cardsV2'][0]['card']['header']['subtitle'], 'Нэргүй Өндөр · шинэ ээлж ороогүй')
+            self.assertEqual(card_text(quiet)[0].splitlines()[1:], ['C-1800 сүүлийн ээлж : 2026-10-29 Өдөр · ZHDH2604',
+                                                                    'CSD-1300 сүүлийн ээлж : 2026-10-28 Өдөр · ZHDH2606'])
+            self.assertEqual(unchanged, posted)
+            sent, _ = self.run_report(folder, '--date', '2026-10-30')
+            sent.assert_not_called()
+            sent, _ = self.run_report(folder, '--date', '2026-10-29')
+            self.assertIn('1 шинэ ээлж', sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'])
+            del self.data['shifts'][0]
+            _, posted = self.run_report(folder, '--date', '2026-10-29')
+            self.assertNotIn(['C-1800', '2026-10-28', 'Өдөр', 'ZHDH2604'], posted)
 
     def test_card_starts_with_hole_progress_and_leaves_out_finance(self):
         message = build_message(self.data, list(reversed(self.added)))

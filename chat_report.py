@@ -1,8 +1,10 @@
-"""Post drilling progress for newly synced shifts to a Google Chat space.
+"""Post drilling shifts not yet reported to a Google Chat space.
 
 The card starts from the hole numbers, then shows daily totals against the
 dashboard norm, hole progress and rig performance. Financial figures are left
 out on purpose. GOOGLE_CHAT_WEBHOOK_URL holds the space's incoming webhook URL.
+chat-posted.json records every posted shift, so shifts are reported once
+whether they arrived through the Drive sync or a local data commit.
 """
 from __future__ import annotations
 
@@ -16,12 +18,15 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+LEDGER = ROOT / "chat-posted.json"
 DASHBOARD_URL = "https://sysmargad.github.io/Drilling-Progress/"
 SITE = "Нэргүй Өндөр"
 RIGS = ("C-1800", "CSD-1300")
 SHIFT_ORDER = {"Өдөр": 0, "Шөнө": 1}
 SHIFT_TARGET, DAY_TARGET = 30, 60  # metres per rig, as on the dashboard chart
 MUTED, GOOD, LOW = "#9aa0a6", "#34a853", "#ea4335"
+DASHBOARD_BUTTON = {"widgets": [{"buttonList": {"buttons": [
+    {"text": "Хяналтын самбар нээх", "onClick": {"openLink": {"url": DASHBOARD_URL}}}]}}]}
 
 
 def load_json(path):
@@ -44,9 +49,21 @@ def shift_order(row):
     return row["date"], SHIFT_ORDER.get(row["shift"], 2), row["rig"]
 
 
-def new_shifts(previous, current):
-    seen = {shift_key(row) for row in previous.get("shifts", [])}
-    return [row for row in current["shifts"] if shift_key(row) not in seen]
+def unposted(posted, data):
+    return [row for row in data["shifts"] if shift_key(row) not in posted]
+
+
+def load_ledger(path):
+    return {tuple(key) for key in load_json(path)["posted"]} if Path(path).exists() else None
+
+
+def save_ledger(path, posted, data):
+    # Keys of shifts later removed from the data are dropped, keeping the file bounded.
+    current = {shift_key(row) for row in data["shifts"]}
+    keys = sorted((key for key in posted if key in current),
+                  key=lambda key: (key[1], SHIFT_ORDER.get(key[2], 2), key[0], key[3]))
+    lines = ",\n".join("  " + json.dumps(list(key), ensure_ascii=False) for key in keys)
+    Path(path).write_text('{"posted": [\n' + lines + "\n]}\n", encoding="utf-8")
 
 
 def area_of(hole):
@@ -178,12 +195,22 @@ def build_message(data, rows):
     sections = [hole_section(collar.get(hole_id, {"id": hole_id}), hole_rows, shifts)
                 for hole_id, hole_rows in sorted(by_hole.items(), key=lambda item: (
                     RIGS.index(item[1][-1]["rig"]) if item[1][-1]["rig"] in RIGS else len(RIGS), item[0]))]
-    sections += [daily_section(dates, shifts), progress_section(data), performance_section(data),
-                 {"widgets": [{"buttonList": {"buttons": [
-                     {"text": "Хяналтын самбар нээх", "onClick": {"openLink": {"url": DASHBOARD_URL}}}]}}]}]
+    sections += [daily_section(dates, shifts), progress_section(data), performance_section(data), DASHBOARD_BUTTON]
     return {"cardsV2": [{"cardId": "drilling-progress", "card": {
         "header": {"title": "Өрөмдлөгийн явц", "subtitle": f"{SITE} · {period} · {len(rows)} шинэ ээлж"},
         "sections": sections}}]}
+
+
+def quiet_message(data):
+    """Evening card when no shift report has arrived since the last one."""
+    lines = ["Сүүлийн мэдээнээс хойш шинэ ээлжийн тайлан бүртгэгдээгүй."]
+    for rig in RIGS:
+        latest = max((row for row in data["shifts"] if row["rig"] == rig), key=shift_order, default=None)
+        last = f"{latest['date']} {latest['shift']} · {html.escape(latest['hole'])}" if latest else "—"
+        lines.append(f"{label(rig + ' сүүлийн ээлж')} : <b>{last}</b>")
+    return {"cardsV2": [{"cardId": "drilling-progress", "card": {
+        "header": {"title": "Өрөмдлөгийн явц", "subtitle": f"{SITE} · шинэ ээлж ороогүй"},
+        "sections": [{"widgets": [{"textParagraph": {"text": "<br>".join(lines)}}]}, DASHBOARD_BUTTON]}}]}
 
 
 def post(url, message):
@@ -198,20 +225,26 @@ def post(url, message):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=ROOT / "dist" / "data.json")
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--previous", type=Path, help="data.json before the sync; posts only shifts added since")
-    source.add_argument("--date", help="Post every shift recorded on this date (YYYY-MM-DD)")
-    parser.add_argument("--dry-run", action="store_true", help="Print the message instead of posting it")
+    parser.add_argument("--ledger", type=Path, default=LEDGER, help="Shifts already posted")
+    parser.add_argument("--date", help="Post every shift recorded on this date again (YYYY-MM-DD)")
+    parser.add_argument("--dry-run", action="store_true", help="Print the message; post and record nothing")
     args = parser.parse_args()
     if args.date and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", args.date):
         parser.error("--date must be YYYY-MM-DD")
-    data = load_json(args.data)
-    rows = (new_shifts(load_json(args.previous), data) if args.previous
-            else [row for row in data["shifts"] if row["date"] == args.date])
-    if not rows:
-        print("No shifts to report; nothing posted.")
+    data, posted = load_json(args.data), load_ledger(args.ledger)
+    if posted is None and not args.date:
+        # Without a record, posting the whole history would flood the space.
+        if not args.dry_run:
+            save_ledger(args.ledger, {shift_key(row) for row in data["shifts"]}, data)
+        print(f"No {args.ledger.name}; recorded {len(data['shifts'])} existing shifts without posting.")
         return
-    message = build_message(data, rows)
+    rows = ([row for row in data["shifts"] if row["date"] == args.date] if args.date
+            else unposted(posted, data))
+    if not rows and args.date:
+        print(f"No shifts recorded on {args.date}; nothing posted.")
+        return
+    # The scheduled evening post still goes out, so a quiet day is not mistaken for a broken bot.
+    message = build_message(data, rows) if rows else quiet_message(data)
     if args.dry_run:
         sys.stdout.reconfigure(encoding="utf-8")
         print(json.dumps(message, ensure_ascii=False, indent=2))
@@ -220,7 +253,9 @@ def main():
     if not url:
         parser.error("Set GOOGLE_CHAT_WEBHOOK_URL to the space's incoming webhook URL")
     post(url, message)
-    print(f"Posted {len(rows)} shifts to Google Chat.")
+    if rows:
+        save_ledger(args.ledger, (posted or set()) | {shift_key(row) for row in rows}, data)
+    print(f"Posted {len(rows)} shifts to Google Chat." if rows else "Posted a no-new-shifts notice to Google Chat.")
 
 
 if __name__ == "__main__":

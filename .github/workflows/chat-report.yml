@@ -1,0 +1,61 @@
+name: Post drilling progress to Google Chat
+
+on:
+  schedule:
+    # 19:40 UTC+8. GitHub often starts scheduled runs late, so the job starts
+    # early and waits for 20:00 before posting.
+    - cron: '40 11 * * *'
+  workflow_dispatch:
+    inputs:
+      chat_date:
+        description: 'Дахин илгээх огноо (YYYY-MM-DD). Хоосон бол илгээгдээгүй бүх ээлжийг илгээнэ.'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chat-report
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait until 20:00 UTC+8
+        if: github.event_name == 'schedule'
+        run: |
+          wait=$(( $(date -u -d '12:00' +%s) - $(date -u +%s) ))
+          if (( wait > 0 && wait <= 1800 )); then sleep "$wait"; fi
+      - uses: actions/checkout@v4
+        with:
+          # Check out after the wait so data committed meanwhile is included.
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Post unreported shifts
+        env:
+          GOOGLE_CHAT_WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          CHAT_DATE: ${{ inputs.chat_date }}
+        shell: bash
+        run: |
+          if [[ -z "$GOOGLE_CHAT_WEBHOOK_URL" ]]; then
+            echo '::warning::Configure the GOOGLE_CHAT_WEBHOOK_URL secret to post drilling progress to Google Chat.'
+          elif [[ -n "$CHAT_DATE" ]]; then
+            python -B chat_report.py --date "$CHAT_DATE"
+          else
+            python -B chat_report.py
+          fi
+      - name: Record posted shifts
+        shell: bash
+        run: |
+          if [[ -z "$(git status --porcelain -- chat-posted.json)" ]]; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- chat-posted.json
+          git commit -m 'Record shifts posted to Google Chat'
+          git pull --rebase --autostash -q origin main
+          git push origin HEAD:main
