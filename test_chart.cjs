@@ -22,6 +22,16 @@ const multi=aggregate([row('2026-10-01','Өдөр','C-1800',15),row('2026-10-01'
 assert.equal(multi.amounts['C-1800'],40);assert.equal(multi.amounts['CSD-1300'],35);assert.equal(multi.target,60);
 assert.equal(aggregate(rows.filter(r=>r.rig==='C-1800'),'day')[0].amounts['CSD-1300'],undefined);
 assert.deepEqual(aggregate([],'day'),[]);
+for(const month of [...new Set(real.shifts.map(s=>s.date.slice(0,7)))])for(const grain of ['shift','day','week','month']){
+ const selected=aggregate(real.shifts,grain,month),expected=real.shifts.filter(s=>s.date.startsWith(month+'-'));
+ assert.ok(Math.abs(selected.reduce((n,g)=>n+Object.values(g.amounts).reduce((a,b)=>a+b,0),0)-expected.reduce((n,s)=>n+s.meters,0))<1e-6);
+ assert.ok(selected.every(g=>g.start.startsWith(month)&&g.end.startsWith(month)&&g.rows.every(s=>s.date.startsWith(month))));
+}
+const clipped=aggregate([row('2026-10-01','Өдөр','C-1800',20),row('2026-10-31','Шөнө','C-1800',30),row('2026-11-01','Өдөр','C-1800',40)],'week','2026-10');
+assert.equal(clipped[0].start,'2026-10-01');assert.equal(clipped[0].target,240);
+assert.equal(clipped.at(-1).end,'2026-10-31');assert.equal(clipped.at(-1).target,360);
+assert.deepEqual(aggregate(real.shifts,'day','2020-01'),[]);
+assert.throws(()=>aggregate(real.shifts,'day','2026-13'));
 assert.throws(()=>aggregate(rows,'year'));
 const hole=real.collar.find(h=>real.shifts.some(s=>s.hole===h.id));
 const actualRows=real.shifts.filter(s=>s.hole===hole.id);
