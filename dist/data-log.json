@@ -532,6 +532,18 @@
       "shifts": 107,
       "meters": 3065.3,
       "note": "Recalculated October compensation from selected source and attendance; previous daily incentive removed; single-assistant extra applied; 13% loading once."
+    },
+    {
+      "id": "b7c17ca3-73b2-473d-b4b8-691318ef2ba1",
+      "source": "drive",
+      "startedAt": "2026-11-03T13:59:40+08:00",
+      "status": "updated",
+      "completedAt": "2026-11-03T14:01:00+08:00",
+      "files": 14,
+      "holes": 13,
+      "shifts": 107,
+      "meters": 3065.3,
+      "note": "74 source conflicts"
     }
   ]
 }

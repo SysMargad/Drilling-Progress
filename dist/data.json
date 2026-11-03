@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-03",
-  "updatedAt": "2026-11-03T12:37:01+08:00",
+  "updatedAt": "2026-11-03T14:00:51+08:00",
   "period": "2026-10-01 – 2026-11-02",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -145,9 +145,9 @@
       "az": 52.0,
       "dip": 64.0,
       "plan": 500.0,
-      "collarDepth": null,
+      "collarDepth": 503.0,
       "start": "2026-10-24",
-      "finish": "",
+      "finish": "2026-11-01",
       "recovery": null,
       "boxes": null
     },
@@ -2659,38 +2659,62 @@
       "driller": ""
     },
     {
-      "date": "2026-11-02",
       "rig": "CSD-1300",
+      "source": "20261102_n_UGDH2601_CSD-1300.jpg",
+      "date": "2026-11-02",
       "shift": "Шөнө",
+      "driller": "",
       "hole": "UGDH2601",
       "from": 137.4,
       "to": 185.4,
-      "meters": 48,
-      "dt": 10.5,
-      "hours": 12,
+      "meters": 48.0,
       "st": null,
       "rt": null,
-      "waterUsageM3": 5,
-      "notes": "jjjj1.jpg; PT=0.5 h; DT=10.5 h; OT=1 h; total=12 h. Water 1 trip = 5000 L (owner-confirmed capacity). Polymer 1 unit: package mass not reported, no kg/cost assumed.",
-      "reports": [],
-      "driller": ""
+      "dt": 10.5,
+      "hours": 12.0,
+      "notes": "PT 0.5 цаг + DT 10.5 цаг + OT 1 цаг =12 цаг. Ус 1 рейс=5000 л (эзэмшигч баталгаажуулсан). Полимер 1: кг, үнэ тодорхойгүй.",
+      "waterUsageM3": 5.0,
+      "reports": [
+        {
+          "hole": "UGDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-11-02",
+          "shift": "Шөнө",
+          "name": "20261102_n_UGDH2601_CSD-1300.jpg",
+          "url": "https://drive.google.com/file/d/148Hw3UBBYtnN6faafumGXXE67JJzSpMn/view?usp=drivesdk",
+          "fileId": "148Hw3UBBYtnN6faafumGXXE67JJzSpMn",
+          "folderUrl": "https://drive.google.com/drive/folders/1mwH3TEapRnIjZkT8EJnOfsFH5IZ2KKkg"
+        }
+      ]
     },
     {
-      "date": "2026-11-02",
       "rig": "CSD-1300",
+      "source": "20261102_d_UGDH2601_CSD-1300.jpg",
+      "date": "2026-11-02",
       "shift": "Өдөр",
+      "driller": "",
       "hole": "UGDH2601",
       "from": 98.4,
       "to": 137.4,
-      "meters": 39,
-      "dt": 12,
-      "hours": 12,
+      "meters": 39.0,
       "st": null,
       "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "DT эхэд хоосон: өмнөх баталгаажсан дүрмээр 12 цаг гэж тооцсон. Төгсгөлийн гүн 98.4+39=137.4; дараагийн ээлжийн эхлэлтэй тулгав. Полимер 1: кг, үнэ тодорхойгүй.",
       "waterUsageM3": null,
-      "notes": "jjjj2.jpg; source DT blank; owner policy 2026-10-27 uses estimated DT=12 h. Total shift=12 h. Finish normalized to 137.4 m from 98.4 + 39, confirmed by next shift start 137.4; handwritten finish omits decimal. Polymer 1: package mass not reported, no kg/cost assumed.",
-      "reports": [],
-      "driller": ""
+      "reports": [
+        {
+          "hole": "UGDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-11-02",
+          "shift": "Өдөр",
+          "name": "20261102_d_UGDH2601_CSD-1300.jpg",
+          "url": "https://drive.google.com/file/d/1V4FyoZ0bE8G4gkRKu9ZPR3rfmBtz_Xtt/view?usp=drivesdk",
+          "fileId": "1V4FyoZ0bE8G4gkRKu9ZPR3rfmBtz_Xtt",
+          "folderUrl": "https://drive.google.com/drive/folders/1mwH3TEapRnIjZkT8EJnOfsFH5IZ2KKkg"
+        }
+      ]
     }
   ],
   "folderMap": {
@@ -3269,6 +3293,104 @@
           "url": "https://drive.google.com/drive/folders/1Ae5QWwGhIRXEZaTQY4eIwFtwT4LTVoyy"
         }
       ]
+    },
+    "UGDH2601": {
+      "url": "https://drive.google.com/drive/folders/17sGT5l-8duZZGWmffzQevg6hMzK6G7cT",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1pU_SEId3bpo_kyMOZboNKjKCuljb68RU"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1pDPXA0B1nI-_-c5bNOJ88egU1V3Mydh6"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/13cTP89xgm-GKfILFHl3mBispTHtdHTTr"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1KuHrPhdfbRBWVSMz22FTeKEeMxi5jroG"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1ohYkuHNLjrNWE9bn_kzWu1e0zQ0xpYZ_"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1MzeTQHvtYI-B5ky4lIR0qVxcVIHEh2sC"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/17GUfovL90Y1S1aWwo0QTDm36Ukz9A69J"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1eaoC94lfrWhs8k88skHgJy4t9uLADbHh"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1xhOCJjqo_bBNfB7z6KYKBEiiMwsFlxVi"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1m6IV_HtW8V37akub_4qjUGG9HxLS1wKT"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1xUuBGG45jKeP9AWpMCO09qtItu1FGtWg"
+        }
+      ]
+    },
+    "UGDH2602": {
+      "url": "https://drive.google.com/drive/folders/1JjaT6kTO7aQKubkMOk-p5gLeNktlBxsw",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1MyQid35mNPDxxkGwxzlzu72Cqhv6Lcrx"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1FRFPJ6zh9Zvqx4zEJ5dJvMpfn4tDnLJK"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/1xyvx3iEquPzTbHCtuXZyXn7H_FFKim5R"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1Ub052sLuoe4jrqtn2MfSHHpU4k2Tjjje"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1sXQhouZR1csAhNInmsmrM-ZDIEqkjjFC"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1XwYL7vih4HnbNGIyOxJaaNDR8pwEm9Ay"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1SMi2OyeOgBJ44FtS7lkDtKG-Cu9rP_vs"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1jCz1SFiykCcPdvhoO4gBQoJbFe19jVtb"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1d1qvjO2h49ispXX5blv1oufJNXy_CDBd"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/11lUellyk0joAN-VKfXnzradErqXii5ES"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/1WuWNtKv847eiFiDnNxkfJNA1bhLX_6Wh"
+        }
+      ]
     }
   },
   "syncWarnings": [
@@ -3297,6 +3419,8 @@
     "Unreported time codes: DTDH2606 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-17 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-18 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: UGDH2601 / 2026-11-02 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: UGDH2601 / 2026-11-02 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-19 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-19 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-20 / Шөнө / ST; preserved as null",
@@ -3347,16 +3471,22 @@
   ],
   "sources": [
     {
-      "name": "ZHDH2604 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
+      "name": "UGDH2601 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 15
+      "shiftRows": 2
     },
     {
       "name": "NUDH_COLLAR.xlsx",
       "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
       "collarRows": 17,
       "shiftRows": 0
+    },
+    {
+      "name": "ZHDH2604 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 15
     },
     {
       "name": "ZHDH2606 - Drilling Shift Report Table",
