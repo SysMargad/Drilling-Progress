@@ -39,6 +39,16 @@ SALARY_SOURCE_ID = "1pIjJeUEM86RkUy4TIvgboWBlq8-scGIy"
 FINANCE_SHEET_MIME = "application/vnd.google-apps.spreadsheet"
 XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 FOLDER_MIME = "application/vnd.google-apps.folder"
+# Areas by hole id prefix. Holes of a new prefix take the name of their Drive area folder
+# (01. Field Data Acquisition / 2026 / <n. area> / <hole>), Mongolian where it is known.
+AREAS = {"DTDH": "Дорнын Төмөр", "ZHDH": "Замт Хөндий", "UGDH": "Уртын гол", "STDH": "Сант"}
+AREA_FOLDERS = {"dorniin tumur": "Дорнын Төмөр", "zamt hundii": "Замт Хөндий", "urtiin gol": "Уртын гол", "sant": "Сант"}
+UNKNOWN_AREA = "Тодорхойгүй"
+# Hole sub-folders listed on the Drilling Data page (folder number -> data kind), as used by the
+# NGM geological log system: box photos, geological / geotechnical workbooks, pXRF, downhole surveys.
+INVENTORY_SECTIONS = {"03": "surveys", "04": "geological", "05": "photos", "07": "geotechnical", "10": "pxrf"}
+PHOTO_FORMATS = {"CR2", "JPG", "PNG", "TIF", "TIFF", "HEIC"}
+INVENTORY_FILE_LIMIT = 60
 FOOD_COST_PER_FIELD_DAY = 35000.0
 SALARY_PRORATION_DAYS = 31
 LOG = logging.getLogger("drilling")
@@ -129,7 +139,8 @@ def number(value):
     text = str(value).strip()
     if not text or text.startswith("#") or text in {"—", "-"}:
         return None
-    n = float(text.replace(",", ""))
+    # Thousands may be grouped with commas or spaces ("671 289.0" in the collar sheet).
+    n = float(re.sub(r"[\s,]", "", text))
     if not math.isfinite(n):
         raise ValueError("Non-finite numeric value")
     return n
@@ -153,8 +164,19 @@ def date(value):
 
 
 def hole_id(value):
+    # Any area's drill holes: DTDH, ZHDH, UGDH, STDH, KHDH, ...
     h = str(value).strip().upper().replace("-", "")
-    return h if re.fullmatch(r"(?:DTDH|ZHDH|UGDH)\d{4,}", h) else None
+    return h if re.fullmatch(r"[A-Z]{2}DH\d{4,}", h) else None
+
+
+def area_of(hole, folder_area=""):
+    """Area of a hole: by its id prefix, else from its Drive area folder ("4. Sant")."""
+    return AREAS.get(hole[:4]) or folder_area or UNKNOWN_AREA
+
+
+def folder_area(name):
+    plain = re.sub(r"^\s*\d+\s*\.\s*", "", name).strip()
+    return AREA_FOLDERS.get(plain.lower(), plain)
 
 
 def parse_collar(rows):
@@ -173,8 +195,7 @@ def parse_collar(rows):
         h = hole_id(get(lambda x: x == "hole id"))
         if not h:
             continue
-        output.append({"id": h, "site": "Нэргүй Өндөр",
-                       "targetArea": "Уртын гол" if h.startswith('UGDH') else "Дорнын Төмөр" if h.startswith("DT") else "Замт Хөндий",
+        output.append({"id": h, "site": "Нэргүй Өндөр", "targetArea": AREAS.get(h[:4], ""),
                        "e": number(get(lambda x: x == "e")),
                        "n": number(get(lambda x: x == "n")),
                        "z": number(get(lambda x: x == "z")),
@@ -185,7 +206,13 @@ def parse_collar(rows):
                        "start": date(get(lambda x: "started date" in x)),
                        "finish": date(get(lambda x: "finished date" in x)),
                        "recovery": number(get(lambda x: x == "core recovery")),
-                       "boxes": number(get(lambda x: "core boxes" in x))})
+                       "boxes": number(get(lambda x: "core boxes" in x)),
+                       # The team's log register ("Completed", "in progress", blank = not done).
+                       "geologyLog": str(get(lambda x: x == "geology log")).strip(),
+                       "geotechLog": str(get(lambda x: x == "geotechnical log")).strip(),
+                       "pxrfLog": str(get(lambda x: x == "xrf combined log")).strip(),
+                       "corePhoto": str(get(lambda x: x == "core photo")).strip(),
+                       "sampling": str(get(lambda x: x == "sampling")).strip()})
     return output
 
 
@@ -618,26 +645,75 @@ def attach_reports(rows, reports):
         row["reports"] = index.get((row["hole"], row["rig"], row["date"], row["shift"]), [])
 
 
+def inventory_section(name):
+    """Logging data kind of a hole sub-folder ("05. Core & RC Photography" -> photos; "10.pXRF" -> pxrf)."""
+    match = re.match(r"\s*(\d{2})\s*\.", name)
+    return INVENTORY_SECTIONS.get(match[1], "") if match else ""
+
+
+def add_inventory_file(inventory, hole, section, f):
+    entry = inventory.setdefault(hole, {}).setdefault(section, {"url": "", "files": []})
+    entry["files"].append({"name": f["name"], "modified": f.get("modifiedTime", ""),
+                           "url": f.get("webViewLink") or f"https://drive.google.com/file/d/{f['id']}/view"})
+
+
+def summarize_inventory(inventory):
+    """Photo folders become counts (box photos are numerous); document folders keep their file list.
+
+    A photo is counted once per name stem: a box's CR2 and its JPEG export, or a resized copy in a
+    sub-folder, are one photo. Files renamed "delete..." (rejected repeat shots) are not counted."""
+    result = {}
+    for hole, sections in sorted(inventory.items()):
+        result[hole] = {}
+        for section, entry in sorted(sections.items()):
+            files = sorted(entry["files"], key=lambda f: (f["name"].lower(), f["url"]))
+            latest = max((f["modified"] for f in files), default="")
+            if section != "photos":
+                result[hole][section] = {"url": entry["url"], "count": len(files), "latest": latest,
+                                         "files": files[:INVENTORY_FILE_LIMIT]}
+                continue
+            stems, formats = set(), {}
+            for f in files:
+                stem, dot, suffix = f["name"].rpartition(".")
+                suffix = suffix.upper().replace("JPEG", "JPG")
+                if not dot or suffix not in PHOTO_FORMATS or stem.strip().lower().startswith("delete"):
+                    continue
+                stems.add(stem.strip().lower())
+                formats[suffix] = formats.get(suffix, 0) + 1
+            result[hole][section] = {"url": entry["url"], "count": len(stems), "latest": latest,
+                                     "formats": dict(sorted(formats.items()))}
+    return result
+
+
 def drive_sources(folder, credentials_path):
     drive = Drive(credentials_path)
-    pending, seen, records, folders, reports = [(folder, None, None, False)], set(), [], {}, []
+    pending, seen, records, folders, reports, inventory = [(folder, None, None, False, None, ())], set(), [], {}, [], {}
     while pending:
-        fid, hole, rig, daily = pending.pop()
+        # section: None above and at the hole folder; inside it, the data kind of its sub-folder ("" = not tracked).
+        # path: folder names from the root down to this folder.
+        fid, hole, rig, daily, section, path = pending.pop()
         if fid in seen:
             continue
         seen.add(fid)
         children = drive.files(fid)
         if hole and hole not in folders and not daily and not rig:
             folders[hole] = {"url": f"https://drive.google.com/drive/folders/{fid}",
+                             "area": folder_area(path[-2]) if len(path) > 1 else "",
                              "folders": [{"name": f["name"], "url": f"https://drive.google.com/drive/folders/{f['id']}"}
                                          for f in children if f["mimeType"] == "application/vnd.google-apps.folder"]}
         for f in children:
             if f["mimeType"] == "application/vnd.google-apps.folder":
                 if re.search(r"duplicat|archive|to_delete", f["name"], re.I):
                     continue
+                child_section = section
+                if hole and section is None:
+                    child_section = inventory_section(f["name"])
+                    if child_section:
+                        entry = inventory.setdefault(hole, {}).setdefault(child_section, {"url": "", "files": []})
+                        entry["url"] = entry["url"] or f"https://drive.google.com/drive/folders/{f['id']}"
                 pending.append((f["id"], hole_id(f["name"]) or hole,
                                 f["name"] if f["name"] in RIGS else rig,
-                                daily or f["name"].startswith("02.")))
+                                daily or f["name"].startswith("02."), child_section, path + (f["name"],)))
             elif "collar" in f["name"].lower() or "shift report" in f["name"].lower():
                 if f["mimeType"] in {"application/vnd.google-apps.spreadsheet",
                                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}:
@@ -648,7 +724,10 @@ def drive_sources(folder, credentials_path):
                 report = report_metadata(f, hole, rig, f"https://drive.google.com/drive/folders/{fid}")
                 if report:
                     reports.append(report)
-    return sorted(records, key=lambda x: x["modified"], reverse=True), folders, reports
+            elif hole and section:
+                add_inventory_file(inventory, hole, section, f)
+    return (sorted(records, key=lambda x: x["modified"], reverse=True), folders, reports,
+            summarize_inventory(inventory))
 
 
 def mud_aggregates(sheets):
@@ -870,7 +949,7 @@ def drive_finance_aggregates(credentials_path, shifts, salary_source_id=SALARY_S
 
 
 
-def assemble(records, seed, folders=None, report_index=None, finance=None):
+def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None):
     collar, shifts, warnings, provenance = {}, {}, [], []
     collar_url, shift_url = seed.get("collarUrl", ""), seed.get("shiftUrl", "")
     for source in records:
@@ -900,6 +979,16 @@ def assemble(records, seed, folders=None, report_index=None, finance=None):
             shifts.setdefault(key, item)
     if not collar or not shifts:
         raise ValueError("No recognized collar and shift records; previous dashboard data preserved")
+    folder_map = folders if folders is not None else seed.get("folderMap", {})
+    # A hole folder found on Drive registers its hole before the collar sheet has a row for it;
+    # the collar row takes its place once added. Local runs keep the collar of their sources.
+    for h in sorted(set(folders or {}) - set(collar)):
+        collar[h] = {"id": h, "site": "Нэргүй Өндөр", "targetArea": "", "e": None, "n": None, "z": None,
+                     "az": None, "dip": None, "plan": None, "collarDepth": None, "start": "", "finish": "",
+                     "recovery": None, "boxes": None, "registered": "drive"}
+        warnings.append(f"Collar missing: {h}; registered from its Drive folder")
+    for h in collar.values():
+        h["targetArea"] = h["targetArea"] or area_of(h["id"], folder_map.get(h["id"], {}).get("area", ""))
     unknown = {s["hole"] for s in shifts.values()} - set(collar)
     if unknown:
         from photo_import import PATH
@@ -925,7 +1014,8 @@ def assemble(records, seed, folders=None, report_index=None, finance=None):
             "period": dates[0] + " – " + dates[-1], "collarUrl": collar_url, "shiftUrl": shift_url,
             "driveUrl": seed["driveUrl"], "collar": list(collar.values()),
             "shifts": sorted(shifts.values(), key=lambda x: (x["date"], x["rig"], x["shift"])),
-            "folderMap": folders if folders is not None else seed.get("folderMap", {}),
+            "folderMap": folder_map,
+            "dataInventory": inventory if inventory is not None else seed.get("dataInventory", {}),
             "syncWarnings": sorted(set(warnings)), "sources": provenance}
     if finance is not None:
         data["finance"] = finance
@@ -1024,8 +1114,8 @@ def main():
                 finance = seed.get("finance")
                 finance_note = ""
                 if args.source == "drive":
-                    records, folders, report_index = drive_sources(args.folder_id, args.credentials)
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"))
+                    records, folders, report_index, inventory = drive_sources(args.folder_id, args.credentials)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory)
                     from photo_import import apply_photos
                     data = apply_photos(data)
                     try:

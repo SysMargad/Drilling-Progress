@@ -6,6 +6,11 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const sum=(rows,key)=>rows.reduce((total,row)=>total+row[key],0),SITE='Нэргүй Өндөр';
 function knownHours(rows,key){const known=rows.filter(row=>Number.isFinite(row[key]));return known.length?(known.length<rows.length?'≥ ':'')+fmt(sum(known,key)):'—';}
 function areaOf(h){const area=(h.targetArea||'').toLocaleLowerCase();if(area==='дорнын төмөр'||(!area&&h.id.startsWith('DTDH')))return 'Дорнын Төмөр';if(area==='замт хөндий'||(!area&&h.id.startsWith('ZHDH')))return 'Замт Хөндий';return h.targetArea||'—';}
+// New areas (from the collar sheet or a Drive area folder) join the filter and map without code changes.
+const AREA_ORDER=['Дорнын Төмөр','Замт Хөндий','Уртын гол','Сант'],AREA_COLORS={'Дорнын Төмөр':'#16b99a','Замт Хөндий':'#f29b44','Уртын гол':'#5b8def','Сант':'#c062d6'};
+const areaColor=area=>AREA_COLORS[area]||'#9aa5ab';
+function areaList(rows){return [...new Set(rows.map(areaOf))].filter(area=>area&&area!=='—').sort((a,b)=>((AREA_ORDER.indexOf(a)+1)||99)-((AREA_ORDER.indexOf(b)+1)||99)||a.localeCompare(b));}
+function areaOptions(){const select=$('#area'),value=select.value,areas=areaList(D.collar);if(value&&!areas.includes(value))areas.push(value);if(select.dataset.areas===areas.join('|'))return;select.dataset.areas=areas.join('|');select.innerHTML='<option value="">Бүх участик</option>'+areas.map(area=>`<option${area===value?' selected':''}>${esc(area)}</option>`).join('');}
 function holes(){return D.collar.filter(h=>(h.site||SITE)===$('#site').value&&(!$('#area').value||areaOf(h)===$('#area').value)&&(!$('#rig').value||D.shifts.some(s=>s.hole===h.id&&s.rig===$('#rig').value)));}
 function shifts(){const ids=new Set(holes().map(h=>h.id));return D.shifts.filter(s=>ids.has(s.hole)&&(!$('#rig').value||s.rig===$('#rig').value));}
 function depth(id){const rows=D.shifts.filter(s=>s.hole===id);return rows.length?Math.max(...rows.map(s=>s.to)):null;}
@@ -391,6 +396,48 @@ function holeDepthChart(h){
 }
 function shiftTable(){const rows=shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())).sort((a,b)=>b.date.localeCompare(a.date)||a.rig.localeCompare(b.rig));return `<div class="table-scroll"><table><thead><tr><th>Огноо / ээлж</th><th>Өрөм</th><th>Цооног</th><th>Өрөмдөгч</th><th>Гүний интервал</th><th>Метр</th><th>DT / ST цаг</th><th>ROP м/ц</th></tr></thead><tbody>${rows.map(s=>`<tr title="${esc(s.notes)}"><td>${s.date}<br><small>${esc(s.shift)}</small></td><td>${s.rig}</td><td><button class="hole-link" data-hole="${s.hole}">${s.hole}</button></td><td>${esc(s.driller)}</td><td>${fmt(s.from)} – ${fmt(s.to)}</td><td><strong>${fmt(s.meters)}</strong></td><td>${fmt(s.dt)} / ${fmt(s.st)}</td><td>${s.dt?fmt(s.meters/s.dt,2):'—'}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Ээлж олдсонгүй.</td></tr>'}</tbody></table></div>`;}
 function performanceTable(){return `<section class="panel"><h2>${tab==='rop'?'Дундаж хурд · ROP':'Өрөмдлөгийн ашиглалт'}</h2><div class="table-scroll"><table><thead><tr><th>Өрөм</th><th>Өрөмдсөн</th><th>DT цаг</th><th>Нийт цаг</th><th>Ашиглалт</th><th>ROP м/ц</th></tr></thead><tbody>${['C-1800','CSD-1300'].filter(r=>!$('#rig').value||r===$('#rig').value).map(r=>{const rows=shifts().filter(s=>s.rig===r),dt=sum(rows,'dt'),hours=sum(rows,'hours'),m=sum(rows,'meters');return `<tr><td>${r}</td><td>${fmt(m)} м</td><td>${fmt(dt)}</td><td>${fmt(hours)}</td><td>${hours?fmt(dt/hours*100)+'%':'—'}</td><td>${dt?fmt(m/dt,2):'—'}</td></tr>`;}).join('')}</tbody></table></div></section>`;}
+function dataRows(){const ids=new Set(holes().map(h=>h.id));return DrillingData.rows(D.collar.filter(h=>ids.has(h.id)),D.shifts,D.dataInventory,D.folderMap).filter(r=>r.id.toLowerCase().includes(query.toLowerCase()));}
+const dataLink=(url,html)=>url?`<a class="data-link" href="${esc(url)}" target="_blank" rel="noopener">${html}</a>`:html;
+const dataCell=(html,note='',url='')=>dataLink(url,html)+(note?`<small>${note}</small>`:'');
+const readinessClass=state=>({dual:'',ai:'',geologist:'',missing:'warn',drilling:'active'}[state]??'planned');
+const loggedClass=(r)=>({done:'',partial:'active',none:r.hole.finish?'warn':'planned'}[r.logged.state]??'planned');
+const registerText=value=>!value?'—':/complete/i.test(value)?'✓':esc(value);
+function dataTable(){
+  if(!D.dataInventory)return '<div class="empty">Drive дээрх файлын жагсаалт хараахан уншигдаагүй. Дараагийн Drive синкээр орно.</div>';
+  const list=dataRows();
+  return '<div class="table-scroll"><table class="data-table"><thead><tr><th>Цооног</th><th>Участик</th><th>Өрөмдлөг</th><th>Collar</th><th>Кернийн зураг</th><th>Геологийн лог</th><th>Геотехникийн лог</th><th>pXRF</th><th>Хазайлтын хэмжилт</th><th>Лог хийх боломж</th><th>Лог хийгдсэн эсэх</th></tr></thead><tbody>'+list.map(r=>{
+    const h=r.hole,state=status(h),g=r.geology,t=r.geotech,p=r.photos;
+    const formats=Object.entries(p.formats).map(([format,count])=>format+' '+count).join(' · ');
+    const geology=g.state==='template'?dataCell('✓ Excel',g.files.length>1?'+ '+(g.files.length-1)+' файл':'',g.file.url):g.state==='handwritten'?dataCell('Гар бичмэл',g.handwritten+' зураг/PDF · Excel-гүй',g.url):g.state==='other'?dataCell(g.files.length+' файл','Excel-гүй',g.url):'—';
+    const geotech=t.state==='template'?dataCell('✓ Excel',t.files.length>1?'+ '+(t.files.length-1)+' файл':'',t.file.url):t.state==='technical'?dataCell('Technical Data','загварт хөрвүүлэх',t.file.url):'—';
+    return '<tr><td><button class="hole-link" data-data-hole="'+esc(r.id)+'">'+esc(r.id)+'</button></td><td>'+esc(areaOf(h))+'</td>'
+      +'<td><span class="badge '+state[1]+'">'+state[0]+'</span><small>'+esc(h.start||'—')+' – '+esc(h.finish||'…')+'</small></td>'
+      +'<td>'+(r.collar.depth==null?'—':fmt(r.collar.depth)+' м')+'<small>'+(r.collar.registered?'E/N '+(r.collar.coordinates?'✓':'—')+' · Z '+(r.collar.elevation?'✓':'—'):'Collar-д мөргүй · Drive хавтаснаас бүртгэсэн')+'</small></td>'
+      +'<td>'+(p.count?dataCell(p.count+' зураг',esc(formats)+(p.boxes==null?'':' · '+fmt(p.boxes,0)+' хайрцаг'),p.url):dataCell('—',p.boxes==null?'':fmt(p.boxes,0)+' хайрцаг'))+'</td>'
+      +'<td>'+geology+'</td><td>'+geotech+'</td>'
+      +'<td>'+(r.pxrf.count?dataCell(r.pxrf.count+' файл','',r.pxrf.url):'—')+'</td>'
+      +'<td>'+(r.surveys.count?dataCell(r.surveys.count+' файл','',r.surveys.url):'—')+'</td>'
+      +'<td><span class="badge '+readinessClass(r.readiness.state)+'">'+esc(r.readiness.label)+'</span>'+(r.readiness.missing.length?'<small>Дутуу: '+r.readiness.missing.map(esc).join(', ')+'</small>':'')+'</td>'
+      +'<td><span class="badge '+loggedClass(r)+'">'+esc(r.logged.label)+'</span>'+(r.logged.state==='unknown'?'':'<small>Геологи '+registerText(r.logged.geology)+' · Геотехник '+registerText(r.logged.geotech)+' · XRF '+registerText(r.logged.pxrf)+'</small>')+'</td></tr>';
+  }).join('')+'</tbody></table></div>'+(list.length?'':'<div class="empty">Цооног олдсонгүй.</div>');
+}
+function drillingData(){
+  const all=D.dataInventory?dataRows():[],counts={},logged={};all.forEach(r=>{counts[r.readiness.state]=(counts[r.readiness.state]||0)+1;logged[r.logged.state]=(logged[r.logged.state]||0)+1;});
+  const summary=Object.keys(DrillingData.LABELS).filter(state=>counts[state]).map(state=>`<span class="badge ${readinessClass(state)}">${DrillingData.LABELS[state]}: ${counts[state]}</span>`).join('')
+    +(all.length?'<span class="data-summary-gap"></span>'+['done','partial','none'].filter(state=>logged[state]).map(state=>`<span class="badge ${{done:'',partial:'active',none:'warn'}[state]}">Лог ${DrillingData.LOGGED[state].toLocaleLowerCase()}: ${logged[state]}</span>`).join(''):'');
+  return `<section class="panel"><div class="panel-head"><div><h2>Drilling Data</h2><span class="sub">Лог хийхэд хэрэгтэй дата · бүртгэлтэй ${D.collar.length} цооног</span></div><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="${esc(query)}"></div>${summary?`<div class="data-summary">${summary}</div>`:''}<div id="table">${dataTable()}</div>
+    <p class="sub data-note">Drive дээрх цооногийн хавтсуудын (03 хэмжилт, 04 геологи, 05 зураг, 07 геотехник, 10 pXRF) файлын нэрээр тодорхойлсон; файлын агуулгыг шалгаагүй. Зураг нэг нэрээр нэг тоологдоно (CR2 ба JPG хуулбар нэг зураг). Лог хийхэд collar-ын эцсийн гүн, геотехникийн Excel (хайрцгийн гүн), мөн кернийн зураг (AI лог) эсвэл геологийн Excel (геологичийн лог) хэрэгтэй; хоёулаа байвал геологич + AI давхар лог. «Лог хийгдсэн эсэх» нь collar файлын «Geology log», «Geotechnical log», «XRF Combined log» баганаас (Completed = ✓). Drive-д шинээр үүссэн цооногийн хавтас collar-д мөргүй байсан ч автоматаар бүртгэгдэнэ (12 цаг тутам). Цооног дээр дарж файлуудыг харна.</p></section>`;
+}
+function openHoleData(id){
+  const h=D.collar.find(x=>x.id===id),r=DrillingData.row(h,D.dataInventory,D.shifts.filter(s=>s.hole===id).length,D.folderMap),own=D.dataInventory?.[id]||{};
+  const list=(key,title)=>{const entry=own[key],files=entry?.files||[];
+    const items=key==='photos'?(entry?.count?`<p>${entry.count} зураг · ${esc(Object.entries(entry.formats||{}).map(([f,n])=>f+' '+n).join(' · '))}${entry.latest?' · сүүлд '+esc(entry.latest.slice(0,10)):''}</p>`:'<p class="sub">Зураг алга.</p>')
+      :files.length?`<ul>${files.map(f=>`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>${f.modified?` <small>${esc(f.modified.slice(0,10))}</small>`:''}</li>`).join('')}</ul>${entry.count>files.length?`<p class="sub">… бусад ${entry.count-files.length} файл</p>`:''}`:'<p class="sub">Файл алга.</p>';
+    return `<section class="data-files"><h3>${entry?.url?dataLink(entry.url,esc(title)+' ↗'):esc(title)}</h3>${items}</section>`;};
+  $('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(id)}</h2><p>${esc(areaOf(h))} · <span class="badge ${readinessClass(r.readiness.state)}">${esc(r.readiness.label)}</span>${r.readiness.missing.length?' · Дутуу: '+r.readiness.missing.map(esc).join(', '):''}</p><p>Лог: <span class="badge ${loggedClass(r)}">${esc(r.logged.label)}</span>${r.logged.state==='unknown'?'':` · Геологи ${registerText(r.logged.geology)} · Геотехник ${registerText(r.logged.geotech)} · XRF ${registerText(r.logged.pxrf)}`}</p>${r.folderUrl?`<p>${dataLink(r.folderUrl,'Цооногийн Drive хавтас ↗')}</p>`:''}`
+    +list('photos','05 · Кернийн зураг')+list('geological','04 · Геологийн лог')+list('geotechnical','07 · Геотехникийн лог')+list('pxrf','10 · pXRF')+list('surveys','03 · Хазайлтын хэмжилт');
+  $('#detail').showModal();
+}
 function logTime(value){const d=new Date(value);return Number.isNaN(d.getTime())?'—':new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(d);}
 function logTable(){
   const labels={updated:'Шинэ өгөгдөл',unchanged:'Өөрчлөлтгүй',failed:'Алдаатай'},entries=[...dataLog].reverse();
@@ -403,9 +450,9 @@ function renderMapping(){
   const missing=selected.filter(hole=>!known.has(hole.id));
   return `<section class="panel mapping-panel"><div class="panel-head"><div><h2>Mapping</h2><span class="sub">Газрын зурагт ${points.length} · Координатгүй ${missing.length}</span></div><button class="button" id="map-fit">Бүгдийг багтаах</button></div>
     <div class="mapping-layout"><div id="mapping-map" aria-label="Цооногуудын газрын зураг"></div><div class="mapping-list"><h3>Координаттай цооногууд</h3>
-      ${points.map(point=>`<button class="mapping-hole" data-map-hole="${esc(point.id)}"><span class="map-dot ${areaOf(point.hole)==='Дорнын Төмөр'?'east':'west'}"></span><span><strong>${esc(point.id)}</strong><small>${esc(areaOf(point.hole))} · ${status(point.hole)[0]}</small></span></button>`).join('')||'<p class="sub">Шүүлтүүрт тохирох координаттай цооног алга.</p>'}
+      ${points.map(point=>`<button class="mapping-hole" data-map-hole="${esc(point.id)}"><span class="map-dot" style="background:${areaColor(areaOf(point.hole))}"></span><span><strong>${esc(point.id)}</strong><small>${esc(areaOf(point.hole))} · ${status(point.hole)[0]}</small></span></button>`).join('')||'<p class="sub">Шүүлтүүрт тохирох координаттай цооног алга.</p>'}
       ${missing.length?`<h3>Координатгүй</h3>${missing.map(hole=>`<button class="mapping-hole missing" data-hole="${esc(hole.id)}"><span><strong>${esc(hole.id)}</strong><small>E / N бүртгэгдээгүй</small></span></button>`).join('')}`:''}
-    </div></div><div class="map-legend"><span><i class="map-dot east"></i>Дорнын Төмөр</span><span><i class="map-dot west"></i>Замт Хөндий</span></div><p id="map-tile-status" class="sub" role="status" hidden>Суурь зургийг ачаалж чадсангүй. Цооногийн цэгүүд харагдаж байна.</p></section>`;
+    </div></div><div class="map-legend">${areaList(selected).map(area=>`<span><i class="map-dot" style="background:${areaColor(area)}"></i>${esc(area)}</span>`).join('')}</div><p id="map-tile-status" class="sub" role="status" hidden>Суурь зургийг ачаалж чадсангүй. Цооногийн цэгүүд харагдаж байна.</p></section>`;
 }
 function fitMapping(){
   if(!mappingMap)return;
@@ -424,7 +471,7 @@ function initMapping(){
   L.control.scale({imperial:false,position:'bottomleft'}).addTo(mappingMap);
   mappingMarkers=new Map();
   for(const point of points){
-    const h=point.hole,color=areaOf(h)==='Дорнын Төмөр'?'#16b99a':'#f29b44';
+    const h=point.hole,color=areaColor(areaOf(h));
     const marker=L.circleMarker([point.lat,point.lng],{radius:8,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(mappingMap);
     marker.bindTooltip(esc(h.id),{permanent:true,direction:h.id==='DTDH2602'?'right':'top',offset:[0,-8],className:'map-hole-label'});
     marker.bindPopup(`<div class="map-popup"><h3>${esc(h.id)}</h3><p>${esc(areaOf(h))} · ${status(h)[0]}</p><dl><dt>Ээлжийн гүн</dt><dd>${fmt(depth(h.id))} м</dd><dt>Төлөвлөсөн</dt><dd>${fmt(h.plan)} м</dd><dt>E / N</dt><dd>${fmt(h.e,3)} / ${fmt(h.n,3)}</dd><dt>Өргөрөг / уртраг</dt><dd>${fmt(point.lat,6)} / ${fmt(point.lng,6)}</dd></dl><button class="button" data-popup-hole="${esc(h.id)}">Цооногийн мэдээлэл</button></div>`);
@@ -439,16 +486,17 @@ function focusMappingHole(id){const marker=mappingMarkers.get(id);if(marker&&map
 function render(){
   hideBarTooltip();
   if(mappingMap){mappingMap.remove();mappingMap=null;mappingMarkers.clear();}
-  if(!D)return;let content=['financial','mapping'].includes(tab)?'':kpis();
+  if(!D)return;let content=['financial','mapping','drilling-data'].includes(tab)?'':kpis();
   if(tab==='financial')content+=renderFinancialTab();
   if(tab==='mapping')content+=renderMapping();
+  if(tab==='drilling-data')content+=drillingData();
   if(tab==='overview')content+='<div class="grid"><section class="panel" id="chart-panel">'+chart()+'</section><section class="panel"><h2>Өрмийн гүйцэтгэл</h2>'+rigs()+'</section></div>';
   if(tab==='holes')content+='<section class="panel"><div class="panel-head"><h2>Цооногийн ахиц</h2><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="'+esc(query)+'"></div><div id="table">'+holeTable()+'</div></section>';
   if(tab==='shifts')content+='<section class="panel"><div class="panel-head"><h2>Ээлжийн бүртгэл</h2><input class="search" aria-label="Ээлж хайх" placeholder="Цооног, нэр, огноо…" value="'+esc(query)+'"></div><div id="table">'+shiftTable()+'</div></section>';
   if(tab==='rop'||tab==='utilization')content+=performanceTable();if(tab==='sources')content+=sources();if(tab==='data-log')content+=logTable();
   $('#app').innerHTML=content;document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   if(tab==='mapping')initMapping();
-  $('.search')?.addEventListener('input',e=>{query=e.target.value;$('#table').innerHTML=tab==='holes'?holeTable():shiftTable();});
+  $('.search')?.addEventListener('input',e=>{query=e.target.value;$('#table').innerHTML=tab==='holes'?holeTable():tab==='drilling-data'?dataTable():shiftTable();});
 }
 function openHole(id){const h=D.collar.find(x=>x.id===id),folder=D.folderMap?.[id],state=status(h);$('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(h.id)}</h2><p>${SITE} · ${esc(areaOf(h))} · <span class="badge ${state[1]}">${state[0]}</span></p><div class="detail-grid">${[['Төлөвлөсөн гүн',fmt(h.plan)+' м'],['Ээлжийн сүүлийн гүн',fmt(depth(id))+' м'],['Collar эцсийн гүн',fmt(h.collarDepth)+' м'],['Эхэлсэн / дууссан',`${h.start||'—'} / ${h.finish||'—'}`],['E / N / Z',`${fmt(h.e,3)} / ${fmt(h.n,3)} / ${fmt(h.z,3)}`],['Азимут / хазайлт',`${fmt(h.az)}° / ${fmt(h.dip)}°`],['Керний гарц',h.recovery==null?'—':fmt(h.recovery)+'%'],['Керний хайрцаг',fmt(h.boxes,0)]].map(([label,value])=>`<div><small>${label}</small><strong>${esc(value)}</strong></div>`).join('')}</div><h3>Эх баримтууд</h3><div class="folder-links">${folder?folder.folders.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)} ↗</a>`).join(''):'Энэ цооногийн хавтас олдоогүй.'}</div>`;$('#detail').showModal();}
 function savedTheme(){try{const theme=localStorage.getItem('drilling-theme');return theme==='light'||theme==='dark'?theme:null;}catch{return null;}}
@@ -462,17 +510,21 @@ document.addEventListener('click',e=>{
   const period=e.target.closest('[data-grain]');if(period){grain=period.dataset.grain;$('#chart-panel').innerHTML=chart();}
   const depthButton=e.target.closest('[data-depth-hole]');if(depthButton){selectedHole=selectedHole===depthButton.dataset.depthHole?null:depthButton.dataset.depthHole;$('#table').innerHTML=holeTable();}
   const hole=e.target.closest('[data-hole]');if(hole)openHole(hole.dataset.hole);if(e.target.closest('#refresh-log'))refreshLog();
+  const dataHole=e.target.closest('[data-data-hole]');if(dataHole)openHoleData(dataHole.dataset.dataHole);
 });
 document.addEventListener('change',event=>{if(event.target.id==='chart-month'){chartMonth=event.target.value;$('#chart-panel').innerHTML=chart();}});
 for(const selector of ['#site','#area','#rig'])$(selector).addEventListener('change',()=>{selectedHole=null;render();});$('.close').addEventListener('click',()=>$('#detail').close());
 $('#detail').addEventListener('click',e=>{if(e.target===$('#detail')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 $('#export').addEventListener('click',()=>{
-  const records=tab==='data-log'?dataLog:tab==='shifts'?shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())):holes().filter(x=>x.id.toLowerCase().includes(query.toLowerCase())).map(h=>({...h,site:SITE,shiftDepth:depth(h.id),status:status(h)[0]}));
+  const records=tab==='data-log'?dataLog:tab==='drilling-data'?(D.dataInventory?dataRows():[]).map(r=>({hole:r.id,area:areaOf(r.hole),status:status(r.hole)[0],collarDepth:r.collar.depth,coordinates:r.collar.coordinates,elevation:r.collar.elevation,
+    photos:r.photos.count,photoFormats:Object.entries(r.photos.formats).map(([f,n])=>f+' '+n).join(' '),boxes:r.photos.boxes,geologicalLog:r.geology.state,geologicalFile:r.geology.file?.name||'',geologicalFiles:r.geology.files.length,
+    geotechnicalLog:r.geotech.state,geotechnicalFile:r.geotech.file?.name||'',pxrfFiles:r.pxrf.count,surveyFiles:r.surveys.count,readiness:r.readiness.label,missing:r.readiness.missing.join('; '),
+    logged:r.logged.label,geologyLog:r.logged.geology,geotechLog:r.logged.geotech,pxrfLog:r.logged.pxrf})):tab==='shifts'?shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())):holes().filter(x=>x.id.toLowerCase().includes(query.toLowerCase())).map(h=>({...h,site:SITE,shiftDepth:depth(h.id),status:status(h)[0]}));
   if(!records.length){alert('Татах бүртгэл байхгүй.');return;}
   const keys=[...new Set(records.flatMap(r=>Object.keys(r)))],cell=value=>'"'+String(value??'').replace(/"/g,'""')+'"',csv='\uFEFF'+[keys,...records.map(r=>keys.map(k=>k==='reports'?(r[k]||[]).map(report=>report.url).join(' | '):r[k]))].map(r=>r.map(cell).join(',')).join('\r\n'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
   a.href=url;a.download=`drilling-${tab}-${D.asOf}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 async function refreshLog(){try{const r=await fetch('data-log.json',{cache:'no-store'});if(!r.ok)throw Error();const log=await r.json();dataLog=log.entries||[];logError='';}catch{logError='Дата татсан түүхийг ачаалж чадсангүй.';}if(D&&tab==='data-log')render();}
-async function refreshData(){try{const r=await fetch('data.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json(),changed=JSON.stringify(data)!==JSON.stringify(D);D=data;$('.period strong').textContent=D.period;$('#load-error').hidden=true;if(changed)render();}catch(e){$('#load-error').hidden=false;$('#load-error').textContent=D?'Өгөгдөл ачаалж чадсангүй. Өмнөх өгөгдлийг харуулж байна.':'Өгөгдөл ачаалж чадсангүй.';}}
+async function refreshData(){try{const r=await fetch('data.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json(),changed=JSON.stringify(data)!==JSON.stringify(D);D=data;areaOptions();$('.period strong').textContent=D.period;$('#load-error').hidden=true;if(changed)render();}catch(e){$('#load-error').hidden=false;$('#load-error').textContent=D?'Өгөгдөл ачаалж чадсангүй. Өмнөх өгөгдлийг харуулж байна.':'Өгөгдөл ачаалж чадсангүй.';}}
 setTheme(document.documentElement.dataset.theme);matchMedia('(prefers-color-scheme: light)').addEventListener('change',e=>{if(!savedTheme())setTheme(e.matches?'light':'dark');});
 refreshData();refreshLog();setInterval(()=>{refreshData();refreshLog();},60000);

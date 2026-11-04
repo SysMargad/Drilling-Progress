@@ -11,9 +11,11 @@ from pathlib import Path
 from drilling_sync import (FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME,
                            append_data_log, assemble, drive_finance_aggregates, apply_uploaded_fuel, diamond_budget,
                            finance_aggregates, mud_aggregates, fuel_aggregates, FinanceSourceError, load_json,
-                           local_sources, parse_shifts, publish, signature,
+                           local_sources, parse_collar, parse_shifts, publish, signature,
                            workbook_rows, report_metadata, attach_reports, drive_sources,
                            XLSX_MIME, Drive)
+
+from validate_data import validate
 
 ROOT = Path(__file__).resolve().parent
 
@@ -175,11 +177,46 @@ class PipelineTests(unittest.TestCase):
               'rig':[{'id':'photo','name':'Daily_report_20261015_n.JPG','mimeType':'image/jpeg'}]}
         with patch('drilling_sync.Drive') as drive:
             drive.return_value.files.side_effect=lambda id:tree[id]
-            records,folders,reports=drive_sources('root',None)
+            records,folders,reports,inventory=drive_sources('root',None)
         self.assertEqual(records,[])
         self.assertIn('DTDH2603',folders)
         self.assertEqual([(r['hole'],r['rig'],r['date'],r['shift']) for r in reports],
                          [('DTDH2603','C-1800','2026-10-15','Шөнө')])
+        self.assertEqual(inventory,{})
+
+    def test_drive_inventory_counts_photos_and_lists_logging_files(self):
+        def folder(id,name):
+            return {'id':id,'name':name,'mimeType':FOLDER_MIME}
+        def file(id,name,modified='2026-10-20T01:00:00Z'):
+            return {'id':id,'name':name,'mimeType':'application/octet-stream','modifiedTime':modified}
+        tree={'root':[folder('year','2026')],'year':[folder('hole','DTDH2606'),file('c','NUDH_COLLAR.pdf')],
+              'hole':[folder('photos','05. Core & RC Photography'),folder('geo','04. Geological Logging'),
+                      folder('xrf','10.pXRF'),folder('plan','00. Pre-Drill Planning'),folder('old','99.Archive'),
+                      file('loose','notes.xlsx')],
+              'photos':[file('p1','Box 1, 2.CR2'),file('p2','Box 1, 2.jpg'),file('p3','Box 3, 4.JPEG'),
+                        file('p4','delete Box 3, 4.CR2'),file('p5','register.xlsx'),folder('small','JPG size reduced')],
+              'small':[file('p6','Box 1, 2.jpg','2026-10-22T01:00:00Z')],
+              'geo':[file('g2','DTDH2606_Geological_Log.xlsx'),file('g1','Field sheet 1.pdf')],
+              'xrf':[file('x1','DTDH2606_pXRF_0-161.4m_3beam_Complete.xlsx')],
+              'plan':[file('d1','plan.pdf')],'old':[file('o1','Box 9.CR2')]}
+        with patch('drilling_sync.Drive') as drive:
+            drive.return_value.files.side_effect=lambda id:tree[id]
+            _,_,_,inventory=drive_sources('root',None)
+        self.assertEqual(set(inventory),{'DTDH2606'})
+        hole=inventory['DTDH2606']
+        self.assertEqual(set(hole),{'photos','geological','pxrf'})
+        self.assertEqual(hole['photos']['count'],2)
+        self.assertEqual(hole['photos']['formats'],{'CR2':1,'JPG':3})
+        self.assertEqual(hole['photos']['latest'],'2026-10-22T01:00:00Z')
+        self.assertEqual(hole['photos']['url'],'https://drive.google.com/drive/folders/photos')
+        self.assertEqual([f['name'] for f in hole['geological']['files']],
+                         ['DTDH2606_Geological_Log.xlsx','Field sheet 1.pdf'])
+        self.assertEqual(hole['geological']['count'],2)
+        self.assertEqual(hole['geological']['files'][0]['url'],'https://drive.google.com/file/d/g2/view')
+        self.assertEqual(hole['pxrf']['url'],'https://drive.google.com/drive/folders/xrf')
+        data=assemble(self.records,self.seed,inventory=inventory)
+        self.assertEqual(data['dataInventory'],inventory)
+        self.assertEqual(assemble(self.records,{**self.seed,'dataInventory':inventory})['dataInventory'],inventory)
 
     def test_report_matching_and_provenance(self):
         image={'id':'photo','name':'DTDH2603_Daily_report_20261015_n.JPG.jpg','mimeType':'image/jpeg'}
@@ -217,6 +254,47 @@ class PipelineTests(unittest.TestCase):
         h = next(h for h in data['collar'] if h['id'] == 'DTDH2603')
         self.assertIsNone(h['collarDepth'])
         self.assertEqual(max(s['to'] for s in data['shifts'] if s['hole'] == h['id']), 203)
+
+    def test_new_areas_and_drive_only_holes_are_registered(self):
+        header = ['No','Hole Id',' E ',' N ',' Z ','Azimuth °','Dip °','Plan Depth, m ',' Drilled Depth, m ','Started date','Finished date']
+        rows = parse_collar([header,
+                             ['13','STDH2601','671 289.0','5 445 920.0','','256','60','350','','46330',''],
+                             ['14','KHDH2601','677 348.0','5 442 878.5','','270','60','300','','46330',''],
+                             ['15','DTDH2609','','','','','','','','','']])
+        self.assertEqual([(h['id'],h['e'],h['n'],h['targetArea']) for h in rows],
+                         [('STDH2601',671289.0,5445920.0,'Сант'),('KHDH2601',677348.0,5442878.5,''),('DTDH2609',None,None,'Дорнын Төмөр')])
+        self.assertEqual(rows[0]['start'],'2026-11-04')
+        register = parse_collar([[*header,'Core Recovery','Count of Core Boxes','Geology log','Geotechnical log','XRF Combined log','Core photo','Sampling'],
+                                 ['1','DTDH2601','1','2','3','88','60','200','221.4','46305','46309','99.41','61',' Completed','Completed','Bruker complete','Completed','in progress'],
+                                 ['2','ZHDH2604','1','2','','52','64','500','503','46319','46327','','135','completed','','','','']])
+        self.assertEqual([(h['geologyLog'],h['geotechLog'],h['pxrfLog'],h['corePhoto'],h['sampling']) for h in register],
+                         [('Completed','Completed','Bruker complete','Completed','in progress'),('completed','','','','')])
+        self.assertEqual(rows[0]['geologyLog'],'')
+        def folder(id,name):
+            return {'id':id,'name':name,'mimeType':FOLDER_MIME}
+        tree={'root':[folder('a3','3. Urtiin gol'),folder('a4','4. Sant'),folder('a5','5. Khar tolgoi')],
+              'a3':[folder('ug2','UGDH2602')],'a4':[folder('st1','STDH2601')],'a5':[folder('kh1','KHDH2601')],
+              'ug2':[],'st1':[folder('p','05. Core & RC Photography')],'p':[],'kh1':[]}
+        with patch('drilling_sync.Drive') as drive:
+            drive.return_value.files.side_effect=lambda id:tree[id]
+            _,folders,_,inventory=drive_sources('root',None)
+        self.assertEqual({h:f['area'] for h,f in folders.items()},
+                         {'UGDH2602':'Уртын гол','STDH2601':'Сант','KHDH2601':'Khar tolgoi'})
+        self.assertEqual(inventory['STDH2601']['photos']['count'],0)
+        collar_source={'name':'NUDH_COLLAR.xlsx','url':'','modified':'','suffix':'.csv',
+                       'content':'\n'.join(','.join(f'"{v}"' for v in r) for r in [header,
+                           ['13','STDH2601','671289','5445920','','256','60','350','','46330',''],
+                           ['14','KHDH2601','677348','5442878.5','','270','60','300','','46330','']]).encode('utf-8')}
+        data=assemble(self.records+[collar_source],self.seed,folders,inventory=inventory)
+        by={h['id']:h for h in data['collar']}
+        self.assertEqual((by['STDH2601']['targetArea'],by['KHDH2601']['targetArea']),('Сант','Khar tolgoi'))
+        self.assertEqual(by['UGDH2602']['registered'],'drive')
+        self.assertEqual(by['UGDH2602']['targetArea'],'Уртын гол')
+        self.assertNotIn('registered',by['STDH2601'])
+        self.assertIn('Collar missing: UGDH2602; registered from its Drive folder',data['syncWarnings'])
+        validate(data)
+        # Local runs keep their sources' collar: Drive folders of the seed do not add holes.
+        self.assertEqual(len(assemble(self.records,self.seed)['collar']),6)
 
     def test_invalid_shift_rejected(self):
         rows = [['Rig','Source','Date','Shift','Driller','Hole ID','From','To','Drilled','ST','RT','DT','Total','Work notes'],

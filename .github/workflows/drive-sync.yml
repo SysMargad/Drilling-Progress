@@ -12,8 +12,9 @@ on:
       - 'consumption_model.py'
       - 'input/consumption-corrections.json'
   schedule:
-    # Same daily timing as Drone Track: 08:00 Asia/Shanghai.
-    - cron: '0 0 * * *'
+    # Every 12 hours (08:00 and 20:00 UTC+8): new hole folders and collar rows are registered.
+    # GitHub starts scheduled runs late (5-7 hours seen), but the 12-hour spacing holds.
+    - cron: '0 0,12 * * *'
   workflow_dispatch:
 
 permissions:
@@ -71,6 +72,7 @@ jobs:
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs
           node test_mapping.cjs
+          node test_drilling_data.cjs
       - name: Report collection failure
         if: steps.collection.outcome == 'failure'
         run: echo '::warning::Drive collection failed. Previous valid data and the failed attempt log are preserved.'
