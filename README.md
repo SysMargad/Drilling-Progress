@@ -63,7 +63,7 @@ Local watch ажиллахад компьютер асаалттай, проце
 
 ## Google Chat өдөр тутмын мэдээ
 
-`.github/workflows/chat-report.yml` нь **өдөр бүр 20:00 (UTC+8)** цагт Chat-д хараахан илгээгээгүй бүх ээлжийг `chat_report.py`-оор Google Chat space руу нэг карт болгон илгээнэ. Drive синк эсвэл local `[skip ci]` commit-оор орсон эсэхээс үл хамаарна. GitHub хуваарьт ажлыг хоцроож эхлүүлдэг тул workflow 19:40-д эхэлж, 20:00 хүртэл хүлээгээд илгээнэ; GitHub-ийн ачаалал ихтэй үед хэдэн минут хоцорч болно. Шинэ ээлж ороогүй өдөр сүүлийн ээлжийг заасан богино мэдэгдэл илгээнэ. Картад:
+`.github/workflows/chat-report.yml` нь **өдөр бүр 20:00 (UTC+8)** цагт Chat-д хараахан илгээгээгүй бүх ээлжийг `chat_report.py`-оор Google Chat space руу нэг карт болгон илгээнэ. Drive синк эсвэл local `[skip ci]` commit-оор орсон эсэхээс үл хамаарна. GitHub-ийн өөрийн хуваарь 5–7 цаг хоцорч шөнө дунд илгээдэг тул workflow-г Google Apps Script (`chat_trigger.gs`) 19:30–20:00 хооронд эхлүүлж, workflow 20:00 хүртэл хүлээгээд илгээнэ. Шинэ ээлж ороогүй өдөр сүүлийн ээлжийг заасан богино мэдэгдэл илгээнэ. Картад:
 - шинэ ээлжүүдийг цооногийн дугаараар бүлэглэсэн жагсаалт: гүний интервал, метр, DT/ST, ROP, өрөмдөгч, тайлангийн зураг;
 - өдрийн дүн: өрөм тус бүрийн метрийг 60 м/өдөр нормтой харьцуулна, мэдээ ороогүй ээлжийг тэмдэглэнэ;
 - бүх цооногийн ахиц;
@@ -75,7 +75,12 @@ Local watch ажиллахад компьютер асаалттай, проце
 
 1. Google Chat space → нэр ▾ → Apps & integrations → Webhooks → Add webhook (жишээ нь `Өрөмдлөгийн явц`) → URL-ийг хуулна.
 2. Repository → Settings → Secrets and variables → Actions → `GOOGLE_CHAT_WEBHOOK_URL` secret-д URL-ийг хадгална. Webhook URL нь нууц тул repository файлд хийхгүй.
-3. Шалгах: Actions → Post drilling progress to Google Chat → Run workflow. Хоосон орхивол илгээгээгүй ээлжүүдийг, `chat_date`-д огноо (жишээ нь `2026-11-02`) бичвэл тухайн өдрийн бүх ээлжийг дахин илгээнэ.
+3. 20:00-ийн trigger:
+   - GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token. Repository access: Only select repositories → `Drilling-Progress`; Permissions → Actions: Read and write. Хугацаа дуусахад Apps Script алдааны имэйл илгээнэ, шинэ token үүсгэж солино.
+   - [script.google.com](https://script.google.com) → New project → `chat_trigger.gs`-ийн агуулгыг `Code.gs`-д хуулна.
+   - Project Settings → Script Properties → `GITHUB_TOKEN` нэртэй token-ийг хадгална. Token-ийг кодонд бичихгүй.
+   - Editor-оос `install` функцийг нэг удаа Run хийж эрх олгоно. Triggers хэсэгт өдөр бүрийн `postDrillingProgress` гарна.
+4. Гараар илгээх: Actions → Post drilling progress to Google Chat → Run workflow. Хоосон орхивол илгээгээгүй ээлжүүдийг, `chat_date`-д огноо (жишээ нь `2026-11-02`) бичвэл тухайн өдрийн бүх ээлжийг дахин илгээнэ.
 
 Дараагийн картыг local-аар урьдчилж харах (юу ч илгээхгүй, бүртгэхгүй):
 
@@ -107,7 +112,7 @@ py -3 -B validate_data.py
 - `.github/workflows/pages.yml`: push → Pages deploy
 - `.github/workflows/drive-sync.yml`: Drive → шалгалт → push → Pages deploy
 - `chat_report.py`, `chat-posted.json`: илгээгээгүй ээлж → Google Chat карт; илгээсэн ээлжийн бүртгэл
-- `.github/workflows/chat-report.yml`: өдөр бүр 20:00 → Google Chat
+- `.github/workflows/chat-report.yml`, `chat_trigger.gs`: өдөр бүр 20:00 → Google Chat
 - `test_drilling_sync.py`, `test_chat_report.py`, `validate_data.py`: шалгалт
 - `requirements.txt`: Drive authentication package
 

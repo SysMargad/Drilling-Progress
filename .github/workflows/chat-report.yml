@@ -1,15 +1,17 @@
 name: Post drilling progress to Google Chat
 
 on:
-  schedule:
-    # 19:40 UTC+8. GitHub often starts scheduled runs late, so the job starts
-    # early and waits for 20:00 before posting.
-    - cron: '40 11 * * *'
+  # chat_trigger.gs (Google Apps Script) starts the evening run between 19:30 and
+  # 20:00 UTC+8. GitHub's own schedule started runs 5–7 hours late, after midnight.
   workflow_dispatch:
     inputs:
       chat_date:
         description: 'Дахин илгээх огноо (YYYY-MM-DD). Хоосон бол илгээгдээгүй бүх ээлжийг илгээнэ.'
         required: false
+      evening:
+        description: '20:00 (UTC+8) хүртэл хүлээгээд илгээх'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -23,10 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait until 20:00 UTC+8
-        if: github.event_name == 'schedule'
+        if: inputs.evening
         run: |
           wait=$(( $(date -u -d '12:00' +%s) - $(date -u +%s) ))
-          if (( wait > 0 && wait <= 1800 )); then sleep "$wait"; fi
+          if (( wait > 0 && wait <= 2700 )); then sleep "$wait"; fi
       - uses: actions/checkout@v4
         with:
           # Check out after the wait so data committed meanwhile is included.
