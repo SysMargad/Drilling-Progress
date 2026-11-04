@@ -32,7 +32,9 @@ ROOT = Path(__file__).resolve().parent
 TZ = timezone(timedelta(hours=8))
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 SCOPE = "https://www.googleapis.com/auth/drive.readonly"
-RIGS = {"C-1800", "CSD-1300"}
+RIGS = {"C-1800", "CSD-1300", "C-1600"}
+# Attendance codes, fuel and mud ledgers cover the two contracted rigs only.
+FINANCE_RIGS = {"C-1800", "CSD-1300"}
 FINANCE_FOLDER_ID = "1j8QjgqCHBh50pJwl68hBpTCvTu1tUYgj"
 DIAMOND_SHEET_ID = "1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8"
 SALARY_SOURCE_ID = "1pIjJeUEM86RkUy4TIvgboWBlq8-scGIy"
@@ -477,7 +479,7 @@ def finance_aggregates(salary_sheets, attendance_sheets, shifts):
     amounts = ('laborCost', 'foodCost', 'bonusCost', 'incentiveCost')
     rig_shifts = {}
     for day in range(1, last_day + 1):
-        for rig in sorted(RIGS):
+        for rig in sorted(FINANCE_RIGS):
             for shift in ('Өдөр', 'Шөнө'):
                 date_key = f"{period}-{day:02d}"
                 rig_shifts[(date_key, rig, shift)] = {
@@ -523,7 +525,7 @@ def finance_aggregates(salary_sheets, attendance_sheets, shifts):
                          'Өдөр' if match[2] == 'D' else 'Шөнө')]
             else:
                 # Shared field staff are distributed evenly across two rigs/two shifts.
-                keys = [(date_key, rig, shift) for rig in sorted(RIGS)
+                keys = [(date_key, rig, shift) for rig in sorted(FINANCE_RIGS)
                         for shift in ('Өдөр', 'Шөнө')]
             base = position['monthlySalary'] / month_days
             incentive = position['incentiveDailyRate'] or 0.0
@@ -751,7 +753,7 @@ def mud_aggregates(sheets):
                 continue
             def get(label):
                 return _finance_cell(row, header.index(label))
-            if get('өрөм') not in RIGS or get('ээлж') not in {'Өдөр', 'Шөнө'}:
+            if get('өрөм') not in FINANCE_RIGS or get('ээлж') not in {'Өдөр', 'Шөнө'}:
                 continue
             bags = _finance_number(get('mud тооцоо (шуудай)'))
             if bags is None or bags < 0:
@@ -806,7 +808,7 @@ def fuel_aggregates(sheets, shifts, period):
                     key = (entry['rig'], entry['shift'], entry['hole'])
                     weights[key] = weights.get(key, 0.0) + entry.get('hours', 0)
             if not weights or sum(weights.values()) <= 0:
-                weights = {(rig, shift, ''): 1 for rig in sorted(RIGS) for shift in ('Өдөр','Шөнө')}
+                weights = {(rig, shift, ''): 1 for rig in sorted(FINANCE_RIGS) for shift in ('Өдөр','Шөнө')}
             total_weight = sum(weights.values())
             items = []
             for (rig, shift, hole), weight in weights.items():
@@ -1076,6 +1078,10 @@ def publish(data, repository):
     LOG.info("GitHub data push completed; GitHub Pages deploys the validated commit")
 
 
+def finance_shifts(data):
+    return [row for row in data["shifts"] if row["rig"] in FINANCE_RIGS]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", choices=["local", "drive"], default="local")
@@ -1119,7 +1125,7 @@ def main():
                     from photo_import import apply_photos
                     data = apply_photos(data)
                     try:
-                        data["finance"] = drive_finance_aggregates(args.credentials, data["shifts"])
+                        data["finance"] = drive_finance_aggregates(args.credentials, finance_shifts(data))
                     except Exception as finance_error:
                         finance_note = f"Finance refresh failed ({type(finance_error).__name__})"
                         if isinstance(finance_error, FinanceSourceError):
@@ -1136,7 +1142,7 @@ def main():
                 from photo_import import apply_photos, apply_daily_water
                 data = apply_photos(data)
                 if data.get('finance') is not None:
-                    data['finance'] = apply_uploaded_fuel(data['finance'], data['shifts'])
+                    data['finance'] = apply_uploaded_fuel(data['finance'], finance_shifts(data))
                     data['finance'] = apply_diamond_budget(data['finance'])
                     from consumption_model import load_corrections, apply_corrections
                     correction_config = load_corrections()

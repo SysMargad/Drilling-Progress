@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent
 LEDGER = ROOT / "chat-posted.json"
 DASHBOARD_URL = "https://sysmargad.github.io/Drilling-Progress/"
 SITE = "Нэргүй Өндөр"
-RIGS = ("C-1800", "CSD-1300")
+RIGS = ("C-1800", "CSD-1300", "C-1600")
 SHIFT_ORDER = {"Өдөр": 0, "Шөнө": 1}
 SHIFT_TARGET, DAY_TARGET = 30, 60  # metres per rig, as on the dashboard chart
 MUTED, GOOD, LOW = "#9aa0a6", "#34a853", "#ea4335"
@@ -131,7 +131,8 @@ def daily_section(dates, shifts):
     lines = ["<b>ӨДРИЙН ГҮЙЦЭТГЭЛ</b>"]
     for day in dates:
         lines.append(f"<b>{day}</b> {label(f'· норм {DAY_TARGET} м / өрөм')}")
-        for rig in RIGS:
+        # A rig is reported from its first shift on, so a new rig is not "missing" before it arrived.
+        for rig in (rig for rig in RIGS if any(row["rig"] == rig and row["date"] <= day for row in shifts)):
             rows = [row for row in shifts if row["date"] == day and row["rig"] == rig]
             if not rows:
                 lines.append(f"{rig} : {label('мэдээ ороогүй')}")
@@ -174,6 +175,8 @@ def performance_section(data):
              f"{label('Дундаж хурд · ROP')} : <b>{rate(meters, dt)}</b>"]
     for rig in RIGS:
         rows = [row for row in shifts if row["rig"] == rig]
+        if not rows:
+            continue
         rig_meters = sum(row["meters"] for row in rows)
         details = [f"{len(rows)} ээлж", f"ROP {rate(rig_meters, sum(row['dt'] for row in rows))}",
                    f"ашиглалт {utilisation(rows)}"]
@@ -206,7 +209,9 @@ def quiet_message(data):
     lines = ["Сүүлийн мэдээнээс хойш шинэ ээлжийн тайлан бүртгэгдээгүй."]
     for rig in RIGS:
         latest = max((row for row in data["shifts"] if row["rig"] == rig), key=shift_order, default=None)
-        last = f"{latest['date']} {latest['shift']} · {html.escape(latest['hole'])}" if latest else "—"
+        if not latest:
+            continue
+        last = f"{latest['date']} {latest['shift']} · {html.escape(latest['hole'])}"
         lines.append(f"{label(rig + ' сүүлийн ээлж')} : <b>{last}</b>")
     return {"cardsV2": [{"cardId": "drilling-progress", "card": {
         "header": {"title": "Өрөмдлөгийн явц", "subtitle": f"{SITE} · шинэ ээлж ороогүй"},

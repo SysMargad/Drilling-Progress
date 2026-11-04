@@ -102,6 +102,14 @@ class ChatReportTests(unittest.TestCase):
         self.assertNotIn('₮', json.dumps(message, ensure_ascii=False))
         self.assertNotIn('1731451', json.dumps(message))
 
+    def test_new_rig_appears_from_its_first_shift(self):
+        added = shift('2026-10-29', 'Шөнө', 'C-1600', 'STDH2601', 0, 18)
+        self.data['shifts'].append(added)
+        *_, daily, _, performance = card_text(build_message(self.data, [added, self.added[0]]))
+        self.assertNotIn('C-1600', daily.split('2026-10-29')[0])
+        self.assertIn('C-1600 : 18 м · Өдөр мэдээ ороогүй', daily)
+        self.assertIn('C-1600 : 18 м · 1 ээлж', performance)
+
     def test_finished_hole_shows_core_summary_and_escapes_text(self):
         self.data['shifts'].append(shift('2026-10-26', 'Өдөр', 'CSD-1300', 'ZHDH2605', 128.4, 170, driller='<b>x</b>'))
         hole = card_text(build_message(self.data, self.data['shifts'][-1:]))[0]
