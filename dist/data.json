@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-11-04",
-  "updatedAt": "2026-11-04T20:12:29+08:00",
+  "asOf": "2026-11-05",
+  "updatedAt": "2026-11-05T03:34:15+08:00",
   "period": "2026-10-01 – 2026-11-03",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -4895,21 +4895,26 @@
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/15CzfAdFfnW01t_7UnXFnaEJN22UKTqiA",
-        "count": 72,
-        "latest": "2026-11-03T05:36:46.000Z",
+        "count": 95,
+        "latest": "2026-11-03T06:05:49.000Z",
         "formats": {
-          "CR2": 71,
-          "JPG": 72
+          "CR2": 94,
+          "JPG": 95
         }
       },
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1Ydlgz42C9aTd2MKFDrZY9A3MI_4vBB69",
-        "count": 2,
-        "latest": "2026-10-31T13:54:32.864Z",
+        "count": 3,
+        "latest": "2026-11-04T12:21:45.617Z",
         "files": [
           {
+            "name": "Bruker_ZHDH2603_Results_20261104.xlsx",
+            "modified": "2026-11-04T12:18:38.192Z",
+            "url": "https://docs.google.com/spreadsheets/d/16Vb-BgGjEq4c2W3kxbxHSxKL5CGaFd5d/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
             "name": "ZHDH2603_Vanta_pXRF_0.4-350.4.xlsx",
-            "modified": "2026-10-31T13:54:32.864Z",
+            "modified": "2026-11-04T12:21:45.617Z",
             "url": "https://docs.google.com/spreadsheets/d/1ZYXE1PseeuUunN4JhQPoDaqznPJqW3P5/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           },
           {
@@ -4989,9 +4994,14 @@
       },
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1lFAY3FIiWNZGVbLqaPl6UQAIIa_LLrWq",
-        "count": 7,
-        "latest": "2026-11-04T11:58:17.596Z",
+        "count": 8,
+        "latest": "2026-11-04T12:37:12.794Z",
         "files": [
+          {
+            "name": "ZHDH2604-291-331m.xlsx",
+            "modified": "2026-11-04T12:37:12.794Z",
+            "url": "https://docs.google.com/spreadsheets/d/1M-Krgs0r8m87E4hpX2089ZcZhnXWuuaH/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
           {
             "name": "ZHDH2604_Vanta_pXRF_004-033_(1m)",
             "modified": "2026-11-04T06:03:37.438Z",
@@ -5073,9 +5083,12 @@
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/1oI7hY7Ng-0foPjRnpMJTMydUy7ZTTcS6",
-        "count": 0,
-        "latest": "",
-        "formats": {}
+        "count": 49,
+        "latest": "2026-11-03T08:05:40.000Z",
+        "formats": {
+          "CR2": 49,
+          "JPG": 49
+        }
       },
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1Cgj7wtVZPz1HjZGgBsAIWTK_QhoT7r8n",
