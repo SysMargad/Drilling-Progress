@@ -1,5 +1,5 @@
 'use strict';
-let D,tab='overview',query='',grain='day',chartMonth='',dataLog=[],logError='',selectedHole=null,chartBars=[];
+let logRegister={},D,tab='overview',query='',grain='day',chartMonth='',dataLog=[],logError='',selectedHole=null,chartBars=[];
 const $=selector=>document.querySelector(selector);
 const fmt=(n,d=1)=>n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -417,7 +417,7 @@ function holeDepthChart(h){
 }
 function shiftTable(){const rows=shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())).sort((a,b)=>b.date.localeCompare(a.date)||a.rig.localeCompare(b.rig));return `<div class="table-scroll"><table><thead><tr><th>Огноо / ээлж</th><th>Өрөм</th><th>Цооног</th><th>Өрөмдөгч</th><th>Гүний интервал</th><th>Метр</th><th>DT / ST цаг</th><th>ROP м/ц</th></tr></thead><tbody>${rows.map(s=>`<tr title="${esc(s.notes)}"><td>${s.date}<br><small>${esc(s.shift)}</small></td><td>${s.rig}</td><td><button class="hole-link" data-hole="${s.hole}">${s.hole}</button></td><td>${esc(s.driller)}</td><td>${fmt(s.from)} – ${fmt(s.to)}</td><td><strong>${fmt(s.meters)}</strong></td><td>${fmt(s.dt)} / ${fmt(s.st)}</td><td>${s.dt?fmt(s.meters/s.dt,2):'—'}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Ээлж олдсонгүй.</td></tr>'}</tbody></table></div>`;}
 function performanceTable(){return `<section class="panel"><h2>${tab==='rop'?'Дундаж хурд · ROP':'Өрөмдлөгийн ашиглалт'}</h2><div class="table-scroll"><table><thead><tr><th>Өрөм</th><th>Өрөмдсөн</th><th>DT цаг</th><th>Нийт цаг</th><th>Ашиглалт</th><th>ROP м/ц</th></tr></thead><tbody>${selectedRigs().map(r=>{const rows=shifts().filter(s=>s.rig===r),dt=sum(rows,'dt'),hours=sum(rows,'hours'),m=sum(rows,'meters');return `<tr><td>${r}</td><td>${fmt(m)} м</td><td>${fmt(dt)}</td><td>${fmt(hours)}</td><td>${hours?fmt(dt/hours*100)+'%':'—'}</td><td>${dt?fmt(m/dt,2):'—'}</td></tr>`;}).join('')}</tbody></table></div></section>`;}
-function dataRows(){const ids=new Set(holes().map(h=>h.id));return DrillingData.rows(D.collar.filter(h=>ids.has(h.id)),D.shifts,D.dataInventory,D.folderMap).filter(r=>r.id.toLowerCase().includes(query.toLowerCase()));}
+function dataRows(){const ids=new Set(holes().map(h=>h.id));return DrillingData.rows(D.collar.filter(h=>ids.has(h.id)),D.shifts,D.dataInventory,D.folderMap,logRegister).filter(r=>r.id.toLowerCase().includes(query.toLowerCase()));}
 const dataLink=(url,html)=>url?`<a class="data-link" href="${esc(url)}" target="_blank" rel="noopener">${html}</a>`:html;
 const dataCell=(html,note='',url='')=>dataLink(url,html)+(note?`<small>${note}</small>`:'');
 const readinessClass=state=>({dual:'',ai:'',geologist:'',missing:'warn',drilling:'active'}[state]??'planned');
@@ -425,7 +425,8 @@ const loggedClass=(r)=>({done:'',partial:'active',none:r.hole.finish?'warn':'pla
 const registerText=value=>!value?'—':/complete/i.test(value)?'✓':esc(value);
 // Geological / geotechnical logging is done once a file named as a log is in the hole's 04 / 07 folder.
 const logStatus=done=>`<strong class="log-${done?'done':'missing'}">${done?'Хийгдсэн':'Хийгдээгүй'}</strong>`;
-const logFileNote=log=>dataLink(log.file.url,'✓ '+esc(log.format))+(log.files.length>1?' · + '+(log.files.length-1)+' файл':'');
+const logFileNote=log=>dataLink(log.file.url,'✓ '+esc(log.format))+(log.files.length>1?' · + '+(log.files.length-1)+' файл':'')
+  +(log.registered?' · бүртгэсэн '+esc(log.registered.date):'');
 function dataTable(){
   if(!D.dataInventory)return '<div class="empty">Drive дээрх файлын жагсаалт хараахан уншигдаагүй. Дараагийн Drive синкээр орно.</div>';
   const list=dataRows();
@@ -451,7 +452,7 @@ function drillingData(){
     <p class="sub data-note">Drive дээрх цооногийн хавтсуудын (03 хэмжилт, 04 геологи, 05 зураг, 07 геотехник, 10 pXRF) файлын нэрээр тодорхойлсон; файлын агуулгыг шалгаагүй. Зураг нэг нэрээр нэг тоологдоно (CR2 ба JPG хуулбар нэг зураг). 04 / 07 хавтсанд нэрэнд нь Log, logging гэх мэт үг орсон файл байвал геологи / геотехник хийгдсэн (ногоон), үгүй бол хийгдээгүй (улаан); дээрх «хийгдсэн / хийгдээгүй» тоо дууссан цооногоор. Drive-д шинээр үүссэн цооногийн хавтас collar-д мөргүй байсан ч автоматаар бүртгэгдэнэ (12 цаг тутам). Цооног дээр дарж файлуудыг харна.</p></section>`;
 }
 function openHoleData(id){
-  const h=D.collar.find(x=>x.id===id),r=DrillingData.row(h,D.dataInventory,D.shifts.filter(s=>s.hole===id).length,D.folderMap),own=D.dataInventory?.[id]||{};
+  const h=D.collar.find(x=>x.id===id),r=DrillingData.row(h,D.dataInventory,D.shifts.filter(s=>s.hole===id).length,D.folderMap,logRegister),own=D.dataInventory?.[id]||{};
   const list=(key,title)=>{const entry=own[key],files=entry?.files||[];
     const items=key==='photos'?(entry?.count?`<p>${entry.count} зураг · ${esc(Object.entries(entry.formats||{}).map(([f,n])=>f+' '+n).join(' · '))}${entry.latest?' · сүүлд '+esc(entry.latest.slice(0,10)):''}</p>`:'<p class="sub">Зураг алга.</p>')
       :files.length?`<ul>${files.map(f=>`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>${f.modified?` <small>${esc(f.modified.slice(0,10))}</small>`:''}</li>`).join('')}</ul>${entry.count>files.length?`<p class="sub">… бусад ${entry.count-files.length} файл</p>`:''}`:'<p class="sub">Файл алга.</p>';
@@ -547,6 +548,7 @@ $('#export').addEventListener('click',()=>{
   a.href=url;a.download=`drilling-${tab}-${D.asOf}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 async function refreshLog(){try{const r=await fetch('data-log.json',{cache:'no-store'});if(!r.ok)throw Error();const log=await r.json();dataLog=log.entries||[];logError='';}catch{logError='Дата татсан түүхийг ачаалж чадсангүй.';}if(D&&tab==='data-log')render();}
-async function refreshData(){try{const r=await fetch('data.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json(),changed=JSON.stringify(data)!==JSON.stringify(D);D=data;areaOptions();$('.period strong').textContent=D.period;$('#load-error').hidden=true;if(changed)render();}catch(e){$('#load-error').hidden=false;$('#load-error').textContent=D?'Өгөгдөл ачаалж чадсангүй. Өмнөх өгөгдлийг харуулж байна.':'Өгөгдөл ачаалж чадсангүй.';}}
+async function refreshRegister(){try{const r=await fetch('log-register.json',{cache:'no-store'});if(!r.ok)return false;const holes=(await r.json()).holes||{};const changed=JSON.stringify(holes)!==JSON.stringify(logRegister);logRegister=holes;return changed;}catch{return false;}}
+async function refreshData(){try{const registerChanged=await refreshRegister();const r=await fetch('data.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json(),changed=registerChanged||JSON.stringify(data)!==JSON.stringify(D);D=data;areaOptions();$('.period strong').textContent=D.period;$('#load-error').hidden=true;if(changed)render();}catch(e){$('#load-error').hidden=false;$('#load-error').textContent=D?'Өгөгдөл ачаалж чадсангүй. Өмнөх өгөгдлийг харуулж байна.':'Өгөгдөл ачаалж чадсангүй.';}}
 setTheme(document.documentElement.dataset.theme);matchMedia('(prefers-color-scheme: light)').addEventListener('change',e=>{if(!savedTheme())setTheme(e.matches?'light':'dark');});
 refreshData();refreshLog();setInterval(()=>{refreshData();refreshLog();},60000);

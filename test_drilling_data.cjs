@@ -137,3 +137,21 @@ assert.equal((vm.runInContext('dataTable()',context).match(/data-data-hole=/g)||
 vm.runInContext('query="";D={...D,dataInventory:undefined}',context);
 assert.ok(vm.runInContext('dataTable()',context).includes('хараахан уншигдаагүй'));
 console.log('Drilling Data verified: readiness per hole, file classification, filters, search and missing inventory.');
+
+// The log register: a log the log system uploaded counts as done before the Drive sync lists it; the Drive file wins its place.
+{
+  const hole={id:'ZHDH2605',finish:'2026-10-26',collarDepth:170.4,e:1,n:2,z:3,boxes:49};
+  const inv={ZHDH2605:{geological:section([file('Image (1).jpg')],'g'),geotechnical:section([file('ZHDH2505_Geochnical Data.xlsx')],'t')}};
+  const reg={ZHDH2605:{geological:{name:'ZHDH2605_Geological_Log.pdf',url:'https://drive.google.com/file/d/geo/view',date:'2026-11-05',by:'NGM Geological Log System'},
+                       geotechnical:{name:'ZHDH2605_Geotechnical_Log.pdf',url:'https://drive.google.com/file/d/tech/view',date:'2026-11-05'}}};
+  const before=model.row(hole,inv);
+  assert.equal(before.geology.done,false); assert.equal(before.geotech.done,false); assert.equal(before.geotech.state,'technical');
+  const after=model.row(hole,inv,0,{},reg);
+  assert.equal(after.geology.done,true); assert.equal(after.geotech.done,true);
+  assert.equal(after.geology.file.url,'https://drive.google.com/file/d/geo/view'); assert.equal(after.geology.registered.date,'2026-11-05');
+  assert.equal(after.geology.format,'PDF'); assert.equal(after.geology.files.length,2);
+  const synced=model.row(hole,{ZHDH2605:{...inv.ZHDH2605,geological:section([file('ZHDH2605_Geological_Log.pdf'),file('Image (1).jpg')],'g')}},0,{},reg);
+  assert.equal(synced.geology.done,true); assert.equal(synced.geology.file.name,'ZHDH2605_Geological_Log.pdf');
+  assert.equal(model.rows([hole],[],inv,{},reg)[0].geotech.done,true);
+}
+console.log('Log register verified: registered logs count as done before the Drive sync.');

@@ -28,17 +28,27 @@
     const rank=f=>(DATA_FILE.test(f.name)?0:2)+(title.test(f.name)?0:1);
     return named(list,template)||list.filter(f=>LOG.test(f.name)).sort((a,b)=>rank(a)-rank(b))[0]||null;
   }
-  function row(hole,inventory,shiftCount=0,folders={}){
-    const own=inventory?.[hole.id]||null,section=key=>own?.[key]||null;
+  // The log register (dist/log-register.json): logs the NGM geological log system made and uploaded to the hole's
+  // 04 / 07 folder. A registered log counts as done at once, before the next Drive sync lists its file.
+  function registered(entry,files){
+    if(!entry)return null;
+    const file={name:entry.name||'',url:entry.url||'',modified:entry.date||''};
+    return {file,date:entry.date||'',by:entry.by||'',files:files.some(f=>f.url===file.url)?files:[file,...files]};
+  }
+  function row(hole,inventory,shiftCount=0,folders={},register={}){
+    const own=inventory?.[hole.id]||null,section=key=>own?.[key]||null,entry=register?.[hole.id]||{};
     const geologyFiles=files(own,'geological'),geotechFiles=files(own,'geotechnical');
     const geologyLog=logFile(geologyFiles,`${hole.id}_Geological_Log.xlsx`,/geological[\s_-]*log/i);
     const geotechLog=logFile(geotechFiles,`${hole.id}_Geotechnical_Log.xlsx`,/geotechnical[\s_-]*log/i);
     const technical=geotechLog?null:geotechFiles.find(f=>DATA_FILE.test(f.name))||null;
     const handwritten=geologyFiles.filter(f=>HANDWRITTEN.test(f.name));
-    const geology={url:section('geological')?.url||'',files:geologyFiles,file:geologyLog,format:geologyLog?format(geologyLog):'',
-      state:geologyLog?'log':handwritten.length?'handwritten':geologyFiles.length?'other':'none',handwritten:handwritten.length,done:!!geologyLog};
-    const geotech={url:section('geotechnical')?.url||'',files:geotechFiles,file:geotechLog||technical,format:geotechLog?format(geotechLog):'',
-      state:geotechLog?'log':technical?'technical':'none',done:!!geotechLog};
+    const geoReg=registered(entry.geological,geologyFiles),techReg=registered(entry.geotechnical,geotechFiles);
+    const geologyDone=geologyLog||geoReg?.file,geotechDone=geotechLog||techReg?.file;
+    const geology={url:section('geological')?.url||'',files:geoReg?.files||geologyFiles,file:geologyDone,format:geologyDone?format(geologyDone):'',
+      state:geologyDone?'log':handwritten.length?'handwritten':geologyFiles.length?'other':'none',handwritten:handwritten.length,
+      done:!!geologyDone,registered:geoReg?{date:geoReg.date,by:geoReg.by}:null};
+    const geotech={url:section('geotechnical')?.url||'',files:techReg?.files||geotechFiles,file:geotechDone||technical,format:geotechDone?format(geotechDone):'',
+      state:geotechDone?'log':technical?'technical':'none',done:!!geotechDone,registered:techReg?{date:techReg.date,by:techReg.by}:null};
     const photos={url:section('photos')?.url||'',count:section('photos')?.count||0,formats:section('photos')?.formats||{},
       latest:section('photos')?.latest||'',boxes:Number.isFinite(hole.boxes)?hole.boxes:null};
     const pxrfFiles=files(own,'pxrf').filter(f=>DATA_FILE.test(f.name)||SHEET.test(f.name.trim()));
@@ -59,8 +69,8 @@
     return {id:hole.id,hole,folderUrl:folders?.[hole.id]?.url||'',collar,photos,geology,geotech,pxrf,surveys,logged:logged(hole),
       readiness:{state,label:LABELS[state],missing:state==='missing'?missing:[],ready:['dual','ai','geologist'].includes(state)}};
   }
-  function rows(collar,shifts,inventory,folders={}){
-    return collar.map(hole=>row(hole,inventory,shifts.filter(s=>s.hole===hole.id).length,folders)).sort((a,b)=>a.id.localeCompare(b.id));
+  function rows(collar,shifts,inventory,folders={},register={}){
+    return collar.map(hole=>row(hole,inventory,shifts.filter(s=>s.hole===hole.id).length,folders,register)).sort((a,b)=>a.id.localeCompare(b.id));
   }
   return {LABELS,LOGGED,row,rows,logged};
 });

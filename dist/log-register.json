@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "note": "Logs made by the NGM geological log system and uploaded to the hole's Drive 04 (geological) / 07 (geotechnical) folder. A registered log shows as done on the Drilling Data page before the next Drive sync lists its file.",
+  "holes": {
+    "ZHDH2602": {
+      "geological": {"name": "ZHDH2602_Geological_Log_with_photos.pdf", "url": "https://drive.google.com/file/d/1kFpPDnOrbabmEN6LjulgzMs2sEzz3_X-/view", "date": "2026-11-04", "by": "NGM Geological Log System"},
+      "geotechnical": {"name": "ZHDH2602_Geotechnical_Log_photo_checked.pdf", "url": "https://drive.google.com/file/d/1TkvvU5VDcpwDhsFUMdXaRsurGu30iUZm/view", "date": "2026-11-04", "by": "NGM Geological Log System"}
+    },
+    "ZHDH2605": {
+      "geological": {"name": "ZHDH2605_Geological_Log.pdf", "url": "https://drive.google.com/file/d/1GkuxsaTRCkjGl3__P9xYEW6QQJIG8qgF/view", "date": "2026-11-05", "by": "NGM Geological Log System"},
+      "geotechnical": {"name": "ZHDH2605_Geotechnical_Log.pdf", "url": "https://drive.google.com/file/d/1S94USkrnzcIVmiI7GSr4dp0XOLz5MnKE/view", "date": "2026-11-05", "by": "NGM Geological Log System"}
+    },
+    "ZHDH2606": {
+      "geological": {"name": "ZHDH2606_Geological_Log.pdf", "url": "https://drive.google.com/file/d/1tcsmEsNQpY3pkqRpqbE4peuy_5twx06C/view", "date": "2026-11-04", "by": "NGM Geological Log System"},
+      "geotechnical": {"name": "ZHDH2606_Geotechnical_Log.pdf", "url": "https://drive.google.com/file/d/1aRIdAkCJ-FDU4rzDH0B0G_IlHCrfj56Z/view", "date": "2026-11-04", "by": "NGM Geological Log System"}
+    }
+  }
+}
