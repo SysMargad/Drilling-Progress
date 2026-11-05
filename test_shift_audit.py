@@ -8,7 +8,7 @@ from pathlib import Path
 
 from drilling_sync import (assemble, attach_reports, canonical_rig, daily_file, date, hole_id, parse_shifts,
                            shift_changes, ulaanbaatar_date, workbook_rows)
-from shift_audit import STATUSES, build_audit, load_confirmations
+from shift_audit import STATUSES, build_audit, foreman_check, load_confirmations, load_foreman_reports
 from validate_data import validate
 
 ROOT = Path(__file__).resolve().parent
@@ -111,6 +111,40 @@ class ShiftAuditTests(unittest.TestCase):
         received = slot(result, 'C-1800', '2026-10-30', 'Өдөр')
         self.assertEqual((received['status'], received['meters']), ('MISSING_REPORT', None), 'a report never becomes metres without its sheet row')
         self.assertTrue(any('хүснэгтэд мөр алга' in i['text'] for i in received['issues']))
+
+    def test_foreman_monthly_report_is_checked_hole_by_hole(self):
+        shifts = [shift('C-1800', '2026-10-01', 'Өдөр', 'A', 0, 30), shift('C-1800', '2026-10-01', 'Шөнө', 'A', 30, 60),
+                  shift('C-1800', '2026-10-02', 'Өдөр', 'B', 100, 150), shift('C-1800', '2026-10-02', 'Шөнө', 'X', 0, 20),
+                  shift('C-1800', '2026-10-03', 'Өдөр', 'C', 0, 25), shift('C-1800', '2026-10-03', 'Шөнө', 'C', 25, 40),
+                  shift('CSD-1300', '2026-10-01', 'Өдөр', 'D', 0, 50.4), shift('CSD-1300', '2026-10-02', 'Өдөр', 'E', 0, 10)]
+        collar = {h['id']: h for h in (hole('A', finish='2026-10-01', depth=61), hole('B', finish='2026-10-02', depth=150), hole('C'),
+                                         hole('D', finish='2026-10-01', depth=50.4), hole('E'), hole('F'))}
+        row = lambda rig, hole_id, start, finish, metres: {'rig': rig, 'hole': hole_id, 'start': start, 'finish': finish, 'metres': metres, 'row': 5, 'raw': 'x'}
+        report = {'month': '2026-10', 'title': 'T', 'from': 'Өрмийн ахлах', 'file': 'f.xlsx', 'received': '2026-11-05', 'totals': {'C-1800': 210},
+                  'rows': [row('C-1800', 'A', '', '2026-10-01', 61), row('C-1800', 'B', '2026-10-02', '2026-10-02', 150),
+                           row('C-1800', '', '2026-10-03', '', 25), row('CSD-1300', 'D', '', '2026-10-01', 50),
+                           row('CSD-1300', 'F', '2026-10-02', '2026-10-02', 10)]}
+        check = foreman_check(report, shifts, collar)
+        a, b, c, d, f = check['rows']
+        self.assertEqual((a['status'], a['reached']), ('differs', 60))
+        self.assertIn('collar-ын эцсийн гүнтэй (61 м) таарч', ' '.join(a['notes']))
+        self.assertEqual((b['status'], b['reported'], b['reached']), ('agree', 50, 150), 'the foreman agrees on depth; the shift reports miss 100 m')
+        self.assertIn('тайлангүй интервал', ' '.join(b['notes']))
+        self.assertEqual((c['hole'], c['holeText']), ('C', ''), 'a row without a hole takes the hole the rig collared that day')
+        self.assertIn('2026-10-03 Өдөр-ийн гүнээр (25 м) тасарсан; ээлжийн тайлангаар 40 м', ' '.join(c['notes']))
+        self.assertEqual(d['status'], 'rounded')
+        self.assertEqual((f['status'], f['reported']), ('differs', None))
+        self.assertIn('тайланд: E 10 м', ' '.join(f['notes']))
+        self.assertEqual(check['rigs'], [{'rig': 'C-1800', 'foreman': 210, 'reported': 170}, {'rig': 'CSD-1300', 'foreman': None, 'reported': 60.4}])
+        report['rows'] = report['rows'][1:2] + [row('C-1800', 'C', '2026-10-01', '2026-10-03', 40)]
+        self.assertIn('ахлахын жагсаалтад үгүй цооногийн тайлан: X 20 м', ' '.join(foreman_check(report, shifts, collar)['rows'][1]['notes']))
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'foreman.json'
+            path.write_text(json.dumps({'reports': [{**report, 'rows': [{**row('C-1800', 'A', '', '', 61), 'raw': ''}]}]}), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'source cells'):
+                load_foreman_reports(path)
+        result = build_audit({'shifts': shifts, 'collar': list(collar.values())}, RIGS, '2026-10-31', None, [report])
+        self.assertEqual(len(result['foreman']), 1)
 
     def test_hole_change_within_a_shift_is_a_transition_not_an_error(self):
         result = audit([shift('C-1800', '2026-10-10', 'Өдөр', 'A', 370, 374), shift('C-1800', '2026-10-10', 'Өдөр', 'B', 0, 5)],

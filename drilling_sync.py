@@ -1314,8 +1314,8 @@ def main():
                                 'Consumption Sheet refresh failed; verified snapshot used (' + type(correction_error).__name__ + ')')))
                     data = apply_corrections(data, correction_config)
                     data = apply_daily_water(data)
-                from shift_audit import build_audit, load_confirmations
-                data["shiftAudit"] = build_audit(data, sorted(RIGS), ulaanbaatar_date(), load_confirmations())
+                from shift_audit import build_audit, load_confirmations, load_foreman_reports
+                data["shiftAudit"] = build_audit(data, sorted(RIGS), ulaanbaatar_date(), load_confirmations(), load_foreman_reports())
                 trail = shift_changes(seed, data)
                 changed = signature(seed) != signature(data)
                 if not changed:

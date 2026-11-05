@@ -19,6 +19,7 @@ STATUSES = ('VERIFIED_DRILLING', 'VERIFIED_NON_DRILLING', 'MISSING_REPORT', 'SOU
 SHIFTS = ('Өдөр', 'Шөнө')
 TOLERANCE = 0.05
 CONFIG = Path(__file__).resolve().parent / 'input' / 'shift-audit.json'
+FOREMAN = Path(__file__).resolve().parent / 'input' / 'foreman-reports.json'
 
 
 def m(value):
@@ -70,7 +71,7 @@ def evidence(record):
     return 'sheet' if str(record.get('source', '')).strip() else ''
 
 
-def build_audit(data, rigs, through, confirmations=None):
+def build_audit(data, rigs, through, confirmations=None, foreman=()):
     """Classify every rig-shift slot from the first shift month through `through` (YYYY-MM-DD)."""
     shifts = [s for s in data['shifts'] if s['rig'] in rigs]
     through_day = Date.fromisoformat(through)
@@ -327,4 +328,87 @@ def build_audit(data, rigs, through, confirmations=None):
         if month and month[:7] in months:
             months[month[:7]]['missingMeters'] = round(months[month[:7]]['missingMeters'] + gap['to'] - gap['from'], 2)
     return {'through': through, 'rigs': list(rigs), 'months': [months[k] for k in months_between(first_day, through_day) if k in months],
-            'slots': output}
+            'slots': output, 'foreman': [foreman_check(report, shifts, collar) for report in foreman]}
+
+
+def load_foreman_reports(path=FOREMAN):
+    """The drilling foreman's monthly metre reports (hole, dates, metres per rig), transcribed with their source cells."""
+    if not Path(path).exists():
+        return []
+    reports = json.loads(Path(path).read_text(encoding='utf-8')).get('reports', [])
+    for report in reports:
+        if not re.fullmatch(r'\d{4}-\d{2}', report.get('month', '')) or not all(str(report.get(k, '')).strip() for k in ('title', 'from', 'file', 'received')):
+            raise ValueError('A foreman report needs month, title, from, file and received')
+        for row in report['rows']:
+            if not isinstance(row.get('metres'), (int, float)) or row['metres'] < 0 or not str(row.get('raw', '')).strip():
+                raise ValueError('A foreman report row needs its metres and the source cells it was read from')
+            for key in ('start', 'finish'):
+                if row.get(key):
+                    Date.fromisoformat(row[key])
+    return reports
+
+
+def foreman_check(report, shifts, collar):
+    """Each row of a foreman's monthly report against the shift reports and the collar register of that month."""
+    month, order = report['month'], {'Өдөр': 0, 'Шөнө': 1}
+    year, number = map(int, month.split('-'))
+    last = (Date(year + number // 12, number % 12 + 1, 1) - timedelta(days=1)).isoformat()
+    in_month = sorted((s for s in shifts if s['date'].startswith(month + '-')), key=lambda s: (s['date'], order[s['shift']], s['from']))
+    rows = []
+    for row in report['rows']:
+        start, finish = row.get('start') or month + '-01', row.get('finish') or last
+        window = [s for s in in_month if s['rig'] == row['rig'] and start <= s['date'] <= finish]
+        hole, notes = row['hole'], []
+        if not hole:
+            # The row names no hole: take the one the rig collared (0 m) on the start date.
+            opened = [s for s in window if s['date'] == start and s['from'] <= TOLERANCE]
+            hole = opened[0]['hole'] if opened else ''
+            notes.append(f'Цооногийн дугаар бичээгүй; {row["rig"]} {start}-нд {hole} цооногийг эхлүүлсэн' if hole else 'Цооногийн дугаар бичээгүй')
+        rows.append({**row, 'hole': hole, 'holeText': row['hole'], 'start': start, 'finish': finish, 'window': window, 'notes': notes})
+    listed = {(r['rig'], r['hole']) for r in rows}
+    checks = []
+    for row in rows:
+        own = [s for s in in_month if s['rig'] == row['rig'] and s['hole'] == row['hole']]
+        reported = round(sum(s['meters'] for s in own), 2)
+        reached = max((s['to'] for s in own), default=None)
+        depth = collar.get(row['hole'], {}).get('collarDepth')
+        stated, notes = row['metres'], row['notes']
+        # Holes of this rig in the row's dates that no row of the report names (inside the dates: the first
+        # and last day are shared with the neighbouring rows).
+        others = {}
+        for s in row['window']:
+            if (s['rig'], s['hole']) not in listed and (not own or row['start'] < s['date'] < row['finish']):
+                others[s['hole']] = round(others.get(s['hole'], 0) + s['meters'], 2)
+        if not own:
+            status = 'differs'
+            notes.append(f'{row["rig"]}-ийн энэ хугацааны тайланд {row["hole"] or "энэ цооног"} алга'
+                         + ('; тайланд: ' + ', '.join(f'{h} {m(v)} м (collar {m(collar.get(h, {}).get("collarDepth") or 0)} м)' for h, v in others.items()) if others else ''))
+        else:
+            # The comparison is with the depth the shift reports reached; the foreman writes whole metres at times.
+            gap = round(reached - stated, 2)
+            status = 'agree' if abs(gap) <= TOLERANCE else 'rounded' if float(stated).is_integer() and 0 < gap < 1 else 'differs'
+            if status == 'rounded':
+                notes.append(f'Ахлах бүхэл метрээр бичсэн ({m(stated)} м); ээлжийн тайлангийн гүн {m(reached)} м')
+            elif status == 'differs':
+                cut = next((s for s in own if abs(s['to'] - stated) <= TOLERANCE), None)
+                if cut and reached > stated:
+                    notes.append(f'Ахлахын дүн {cut["date"]} {cut["shift"]}-ийн гүнээр ({m(stated)} м) тасарсан; ээлжийн тайлангаар {m(reached)} м хүрсэн')
+                else:
+                    notes.append(f'Ахлах {m(stated)} м, ээлжийн тайлангийн гүн {m(reached)} м ({m(abs(gap))} м зөрүү)')
+            if depth is not None and abs(depth - stated) > TOLERANCE and collar.get(row['hole'], {}).get('finish', '9999') <= row['finish']:
+                notes.append(f'Collar-ын эцсийн гүн {m(depth)} м')
+            elif depth is not None and status == 'differs' and abs(depth - stated) <= TOLERANCE:
+                notes.append(f'Ахлахын дүн collar-ын эцсийн гүнтэй ({m(depth)} м) таарч байна')
+            if abs(reported - reached) > TOLERANCE:
+                notes.append(f'Ээлжийн тайлангийн метрийн нийлбэр {m(reported)} м, гүн {m(reached)} м — '
+                             + ('тайлангүй интервал бий' if reported < reached else 'давхардсан интервал бий'))
+            if others:
+                notes.append('Энэ хугацаанд ахлахын жагсаалтад үгүй цооногийн тайлан: ' + ', '.join(f'{h} {m(v)} м' for h, v in others.items()))
+        checks.append({'rig': row['rig'], 'hole': row['hole'], 'holeText': row['holeText'], 'start': row['start'], 'finish': row['finish'],
+                       'foreman': stated, 'reported': reported if own else None, 'reached': reached, 'collarDepth': depth,
+                       'status': status, 'notes': notes, 'row': row['row'], 'raw': row['raw']})
+    rigs = sorted({r['rig'] for r in report['rows']})
+    return {'month': month, 'title': report['title'], 'from': report['from'], 'file': report['file'], 'received': report['received'],
+            'rigs': [{'rig': rig, 'foreman': report.get('totals', {}).get(rig),
+                      'reported': round(sum(s['meters'] for s in in_month if s['rig'] == rig), 2)} for rig in rigs],
+            'rows': checks}

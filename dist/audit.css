@@ -36,3 +36,7 @@
 .financial-details-table small.unreported{display:block;color:var(--audit-missing);font-weight:600}
 .audit-kpis .kpi .value.audit-text{font-size:15px;line-height:1.35}
 .audit-issues td:nth-child(1),.audit-issues td:nth-child(2),.audit-issues td:nth-child(3){white-space:nowrap}
+.audit-foreman td{vertical-align:top;white-space:normal}
+.audit-foreman td:nth-child(-n+8){white-space:nowrap}
+.audit-foreman td:last-child{min-width:300px}
+.audit-foreman td small{display:block;color:var(--muted);font-size:11px;margin-top:4px}

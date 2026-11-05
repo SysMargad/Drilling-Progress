@@ -10,7 +10,11 @@ replace('C-1800','2026-10-14','Шөнө',slot('C-1800','2026-10-14','Шөнө','
 replace('C-1800','2026-10-15','Шөнө',slot('C-1800','2026-10-15','Шөнө','SOURCE_CONFLICT',9,{issues:[{kind:'overlap',text:'DTDH2603: 248–257 м нь өмнөх ...'}]}));
 replace('CSD-1300','2026-10-14','Өдөр',slot('CSD-1300','2026-10-14','Өдөр','UNVERIFIED',null,{issues:[{kind:'noReport',text:'нүүлт байж болзошгүй'}]}));
 replace('CSD-1300','2026-10-15','Өдөр',slot('CSD-1300','2026-10-15','Өдөр','VERIFIED_NON_DRILLING',0));
-const audit={through:'2026-10-15',rigs:['C-1800','CSD-1300'],months:[{month:'2026-10',expected:8,counts:{},meters:{},missingMeters:9}],slots};
+const foremanRow=(rig,hole,holeText,foreman,reported,reached,status,notes)=>({rig,hole,holeText,start:'2026-10-14',finish:'2026-10-16',foreman,reported,reached,collarDepth:200.4,status,notes,row:7,raw:'2026/10/14с 2026/10/16нд | DTDH-2603 | 200м'});
+const audit={through:'2026-10-15',rigs:['C-1800','CSD-1300'],months:[{month:'2026-10',expected:8,counts:{},meters:{},missingMeters:9}],slots,
+  foreman:[{month:'2026-10',title:'10 сарын метрийн мэдээ',from:'Өрмийн ахлах',file:'ммм1_1.xlsx / Sheet1',received:'2026-11-05',rigs:[{rig:'C-1800',foreman:1552.7,reported:1424.7},{rig:'CSD-1300',foreman:1477.4,reported:1517.6}],
+    rows:[foremanRow('CSD-1300','DTDH2603','DTDH2603',200,null,null,'differs',['CSD-1300-ийн энэ хугацааны тайланд DTDH2603 алга; тайланд: DTDH2605 128 м (collar 200.4 м)']),
+      foremanRow('C-1800','ZHDH2604','',428,458,461,'differs',['Цооногийн дугаар бичээгүй'])]}]};
 // The model counts per month and rig from the slots themselves.
 const all=AuditModel.summary(audit,'2026-10'),c1800=AuditModel.summary(audit,'2026-10','C-1800');
 assert.deepEqual([all.expected,all.days,all.counts.VERIFIED_DRILLING,all.counts.MISSING_REPORT,all.counts.SOURCE_CONFLICT,all.counts.UNVERIFIED,all.counts.VERIFIED_NON_DRILLING],[8,2,4,1,1,1,1]);
@@ -46,7 +50,13 @@ assert.ok(page.includes('<td>Тайлангүй</td>'));
 assert.ok(page.includes('Өрөм нь тодорхойгүй мөр: 1'));
 assert.ok(page.includes('Ээлжид холбогдоогүй Drive тайлан: 1'));
 assert.ok(page.includes('2_Ээлжийн_бүртгэл мөр 51'));
+assert.ok(page.includes('Өрмийн ахлахын сарын мэдээтэй тулгалт'));
+assert.ok(page.includes('C-1800: ахлах 1,552.7 м, ээлжийн тайлан 1,424.7 м'));
+assert.ok(page.includes('<span class="badge audit-source-conflict">Зөрүүтэй</span>'));
+assert.ok(page.includes('ZHDH2604<small>ахлахын мэдээнд: бичээгүй</small>'));
+assert.ok(page.includes('Эх мөр 7: 2026/10/14с 2026/10/16нд | DTDH-2603 | 200м'));
 rig='CSD-1300';page=vm.runInContext('auditView()',context);
+assert.ok(!page.includes('ахлахын мэдээнд: бичээгүй'),'the rig filter applies to the foreman rows');
 assert.equal((page.match(/class="audit-cell /g)||[]).length,4);
 assert.ok(!page.includes('C-1800 · Өдөр'));
 rig='';

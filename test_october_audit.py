@@ -8,12 +8,12 @@ import json
 import unittest
 from pathlib import Path
 
-from shift_audit import build_audit, load_confirmations
+from shift_audit import build_audit, load_confirmations, load_foreman_reports
 
 ROOT = Path(__file__).resolve().parent
 DATA = json.loads((ROOT / 'dist' / 'data.json').read_text(encoding='utf-8'))
 # Later reports (e.g. the first UGDH2601 shift on 1 November) decide October's last slots, so audit through the data.
-AUDIT = build_audit(DATA, ('C-1800', 'CSD-1300'), max(s['date'] for s in DATA['shifts']), load_confirmations())
+AUDIT = build_audit(DATA, ('C-1800', 'CSD-1300'), max(s['date'] for s in DATA['shifts']), load_confirmations(), load_foreman_reports())
 
 
 def slot(rig, day, name):
@@ -100,6 +100,37 @@ class OctoberAuditTests(unittest.TestCase):
     def test_zhdh2603_reports_overlap_by_one_metre(self):
         for day, name in ((19, 'Шөнө'), (20, 'Өдөр')):
             self.assertIn('59.4–60.4 м давхардсан', texts(slot('CSD-1300', day, name)))
+
+
+class ForemanReportTests(unittest.TestCase):
+    """The drilling foreman's October metre report (ммм1_1.xlsx, received 2026-11-05) against the shift reports."""
+    report, = AUDIT['foreman']
+    rows = {(r['rig'], r['hole']): r for r in report['rows']}
+
+    def test_rig_totals_are_the_foremans_and_the_dashboards(self):
+        self.assertEqual(self.report['rigs'], [{'rig': 'C-1800', 'foreman': 1552.7, 'reported': 1424.7},
+                                               {'rig': 'CSD-1300', 'foreman': 1477.4, 'reported': 1517.6}])
+
+    def test_c1800_drilled_zhdh2602_from_15_to_23_october(self):
+        row = self.rows[('C-1800', 'ZHDH2602')]
+        self.assertEqual((row['status'], row['foreman'], row['reached'], row['reported']), ('agree', 489.3, 489.3, 223.3))
+        self.assertIn('ZHDH2612 111 м, DTDH2602 0 м', ' '.join(row['notes']))
+
+    def test_csd1300_hole_of_14_to_16_october_is_dtdh2605_in_the_shift_reports(self):
+        row = self.rows[('CSD-1300', 'DTDH2603')]
+        self.assertEqual((row['status'], row['reported']), ('differs', None))
+        self.assertIn('DTDH2605 128 м (collar 200.4 м)', row['notes'][0])
+
+    def test_large_differences(self):
+        self.assertEqual((self.rows[('CSD-1300', 'ZHDH2606')]['foreman'], self.rows[('CSD-1300', 'ZHDH2606')]['reached']), (70, 233.4))
+        self.assertEqual(self.rows[('CSD-1300', 'ZHDH2606')]['status'], 'differs')
+        self.assertIn('collar-ын эцсийн гүнтэй (377 м)', ' '.join(self.rows[('C-1800', 'ZHDH2601')]['notes']))
+        zhdh2604 = self.rows[('C-1800', 'ZHDH2604')]
+        self.assertEqual(zhdh2604['holeText'], '')
+        self.assertIn('2026-10-29 Шөнө-ийн гүнээр (428 м) тасарсан', ' '.join(zhdh2604['notes']))
+
+    def test_whole_metre_rows(self):
+        self.assertEqual([r['hole'] for r in self.report['rows'] if r['status'] == 'rounded'], ['DTDH2602', 'DTDH2601', 'ZHDH2603'])
 
 
 if __name__ == '__main__':

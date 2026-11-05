@@ -93,6 +93,9 @@ def validate_audit(audit, data):
     for month in audit['months']:
         if month['expected'] != months.get(month['month']) or sum(month['counts'].values()) != month['expected']:
             raise ValueError('Shift audit counts do not add up')
+    for report in audit.get('foreman', []):
+        if any(row['status'] not in {'agree', 'rounded', 'differs'} or row['rig'] not in RIGS for row in report['rows']):
+            raise ValueError('Invalid foreman report check')
     recorded = {(s['rig'], s['date'], s['shift']) for s in data['shifts'] if s['rig'] in audit['rigs'] and s['date'] <= audit['through']}
     if recorded - seen:
         raise ValueError('Shift audit misses recorded shifts')
