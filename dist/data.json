@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-05",
-  "updatedAt": "2026-11-05T11:40:20+08:00",
+  "updatedAt": "2026-11-05T13:49:56+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -3779,7 +3779,7 @@
       "photos": {
         "url": "https://drive.google.com/drive/folders/1eEtC-OHK1OJGFiGQPYDE1M6ZlqvWomxN",
         "count": 31,
-        "latest": "2026-10-16T08:39:48.000Z",
+        "latest": "2026-11-05T04:18:35.328Z",
         "formats": {
           "CR2": 31
         }
@@ -3946,7 +3946,7 @@
       "photos": {
         "url": "https://drive.google.com/drive/folders/16_sTowDYL2UuaNNkP74GsOUgUST7sssz",
         "count": 44,
-        "latest": "2026-10-16T08:02:56.000Z",
+        "latest": "2026-11-05T04:22:34.449Z",
         "formats": {
           "CR2": 3,
           "JPG": 41
@@ -4099,7 +4099,7 @@
       "photos": {
         "url": "https://drive.google.com/drive/folders/1GPdIlAzau9L1F_MsvUuOh6wC_xAOILmF",
         "count": 48,
-        "latest": "2026-10-21T04:30:08.070Z",
+        "latest": "2026-11-05T04:22:24.933Z",
         "formats": {
           "CR2": 27,
           "JPG": 59
@@ -4813,11 +4813,11 @@
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/1ukOM3qCn43lOmO1-tmhn6uc_sPm4qILg",
-        "count": 109,
-        "latest": "2026-11-04T05:16:27.548Z",
+        "count": 124,
+        "latest": "2026-11-04T07:36:45.000Z",
         "formats": {
-          "CR2": 105,
-          "JPG": 108
+          "CR2": 119,
+          "JPG": 121
         }
       },
       "pxrf": {
@@ -4912,8 +4912,8 @@
     "ZHDH2603": {
       "geological": {
         "url": "https://drive.google.com/drive/folders/1yphmt_3Vt13PaIPHwQQ3L1eOmUWd3KyP",
-        "count": 15,
-        "latest": "2026-11-02T07:24:32.757Z",
+        "count": 17,
+        "latest": "2026-11-05T05:16:57.028Z",
         "files": [
           {
             "name": "20261031_224936.jpg",
@@ -4989,18 +4989,43 @@
             "name": "ZHDH2603_Geological_Log.pdf",
             "modified": "2026-11-02T07:24:32.757Z",
             "url": "https://drive.google.com/file/d/1JGCdyvgNUrO_S9N9MIuHqLtliqRZ-sk-/view?usp=drivesdk"
+          },
+          {
+            "name": "ZHDH2603_Geological_Log.xlsx",
+            "modified": "2026-11-02T04:45:03.938Z",
+            "url": "https://docs.google.com/spreadsheets/d/1uA--cgQtySfFOEYqV5QFddCyn0DugBdu/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
+            "name": "ZHDH2603_Geological_Log_with_photos.pdf",
+            "modified": "2026-11-05T05:16:57.028Z",
+            "url": "https://drive.google.com/file/d/1KI7gBgpRih_vW-s5RARS9l-VGttYb5Ar/view?usp=drivesdk"
           }
         ]
       },
       "geotechnical": {
         "url": "https://drive.google.com/drive/folders/1DBbctCBY-VgvqIf7IYG5FqR3UOsXw4bo",
-        "count": 1,
-        "latest": "2026-10-31T12:31:16.216Z",
+        "count": 4,
+        "latest": "2026-11-05T05:17:40.623Z",
         "files": [
           {
             "name": "ZHDH2603 GeoTechnical Data.xlsx",
             "modified": "2026-10-31T12:31:16.216Z",
             "url": "https://docs.google.com/spreadsheets/d/1uK9BRnbFhiwNjb4tTSS6eBueYWZKJElz/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
+            "name": "ZHDH2603_Geotechnical_Log.pdf",
+            "modified": "2026-11-05T05:17:40.623Z",
+            "url": "https://drive.google.com/file/d/1RFeyV91sVXZG5gzfmMzdSXXLL4m8dyjb/view?usp=drivesdk"
+          },
+          {
+            "name": "ZHDH2603_Geotechnical_Log.xlsx",
+            "modified": "2026-11-05T04:32:58.088Z",
+            "url": "https://docs.google.com/spreadsheets/d/1qimn2POq7iyUGvwS7NmB4jBIcj7dUy8P/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
+            "name": "ZHDH2603_Geotechnical_Photo_Check.xlsx",
+            "modified": "2026-11-05T04:34:27.890Z",
+            "url": "https://docs.google.com/spreadsheets/d/1fyiiWegpfAMxmlji5WUPDcXFu83kMAPg/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           }
         ]
       },
@@ -5160,8 +5185,8 @@
     "ZHDH2605": {
       "geological": {
         "url": "https://drive.google.com/drive/folders/1Vg9gBoSnNFFVF50y8AGXeM4uQuepX4pd",
-        "count": 3,
-        "latest": "2026-11-02T14:13:17.156Z",
+        "count": 5,
+        "latest": "2026-11-05T05:04:59.871Z",
         "files": [
           {
             "name": "Image (1).jpg",
@@ -5177,25 +5202,45 @@
             "name": "Image (3).jpg",
             "modified": "2026-11-02T14:13:17.156Z",
             "url": "https://drive.google.com/file/d/1DQgVPhVl7rdKCfnRIkoYjxOvTQJLPJeC/view?usp=drivesdk"
+          },
+          {
+            "name": "ZHDH2605_Geological_Log.pdf",
+            "modified": "2026-11-05T05:04:59.871Z",
+            "url": "https://drive.google.com/file/d/1GkuxsaTRCkjGl3__P9xYEW6QQJIG8qgF/view?usp=drivesdk"
+          },
+          {
+            "name": "ZHDH2605_Geological_Log.xlsx",
+            "modified": "2026-11-05T04:43:30.960Z",
+            "url": "https://docs.google.com/spreadsheets/d/113o7dpqq65vjaWQSzSde6pL4TlZ8mNjM/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           }
         ]
       },
       "geotechnical": {
         "url": "https://drive.google.com/drive/folders/1V2SB6kN2LcJzDM5cOK02DmYPtZzzwkWG",
-        "count": 1,
-        "latest": "2026-10-31T11:53:46.042Z",
+        "count": 3,
+        "latest": "2026-11-05T05:05:29.045Z",
         "files": [
           {
             "name": "ZHDH2505_Geochnical Data.xlsx",
             "modified": "2026-10-31T11:53:46.042Z",
             "url": "https://docs.google.com/spreadsheets/d/1fZGm33Jd9sLh_p0VFoVOewiFP5BmXaLz/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
+            "name": "ZHDH2605_Geotechnical_Log.pdf",
+            "modified": "2026-11-05T05:05:29.045Z",
+            "url": "https://drive.google.com/file/d/1S94USkrnzcIVmiI7GSr4dp0XOLz5MnKE/view?usp=drivesdk"
+          },
+          {
+            "name": "ZHDH2605_Geotechnical_Log.xlsx",
+            "modified": "2026-11-05T04:43:31.020Z",
+            "url": "https://docs.google.com/spreadsheets/d/1YxSXieZhIyln0RgkA6mlOQAZIjYc4j3n/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           }
         ]
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/1oI7hY7Ng-0foPjRnpMJTMydUy7ZTTcS6",
         "count": 49,
-        "latest": "2026-11-03T08:05:40.000Z",
+        "latest": "2026-11-05T04:16:11.115Z",
         "formats": {
           "CR2": 49,
           "JPG": 49
