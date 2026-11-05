@@ -10,6 +10,8 @@ replace('C-1800','2026-10-14','Шөнө',slot('C-1800','2026-10-14','Шөнө','
   inferred:[{hole:'DTDH2603',from:248,to:257,meters:9,exact:true,shifts:1,note:''}]}));
 replace('C-1800','2026-10-15','Шөнө',slot('C-1800','2026-10-15','Шөнө','SOURCE_CONFLICT',9,{issues:[{kind:'overlap',text:'DTDH2603: 248–257 м нь өмнөх ...'}]}));
 replace('CSD-1300','2026-10-14','Өдөр',slot('CSD-1300','2026-10-14','Өдөр','UNVERIFIED',null,{issues:[{kind:'noReport',text:'нүүлт байж болзошгүй'}]}));
+replace('CSD-1300','2026-10-14','Шөнө',slot('CSD-1300','2026-10-14','Шөнө','MISSING_REPORT',null,{issues:[{kind:'gap',text:'UGDH2601: 0–65.4 м (65.4 м) тайлангүй — 3 ээлжид'}],
+  inferred:[{hole:'UGDH2601',from:0,to:65.4,meters:65.4,exact:false,shifts:3,note:'3 ээлжид хуваагдана; ээлж бүрийн метр тодорхойгүй'}]}));
 replace('CSD-1300','2026-10-15','Өдөр',slot('CSD-1300','2026-10-15','Өдөр','VERIFIED_NON_DRILLING',0));
 const foremanRow=(rig,hole,holeText,foreman,reported,reached,status,notes)=>({rig,hole,holeText,start:'2026-10-14',finish:'2026-10-16',foreman,reported,reached,collarDepth:200.4,status,notes,row:7,raw:'2026/10/14с 2026/10/16нд | DTDH-2603 | 200м'});
 const audit={through:'2026-10-15',rigs:['C-1800','CSD-1300'],months:[{month:'2026-10',expected:8,counts:{},meters:{},missingMeters:9,inferredMeters:9,
@@ -19,13 +21,14 @@ const audit={through:'2026-10-15',rigs:['C-1800','CSD-1300'],months:[{month:'202
       foremanRow('C-1800','ZHDH2604','',428,458,461,'differs',['Цооногийн дугаар бичээгүй'])]}]};
 // The model counts per month and rig from the slots themselves.
 const all=AuditModel.summary(audit,'2026-10'),c1800=AuditModel.summary(audit,'2026-10','C-1800');
-assert.deepEqual([all.expected,all.days,all.counts.VERIFIED_DRILLING,all.counts.MISSING_REPORT,all.counts.SOURCE_CONFLICT,all.counts.UNVERIFIED,all.counts.VERIFIED_NON_DRILLING],[8,2,4,1,1,1,1]);
+assert.deepEqual([all.expected,all.days,all.counts.VERIFIED_DRILLING,all.counts.MISSING_REPORT,all.counts.SOURCE_CONFLICT,all.counts.UNVERIFIED,all.counts.VERIFIED_NON_DRILLING],[8,2,3,2,1,1,1]);
 assert.equal(all.missingMeters,9);
 assert.deepEqual([c1800.expected,c1800.counts.MISSING_REPORT,c1800.missingMeters],[4,1,null]);
 assert.equal(Object.values(all.counts).reduce((n,v)=>n+v,0),all.expected);
-// Reported metres, metres inferred from depth for unreported shifts, and totals known only across shifts or months.
-assert.deepEqual([all.reported,all.inferred,all.unallocated,all.crossMonth,all.depthTotal],[189,9,20,65.4,218]);
-assert.deepEqual([c1800.inferred,c1800.unallocated,c1800.crossMonth],[9,20,0]);
+// Reported metres, and metres estimated from depth for unreported shifts (a gap over several shifts: an even share each).
+assert.deepEqual([all.reported,all.inferred,all.split,all.depthTotal],[144,30.8,21.8,174.8]);
+assert.deepEqual([c1800.inferred,c1800.split],[9,0]);
+assert.equal(AuditModel.estimate(slots.find(s=>s.rig==='CSD-1300'&&s.date==='2026-10-14'&&s.shift==='Шөнө')),21.8);
 assert.deepEqual(AuditModel.freshness([{rig:'C-1800',date:'2026-10-15',shift:'Өдөр'},{rig:'C-1800',date:'2026-10-15',shift:'Шөнө'},{rig:'C-1800',date:'2026-10-14',shift:'Шөнө'}],['C-1800','CSD-1300']),
   [{rig:'C-1800',date:'2026-10-15',shift:'Шөнө'},{rig:'CSD-1300',date:'',shift:''}]);
 const log=[{status:'updated',completedAt:'2026-11-05T13:50:09+08:00'},{status:'failed',startedAt:'2026-11-05T15:00:00+08:00',completedAt:'2026-11-05T15:01:00+08:00',error:'ValueError',validation:'Missing/invalid dt for ZHDH2604 on 2026-10-30'}];
@@ -42,16 +45,19 @@ vm.runInContext(app.split('function kpis()')[0]+app.slice(app.indexOf('const dat
 vm.runInContext('D=fixture;dataLog=log',context);
 let page=vm.runInContext('auditView()',context);
 assert.ok(page.includes('<div class="label">Нийт хүлээгдэж буй ээлж</div><div class="value">8</div><div class="note">2 өдөр × 2 ээлж × 2 өрөм</div>'));
-assert.ok(page.includes('<div class="label">Тайлан дутуу</div><div class="value">1</div><div class="note">9 м тайлангүй</div>'));
+assert.ok(page.includes('<div class="label">Тайлан дутуу</div><div class="value">2</div><div class="note">9 м тайлангүй</div>'));
 assert.ok(page.includes('Сүүлийн оролдлого алдаатай: Missing/invalid dt for ZHDH2604 on 2026-10-30'));
 assert.ok(page.includes('C-1800: 10-15 Шөнө'));
 assert.equal((page.match(/class="audit-cell /g)||[]).length,8);
 assert.ok(page.includes('class="audit-cell audit-missing-report audit-inferred" data-audit-slot="C-1800|2026-10-14|Шөнө"'));
 assert.match(page,/class="audit-cell audit-missing-report audit-inferred" data-audit-slot="C-1800\|2026-10-14\|Шөнө"[^>]*>~9<\/button>/,'inferred metres show ~, never as a report');
-assert.ok(page.includes('<div class="label">Гүнээр тооцсон нийт метр</div><div class="value">218</div><div class="note">Тайлангүй ээлжид гүнээр ~9 м, ээлжинд хуваагдаагүй 20 м · сар дамнасан 65.4 м-ийн хэсэг нэмэгдэж болно</div>'));
-assert.ok(page.includes('<div class="label">Ээлжийн тайлангийн метр</div><div class="value">189</div>'));
+assert.ok(page.includes('<div class="label">Гүнээр тооцсон нийт метр</div><div class="value">174.8</div><div class="note">Тайлангүй ээлжид гүнээр ~30.8 м; үүнээс 21.8 м нь ээлжинд яг оноох боломжгүй завсар (тэнцүү хуваасан)</div>'));
+assert.ok(page.includes('<div class="label">Ээлжийн тайлангийн метр</div><div class="value">144</div>'));
+assert.match(page,/data-audit-slot="CSD-1300\|2026-10-14\|Шөнө"[^>]*>~21.8<\/button>/,'an unreported shift of a longer gap gets its even share');
+assert.ok(page.includes('гүнээр ~21.8 м (65.4 м / 3 ээлж)</small>'));
 assert.ok(page.includes('гүнээр ~9 м</small>'));
-assert.match(page,/data-audit-slot="CSD-1300\|2026-10-14\|Өдөр"[^>]*>\?<\/button>/);
+assert.match(page,/data-audit-slot="CSD-1300\|2026-10-14\|Өдөр"[^>]*><\/button>/,'no ! or ? marks: a shift with nothing to infer stays blank, its colour gives the status');
+assert.ok(!/>[!?]<\/button>/.test(page));
 assert.match(page,/data-audit-slot="CSD-1300\|2026-10-15\|Өдөр"[^>]*>0<\/button>/,'a verified non-drilling shift is 0 m');
 assert.match(page,/data-audit-slot="C-1800\|2026-10-15\|Шөнө"[^>]*>9\*<\/button>/);
 assert.ok(page.includes('<td>Тайлангүй</td>'));

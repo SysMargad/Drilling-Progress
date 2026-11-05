@@ -7,6 +7,10 @@
     MISSING_REPORT:'Тайлан дутуу',SOURCE_CONFLICT:'Эх сурвалжийн зөрчил',UNVERIFIED:'Баталгаажаагүй'};
   const months=audit=>(audit?.months||[]).map(month=>month.month);
   const slots=(audit,month,rig='')=>(audit?.slots||[]).filter(s=>s.date.startsWith(month+'-')&&(!rig||s.rig===rig));
+  // The metres an unreported shift must hold from the depths before and after it: the whole gap when it is the
+  // only such shift, an even share of a gap spread over several. An estimate, never a report.
+  const estimate=slot=>Math.round((slot?.inferred||[]).reduce((n,i)=>n+(i.exact?i.meters:i.meters/i.shifts),0)*100)/100;
+  const shared=slot=>(slot?.inferred||[]).some(i=>!i.exact);
   function summary(audit,month,rig=''){
     const list=slots(audit,month,rig),counts=Object.fromEntries(STATUSES.map(s=>[s,0])),meters=Object.fromEntries(STATUSES.map(s=>[s,0]));
     for(const slot of list){counts[slot.status]++;meters[slot.status]+=slot.meters||0;}
@@ -14,12 +18,10 @@
     const published=(audit?.months||[]).find(m=>m.month===month);
     // Metres from the depths around a gap: pinned to one shift (inferred), or known only in total. A total whose
     // shifts all fall in this month belongs to it; one spread over two months is a range for each.
-    const shares=(published?.unallocated||[]).filter(u=>!rig||u.rig===rig);
-    const inferred=list.reduce((n,s)=>n+(s.inferred||[]).filter(i=>i.exact).reduce((k,i)=>k+i.meters,0),0);
-    const unallocated=shares.filter(u=>u.inMonth===u.shifts).reduce((n,u)=>n+u.meters,0),crossMonth=shares.filter(u=>u.inMonth<u.shifts).reduce((n,u)=>n+u.meters,0);
+    const inferred=list.reduce((n,s)=>n+estimate(s),0),split=list.reduce((n,s)=>n+(s.inferred||[]).filter(i=>!i.exact).reduce((k,i)=>k+i.meters/i.shifts,0),0);
     const reported=list.reduce((n,s)=>n+(s.meters||0),0);
     return {expected:list.length,days:new Set(list.map(s=>s.date)).size,counts,meters,missingMeters:rig?null:published?.missingMeters??null,
-      reported,inferred,unallocated,crossMonth,depthTotal:reported+inferred+unallocated};
+      reported,inferred,split,depthTotal:reported+inferred};
   }
   const order=shift=>shift==='Өдөр'?0:1;
   // Freshness is the latest reported shift of each rig, not the time the sync last ran.
@@ -33,5 +35,5 @@
   }
   const key=slot=>slot.rig+'|'+slot.date+'|'+slot.shift;
   const index=audit=>new Map((audit?.slots||[]).map(slot=>[key(slot),slot]));
-  return {STATUSES,LABELS,months,slots,summary,freshness,lastSync,key,index};
+  return {STATUSES,LABELS,months,slots,summary,estimate,shared,freshness,lastSync,key,index};
 });

@@ -32,7 +32,6 @@
 .audit-extra summary{cursor:pointer;font-weight:600}
 .audit-extra li{margin:3px 0;overflow-wrap:anywhere}
 @media (max-width:640px){.audit-kpis{grid-template-columns:1fr 1fr}.audit-issues td:nth-child(5){min-width:220px}}
-.audit-mark{fill:var(--fg);font-size:14px;font-weight:700;cursor:help}
 .financial-details-table small.unreported{display:block;color:var(--audit-missing);font-weight:600}
 .audit-kpis .kpi .value.audit-text{font-size:15px;line-height:1.35}
 .audit-issues td:nth-child(1),.audit-issues td:nth-child(2),.audit-issues td:nth-child(3){white-space:nowrap}
@@ -43,3 +42,4 @@
 .audit-cell.audit-inferred{font-style:italic;background:transparent;border-style:dashed}
 .audit-inferred-note{display:block;color:var(--audit-missing);font-size:11px}
 .audit-kpis .kpi.audit-inferred-card{box-shadow:inset 4px 0 0 var(--muted)}
+.chart-note{margin:8px 0 0}
