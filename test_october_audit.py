@@ -8,10 +8,14 @@ import json
 import unittest
 from pathlib import Path
 
+from drilling_sync import correct_holes
 from shift_audit import build_audit, load_confirmations, load_foreman_reports
 
 ROOT = Path(__file__).resolve().parent
 DATA = json.loads((ROOT / 'dist' / 'data.json').read_text(encoding='utf-8'))
+# The sync files the owner's hole corrections (2026-11-05) as it reads the sheets; a published row already
+# under its corrected hole is left as it is.
+correct_holes(DATA['shifts'], load_confirmations()['holes'])
 # Later reports (e.g. the first UGDH2601 shift on 1 November) decide October's last slots, so audit through the data.
 AUDIT = build_audit(DATA, ('C-1800', 'CSD-1300'), max(s['date'] for s in DATA['shifts']), load_confirmations(), load_foreman_reports())
 
@@ -57,14 +61,17 @@ class OctoberAuditTests(unittest.TestCase):
         self.assertEqual(slot('C-1800', 15, 'Шөнө')['status'], 'SOURCE_CONFLICT')
         self.assertIn('нэг ээлжээр зөрсөн', texts(slot('C-1800', 15, 'Шөнө')))
 
-    def test_zhdh2612_rows_are_unregistered_and_c1800_left_gaps(self):
-        for day, name in ((16, 'Шөнө'), (17, 'Өдөр'), (17, 'Шөнө')):
+    def test_zhdh2612_and_c1800_dtdh2602_rows_are_zhdh2602_by_owner_decision(self):
+        # 2026-11-05: the ZHDH2612 rows (16-17 Oct) and the C-1800 DTDH2602 row (18 Oct night) are ZHDH2602.
+        for day, name, sheet_hole in ((16, 'Шөнө', 'ZHDH2612'), (17, 'Өдөр', 'ZHDH2612'), (17, 'Шөнө', 'ZHDH2612'), (18, 'Шөнө', 'DTDH2602')):
             s = slot('C-1800', day, name)
-            self.assertEqual(s['status'], 'SOURCE_CONFLICT')
-            self.assertIn('ZHDH2612: collar-д төлөвлөгөө', texts(s))
-        self.assertIn('ZHDH2612: 0–110 м', texts(slot('C-1800', 16, 'Өдөр')))
-        self.assertIn('DTDH2602: цооног 2026-10-10-нд дууссан', texts(slot('C-1800', 18, 'Шөнө')))
-        self.assertIn('ZHDH2602: 0–266 м', texts(slot('C-1800', 19, 'Өдөр')))
+            self.assertEqual([r['hole'] for r in s['records']], ['ZHDH2602'])
+            self.assertIn(f'эх хүснэгтэд {sheet_hole} → ZHDH2602', texts(s))
+            self.assertNotEqual(s['status'], 'SOURCE_CONFLICT')
+        self.assertIn('ZHDH2602: 0–110 м', texts(slot('C-1800', 16, 'Өдөр')))
+        self.assertIn('ZHDH2602: 221–266 м (45 м) тайлангүй', texts(slot('C-1800', 18, 'Өдөр')))
+        self.assertNotIn('0–266', texts(slot('C-1800', 19, 'Өдөр')))
+        self.assertFalse(any(r['hole'] == 'ZHDH2612' for s in AUDIT['slots'] for r in s['records']))
 
     def test_18_october_day_shifts_have_no_report_on_either_rig(self):
         for rig in ('C-1800', 'CSD-1300'):
@@ -101,13 +108,14 @@ class OctoberAuditTests(unittest.TestCase):
         exact = [(s['rig'], s['date'][5:], s['shift'], i['hole'], i['from'], i['to']) for s in AUDIT['slots']
                  if s['date'].startswith('2026-10') for i in s['inferred'] if i['exact']]
         self.assertEqual(exact, [('CSD-1300', '10-15', 'Өдөр', 'DTDH2605', 77.4, 107.4), ('CSD-1300', '10-16', 'Өдөр', 'DTDH2605', 158, 200.4),
-                                 ('CSD-1300', '10-18', 'Өдөр', 'DTDH2606', 107.4, 134.4), ('CSD-1300', '10-24', 'Шөнө', 'ZHDH2605', 0, 26.4),
-                                 ('C-1800', '10-30', 'Өдөр', 'ZHDH2604', 428, 431)])
+                                 ('C-1800', '10-18', 'Өдөр', 'ZHDH2602', 221, 266), ('CSD-1300', '10-18', 'Өдөр', 'DTDH2606', 107.4, 134.4),
+                                 ('CSD-1300', '10-24', 'Шөнө', 'ZHDH2605', 0, 26.4), ('C-1800', '10-30', 'Өдөр', 'ZHDH2604', 428, 431)])
         october = AUDIT['months'][0]
-        self.assertEqual(october['inferredMeters'], 128.8)
+        self.assertEqual(october['inferredMeters'], 173.8)
+        # The owner kept the 15 Oct night report's date (2026-11-05), so the gap it fills on 14 Oct is not inferred.
         self.assertEqual(slot('C-1800', 14, 'Шөнө')['inferred'], [], 'the 15 Oct night report fills it')
         self.assertEqual([(u['hole'], u['meters'], u['shifts'], u['inMonth']) for u in october['unallocated']],
-                         [('UGDH2601', 65.4, 3, 2), ('ZHDH2604', 39, 2, 1), ('ZHDH2612', 110, 1, 1)])
+                         [('UGDH2601', 65.4, 3, 2), ('ZHDH2602', 110, 1, 1), ('ZHDH2604', 39, 2, 1)])
 
     def test_zhdh2603_reports_overlap_by_one_metre(self):
         for day, name in ((19, 'Шөнө'), (20, 'Өдөр')):
@@ -125,8 +133,8 @@ class ForemanReportTests(unittest.TestCase):
 
     def test_c1800_drilled_zhdh2602_from_15_to_23_october(self):
         row = self.rows[('C-1800', 'ZHDH2602')]
-        self.assertEqual((row['status'], row['foreman'], row['reached'], row['reported']), ('agree', 489.3, 489.3, 223.3))
-        self.assertIn('ZHDH2612 111 м, DTDH2602 0 м', ' '.join(row['notes']))
+        self.assertEqual((row['status'], row['foreman'], row['reached'], row['reported']), ('agree', 489.3, 489.3, 334.3))
+        self.assertNotIn('ахлахын жагсаалтад үгүй', ' '.join(row['notes']), 'the corrected rows are ZHDH2602')
 
     def test_csd1300_hole_of_14_to_16_october_is_dtdh2605_in_the_shift_reports(self):
         row = self.rows[('CSD-1300', 'DTDH2603')]

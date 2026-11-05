@@ -130,7 +130,7 @@ py -3 -B validate_data.py
 - `dist/data-model.js`, `dist/drilling-data.css`: Drilling Data цэс (цооног бүрийн лог хийх дата)
 - `dist/log-register.json`: лог системийн хийж Drive-д байршуулсан геологи/геотехникийн логийн бүртгэл
 - `shift_audit.py`, `dist/audit-model.js`, `dist/audit.css`, `input/shift-audit.json`, `input/foreman-reports.json`: QA/QC ээлжийн аудит, эзэмшигчийн баталгаа, өрмийн ахлахын сарын мэдээ
-- `docs/october-2026-shift-audit.md`, `docs/october-2026-shift-audit.csv`: 2026.10-ын ээлжийн аудитын тайлан (2026.11.05)
+- `docs/october-2026-shift-audit.md`, `.csv`, `.xlsx`: 2026.10-ын ээлжийн аудитын тайлан (2026.11.05; xlsx-д timeline, ээлж бүрийн мөр, хураангуй)
 - `test_drilling_sync.py`, `test_shift_audit.py`, `test_october_audit.py`, `test_chat_report.py`, `test_drilling_data.cjs`, `test_audit_dashboard.cjs`, `validate_data.py`: шалгалт
 - `requirements.txt`: Drive authentication package
 
@@ -163,6 +163,8 @@ Data Log-ийн мөр бүр тухайн sync-ээр нэмэгдсэн, ха�
 Эзэмшигчийн баталгаа (`input/shift-audit.json`, `confirmed`): `rig`, `date`, `shift`, `status: VERIFIED_NON_DRILLING`, `reason`, `evidence`, `confirmedBy`, `confirmedAt` заавал. Метр нэмэх, тайлан зохиох боломжгүй; гүний завсартай ээлжид баталгаа хүчингүй.
 
 Эзэмшигчид ирсэн боловч цооногийн 02 фолдерт ороогүй ээлжийн тайланг `reports`-д бүртгэнэ: `rig`, `date`, `shift`, `hole`, `from`, `to`, `source`, `evidence`, `confirmedBy`, `confirmedAt`. Хүснэгтийн мөрийн гүн яг таарвал тэр мөр баталгаажна, таарахгүй бол «Эх сурвалжийн зөрчил», мөр байхгүй бол «Тайлан дутуу» хэвээр (метр нэмэгдэхгүй). Жишээ: ZHDH2604-ийн 10-30 Шөнө (431–446 м, `ffff5.jpg`) ба 10-31 Өдөр (446–461 м, `ffff6.jpg`), 2026-11-05.
+
+Буруу цооногийн дугаартай хүснэгтийн мөрийг `holes`-д бүртгэнэ: `rig` (өрөм тодорхойгүй мөрд `""`), `date`, `shift`, `hole`, `from`, `to`, `correctHole`, `reason`, `evidence`, `confirmedBy`, `confirmedAt`. Sync хүснэгт уншихдаа мөрийг гүнээр нь яг таньж зөвхөн цооногийг сольдог; утга, эх файл хэвээр, мөр бүр эх хүснэгтэд ямар дугаартай байсныг `correction`-д хадгална. Chat бот ийм мөрийг хуучин дугаараар нь илгээсэн гэж тооцож дахин илгээхгүй. 2026-11-05-ны шийдвэр: ZHDH2612 нэртэй мөрүүд (10-15 – 10-17) болон C-1800-ийн 10-18 Шөнийн DTDH2602 мөр → ZHDH2602 (ахлахын мэдээ, гүний дараалал, эх зураг). 10-15 Шөнийн тайлангийн огноо хэвээр.
 
 Өрмийн ахлахын сарын метрийн мэдээг (`input/foreman-reports.json`: сар, өрөм, цооног, эхэлсэн/хаасан огноо, метр, эх нүдний бичвэр ба мөр) цооног бүрээр ээлжийн тайлангийн хүрсэн гүн, метрийн нийлбэр ба collar-тай тулгана: «Таарсан», «Бүхэл метрээр» (ахлах бутархайг орхисон), «Зөрүүтэй». Цооногийн дугааргүй мөрийн цооногийг тухайн өрөм эхэлсэн өдөр 0 м-ээс эхлүүлсэн цооногоор тодорхойлно. Ахлахын жагсаалтад үгүй цооногийн тайланг мөн заана.
 

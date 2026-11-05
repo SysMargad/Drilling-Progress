@@ -49,8 +49,17 @@ def shift_order(row):
     return row["date"], SHIFT_ORDER.get(row["shift"], 2), row["rig"]
 
 
+def shift_keys(row):
+    """The shift's key and, for a shift whose hole number the owner corrected, its key under the old hole,
+    so the correction does not post the shift a second time."""
+    keys = {shift_key(row)}
+    if row.get("correction"):
+        keys.add((row["rig"], row["date"], row["shift"], row["correction"]["hole"]))
+    return keys
+
+
 def unposted(posted, data):
-    return [row for row in data["shifts"] if shift_key(row) not in posted]
+    return [row for row in data["shifts"] if not shift_keys(row) & posted]
 
 
 def load_ledger(path):
@@ -59,7 +68,7 @@ def load_ledger(path):
 
 def save_ledger(path, posted, data):
     # Keys of shifts later removed from the data are dropped, keeping the file bounded.
-    current = {shift_key(row) for row in data["shifts"]}
+    current = set().union(*(shift_keys(row) for row in data["shifts"]))
     keys = sorted((key for key in posted if key in current),
                   key=lambda key: (key[1], SHIFT_ORDER.get(key[2], 2), key[0], key[3]))
     lines = ",\n".join("  " + json.dumps(list(key), ensure_ascii=False) for key in keys)

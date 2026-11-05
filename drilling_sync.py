@@ -1058,11 +1058,25 @@ def drive_finance_aggregates(credentials_path, shifts, salary_source_id=SALARY_S
 
 
 
+def correct_holes(rows, corrections):
+    """Owner-confirmed hole number corrections (input/shift-audit.json 'holes'). The row keeps its values and
+    its source; only the hole it is filed under changes, and the row records the hole its sheet gave."""
+    for row in rows:
+        for c in corrections:
+            if ((c['rig'], c['date'], c['shift'], c['hole']) == (row.get('rig', ''), row['date'], row['shift'], row['hole'])
+                    and abs(c['from'] - (row['from'] or 0)) <= 0.05 and abs(c['to'] - (row['to'] or 0)) <= 0.05):
+                row['correction'] = {'hole': row['hole'], 'reason': c['reason'], 'evidence': c['evidence'],
+                                     'confirmedBy': c['confirmedBy'], 'confirmedAt': c['confirmedAt']}
+                row['hole'] = c['correctHole']
+                break
+    return rows
+
+
 # A shift's measured values; two sources that differ only in notes or file names do not conflict.
 SHIFT_VALUES = ("from", "to", "meters", "st", "rt", "dt", "hours")
 
 
-def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None):
+def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None, corrections=()):
     collar, shifts, warnings, provenance = {}, {}, [], []
     conflicts, unassigned, rejected = {}, {}, {}
     collar_url, shift_url = seed.get("collarUrl", ""), seed.get("shiftUrl", "")
@@ -1071,7 +1085,9 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
         for tab, rows in workbook_rows(source["content"], source["suffix"]):
             c.extend(parse_collar(rows))
             aside, invalid = [], []
-            for item in parse_shifts(rows, aside, invalid):
+            parsed = parse_shifts(rows, aside, invalid)
+            correct_holes(parsed + aside, corrections)
+            for item in parsed:
                 # The structured record keeps the sheet row it came from; its raw report is linked below.
                 item["sheet"] = {"name": source["name"], "tab": tab, "row": item.pop("sheetRow"), "url": source["url"]}
                 s.append(item)
@@ -1279,9 +1295,11 @@ def main():
                 seed = load_json(args.output if args.output.exists() else ROOT / "dist" / "data.json")
                 finance = seed.get("finance")
                 finance_note = ""
+                from shift_audit import load_confirmations
+                corrections = load_confirmations()["holes"]
                 if args.source == "drive":
                     records, folders, report_index, inventory = drive_sources(args.folder_id, args.credentials)
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory, corrections)
                     from photo_import import apply_photos
                     data = apply_photos(data)
                     try:
@@ -1298,7 +1316,7 @@ def main():
                     records, folders = local_sources(args.input), None
                     report_file = args.input / "report-index.json"
                     report_index = load_json(report_file) if report_file.exists() else None
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"))
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), corrections=corrections)
                 from photo_import import apply_photos, apply_daily_water
                 data = apply_photos(data)
                 if data.get('finance') is not None:

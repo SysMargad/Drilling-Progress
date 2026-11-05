@@ -80,6 +80,16 @@ class ChatReportTests(unittest.TestCase):
             _, posted = self.run_report(folder, '--date', '2026-10-29')
             self.assertNotIn(['C-1800', '2026-10-28', 'Өдөр', 'ZHDH2604'], posted)
 
+    def test_a_shift_refiled_under_a_corrected_hole_is_not_posted_again(self):
+        with tempfile.TemporaryDirectory() as folder:
+            self.run_report(folder)
+            ledger = Path(folder) / 'chat-posted.json'
+            self.data['shifts'][0] = {**self.old[0], 'hole': 'ZHDH2602', 'correction': {'hole': 'ZHDH2604'}}
+            sent, posted = self.run_report(folder)
+            self.assertEqual(sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'], 'Нэргүй Өндөр · шинэ ээлж ороогүй')
+            self.assertIn(['C-1800', '2026-10-28', 'Өдөр', 'ZHDH2604'], posted, 'the key under the old hole is kept')
+            self.assertTrue(ledger.exists())
+
     def test_card_starts_with_hole_progress_and_leaves_out_finance(self):
         message = build_message(self.data, list(reversed(self.added)))
         card = message['cardsV2'][0]['card']

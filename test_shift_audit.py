@@ -6,7 +6,7 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from drilling_sync import (assemble, attach_reports, canonical_rig, daily_file, date, hole_id, parse_shifts,
+from drilling_sync import (assemble, attach_reports, canonical_rig, correct_holes, daily_file, date, hole_id, parse_shifts,
                            shift_changes, ulaanbaatar_date, workbook_rows)
 from shift_audit import STATUSES, build_audit, foreman_check, load_confirmations, load_foreman_reports
 from validate_data import validate
@@ -283,6 +283,34 @@ class SourceReconciliationTests(unittest.TestCase):
         self.assertEqual([(r['rigText'], r['hole'], r['to'], r['row']) for r in data['unassignedShifts']], [('Баталгаажаагүй', 'ZHDH9612', 74, 3)])
         self.assertEqual([(r['hole'], r['date'], r['row']) for r in data['rejectedShifts']], [('DTDH9001', '2026-10-02', 4)])
         self.assertIn('Depth/meters mismatch', data['rejectedShifts'][0]['reason'])
+
+    def test_owner_confirmed_hole_correction_refiles_a_row_without_changing_its_values(self):
+        correction = lambda rig, day, name, wrong, start, end: {'rig': rig, 'date': day, 'shift': name, 'hole': wrong, 'from': start, 'to': end,
+                                                               'correctHole': 'DTDH9001', 'reason': 'Ахлахын мэдээ', 'evidence': 'мөр 7',
+                                                               'confirmedBy': 'Owner', 'confirmedAt': '2026-11-05'}
+        collar = csv_source('collar', [COLLAR_HEADER, ['DTDH9001', 300, '', '2026-10-01', ''], ['ZHDH9612', '', '', '', '']], '1')
+        rows = csv_source('new', [SHIFT_HEADER, ['C-1800', 'a.jpg', '2026-10-16', 'Шөнө', '', 'ZHDH-9612', 110, 155, 45, '', '', 10, 12, ''],
+                                  ['C-1800', 'b.jpg', '2026-10-17', 'Өдөр', '', 'ZHDH9612', 155, 200, 45, '', '', 10, 12, ''],
+                                  ['Баталгаажаагүй', 'c.jpg', '2026-10-15', 'Өдөр', '', 'ZHDH9612', 0, 74, 74, '', '', '', '', '']], '2')
+        fixes = [correction('C-1800', '2026-10-16', 'Шөнө', 'ZHDH9612', 110, 155), correction('', '2026-10-15', 'Өдөр', 'ZHDH9612', 0, 74),
+                 correction('C-1800', '2026-10-17', 'Өдөр', 'ZHDH9612', 150, 200)]
+        data = assemble([rows, collar], {**self.seed, 'collar': []}, corrections=fixes)
+        holes = {(s['date'], s['hole']): s for s in data['shifts']}
+        fixed = holes[('2026-10-16', 'DTDH9001')]
+        self.assertEqual((fixed['from'], fixed['to'], fixed['source'], fixed['correction']['hole']), (110, 155, 'a.jpg', 'ZHDH9612'))
+        self.assertIn(('2026-10-17', 'ZHDH9612'), holes, 'a correction whose depths differ from the row does not apply')
+        self.assertEqual([(r['hole'], r['correction']['hole']) for r in data['unassignedShifts']], [('DTDH9001', 'ZHDH9612')])
+        self.assertEqual(correct_holes([{**fixed}], fixes)[0]['hole'], 'DTDH9001', 'a row already under its corrected hole stays there')
+        result = build_audit(data, RIGS, '2026-10-31')
+        self.assertIn('эх хүснэгтэд ZHDH9612 → DTDH9001 — Ахлахын мэдээ', ' '.join(i['text'] for i in slot(result, 'C-1800', '2026-10-16', 'Шөнө')['issues']))
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'shift-audit.json'
+            path.write_text(json.dumps({'holes': [{**fixes[0], 'correctHole': 'ZHDH9612'}]}), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'must change the hole'):
+                load_confirmations(path)
+            path.write_text(json.dumps({'holes': [{**fixes[0], 'evidence': ''}]}), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'correctHole'):
+                load_confirmations(path)
 
     def test_raw_reports_link_by_cited_file_and_uncited_reports_are_listed(self):
         def file(id, name, mime='image/jpeg'):

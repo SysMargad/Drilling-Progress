@@ -38,9 +38,9 @@ def load_confirmations(path=CONFIG):
     """Owner confirmations, each with its evidence: `confirmed` slots without a report (rig move, standby)
     and `reports` that reached the owner but not the hole's Drive folder, with the depths they state."""
     if not Path(path).exists():
-        return {'confirmed': [], 'reports': []}
+        return {'confirmed': [], 'reports': [], 'holes': []}
     config = json.loads(Path(path).read_text(encoding='utf-8'))
-    confirmed, reports = config.get('confirmed', []), config.get('reports', [])
+    confirmed, reports, holes = config.get('confirmed', []), config.get('reports', []), config.get('holes', [])
     for row in confirmed:
         if row.get('status') != 'VERIFIED_NON_DRILLING' or row.get('shift') not in SHIFTS:
             raise ValueError('Shift audit confirmations may only record verified non-drilling shifts')
@@ -54,7 +54,18 @@ def load_confirmations(path=CONFIG):
         if not all(isinstance(row.get(key), (int, float)) for key in ('from', 'to')) or row['to'] < row['from']:
             raise ValueError('A confirmed report states the depths it covers (from <= to)')
         Date.fromisoformat(row['date'])
-    return {'confirmed': confirmed, 'reports': reports}
+    for row in holes:
+        # A sheet row filed under the wrong hole number: identified by rig ('' = a row with no known rig),
+        # date, shift, hole and depths; only its hole changes.
+        if row.get('shift') not in SHIFTS or not all(str(row.get(key, '')).strip() for key in
+                                                     ('date', 'hole', 'correctHole', 'reason', 'evidence', 'confirmedBy', 'confirmedAt')):
+            raise ValueError('A hole correction needs date, shift, hole, correctHole, reason, evidence, confirmedBy and confirmedAt')
+        if not isinstance(row.get('rig'), str) or not all(isinstance(row.get(key), (int, float)) for key in ('from', 'to')):
+            raise ValueError('A hole correction names the rig ("" for a row without one) and the depths of the row')
+        if row['hole'] == row['correctHole']:
+            raise ValueError('A hole correction must change the hole')
+        Date.fromisoformat(row['date'])
+    return {'confirmed': confirmed, 'reports': reports, 'holes': holes}
 
 
 def daily_folder(data, hole):
@@ -237,6 +248,9 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
                       None if held else 'SOURCE_CONFLICT')
 
     for record in records:
+        if record.get('correction'):
+            c = record['correction']
+            issue(record['slot'], 'correction', f'Цооногийн дугаар засагдсан: эх хүснэгтэд {c["hole"]} → {record["hole"]} — {c["reason"]} ({c["confirmedBy"]}, {c["confirmedAt"]})')
         names = [str(record.get('source', ''))] + [x.get('name', '') for x in record.get('reports', [])]
         if any(re.search(r'date[_\s-]?(check|review)', name, re.I) for name in names):
             record['dateCheck'] = True
