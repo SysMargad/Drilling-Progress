@@ -34,8 +34,10 @@ assert.deepEqual(rows.map(r=>r.id),[...collar.map(h=>h.id)].sort());
 const state=id=>by[id].readiness.state;
 // Geologist's Excel log and photos: dual log; the geotechnical template wins over Technical Data.
 assert.equal(state('DTDH2606'),'dual');
-assert.equal(by.DTDH2606.geology.state,'template');
-assert.equal(by.DTDH2606.geotech.state,'template');
+assert.equal(by.DTDH2606.geology.state,'log');
+assert.equal(by.DTDH2606.geology.format,'Excel');
+assert.equal(by.DTDH2606.geotech.state,'log');
+assert.equal(by.DTDH2606.geotech.done,true);
 assert.equal(by.DTDH2606.geotech.file.name,'DTDH2606_Geotechnical_Log.xlsx');
 assert.equal(by.DTDH2606.pxrf.count,2,'pXRF data files: xlsx and Google Sheets, not the PDF');
 assert.equal(by.DTDH2606.folderUrl,'https://drive.google.com/drive/folders/DTDH2606');
@@ -43,14 +45,32 @@ assert.equal(by.DTDH2606.folderUrl,'https://drive.google.com/drive/folders/DTDH2
 assert.equal(state('DTDH2602'),'ai');
 assert.equal(by.DTDH2602.geology.state,'handwritten');
 assert.equal(by.DTDH2602.geotech.state,'technical');
+assert.equal(by.DTDH2602.geotech.done,false,'Technical Data is not a geotechnical log');
 assert.equal(by.DTDH2602.pxrf.count,0,'files named delete are not data');
-// No photos and only handwritten sheets: missing, and the message says the sheets need transcribing.
-assert.equal(state('ZHDH2603'),'missing');
-assert.deepEqual(by.ZHDH2603.readiness.missing,['Кернийн зураг эсвэл геологийн Excel (гар бичмэлийг буулгах)']);
+// A file named as a log is the geologist's log in any format, next to field sheet scans too.
+assert.equal(state('ZHDH2603'),'geologist');
+assert.equal(by.ZHDH2603.geology.file.name,'ZHDH2603_Geological_Log.pdf');
+assert.equal(by.ZHDH2603.geology.format,'PDF');
 assert.equal(by.ZHDH2603.collar.elevation,false);
-// Geologist's Excel log without photos needs a geotechnical workbook (a Markdown note is not one).
+const geologyFolder=(...list)=>model.row(collar[2],{ZHDH2603:{...inventory.ZHDH2603,geological:section(list.map(f=>typeof f==='string'?file(f):f),'g')}});
+for(const name of ['ZHDH2603 core logging.xlsx','ZHDH2603_Geolog20261005_14by_MT_EC.pdf','ZHDH2603_LOG_v2.pdf'])
+  assert.equal(geologyFolder('img1.jpg',name).geology.file.name,name);
+const docs={name:'ZHDH2603_Drill_Hole_Log_Combined',url:'https://docs.google.com/document/d/x/edit'};
+assert.equal(geologyFolder(docs).geology.format,'Docs');
+assert.equal(geologyFolder(docs,'ZHDH2603_Geolog20261005.pdf','ZHDH2603_Geological_Log.pdf').geology.file.name,'ZHDH2603_Geological_Log.pdf');
+// No photos and only handwritten sheets: missing, and the message says the sheets need transcribing.
+assert.equal(geologyFolder('20261031_224936.jpg','Field sheet 1.pdf').geology.state,'handwritten');
+assert.deepEqual(geologyFolder('20261031_224936.jpg','Field sheet 1.pdf').readiness.missing,['Кернийн зураг эсвэл геологийн лог (гар бичмэлийг буулгах)']);
+// Geologist's Excel log without photos needs geotechnical data (a Markdown note not named as a log is not).
 assert.equal(state('ZHDH2604'),'missing');
-assert.deepEqual(by.ZHDH2604.readiness.missing,['Геотехникийн Excel']);
+assert.deepEqual(by.ZHDH2604.readiness.missing,['Геотехникийн лог эсвэл Technical Data']);
+// A file named as a log in the geotechnical folder is the geotechnical log in any format: geotechnical logging done.
+const geotechFolder=(...names)=>model.row(collar[3],{ZHDH2604:{...inventory.ZHDH2604,geotechnical:section(names.map(n=>file(n)),'t')}}).geotech;
+for(const name of ['ZHDH2604_geotech_log.md','ZHDH2604 Geotechnical logging.pdf'])
+  assert.deepEqual([geotechFolder('ZHDH2604 GeoTechnical Data.xlsx',name).state,geotechFolder(name).done],['log',true],name);
+assert.equal(geotechFolder('ZHDH2604_Graphic_Log.pdf','ZHDH2604_Geotechnical_Log.pdf').file.name,'ZHDH2604_Geotechnical_Log.pdf');
+assert.equal(geotechFolder('ZHDH2604_Geotechnical_Log.pdf').format,'PDF');
+assert.equal(model.row(collar[3],{ZHDH2604:{...inventory.ZHDH2604,geotechnical:section([file('ZHDH2604_geotech_log.md')],'t')}}).readiness.state,'geologist');
 assert.equal(model.row({...collar[3]},{ZHDH2604:{...inventory.ZHDH2604,geotechnical:section([file('ZHDH2604 GeoTechnical Data.xlsx')],'t')}}).readiness.state,'geologist');
 // A misnamed Technical Data workbook still counts as geotechnical data; the collar's final depth is required.
 assert.equal(by.ZHDH2605.geotech.state,'technical');
@@ -89,6 +109,9 @@ for(const h of [...collar,{id:'STDH2601'},{id:'UGDH2602'}])assert.ok(page.includ
 assert.ok(page.includes('Геологич + AI: 1'));
 assert.ok(page.includes('Лог хийгдсэн: 1'));
 assert.ok(page.includes('Лог хийгдээгүй: 7'));
+// Geotechnical logging counted over finished holes: only DTDH2606 has a geotechnical log on Drive.
+assert.ok(page.includes('Геотехник хийгдсэн: 1'));
+assert.ok(page.includes('Геотехник хийгдээгүй: 5'));
 assert.ok(page.includes('Геологи ✓ · Геотехник ✓ · XRF in progress'));
 assert.ok(page.includes('Drive хавтаснаас бүртгэсэн'));
 assert.ok(page.includes('Лог хийгдсэн эсэх'));
