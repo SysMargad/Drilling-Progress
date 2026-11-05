@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-05",
-  "updatedAt": "2026-11-05T10:21:48+08:00",
+  "updatedAt": "2026-11-05T11:40:20+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -3668,6 +3668,56 @@
           "url": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
         }
       ]
+    },
+    "KHDH2601": {
+      "url": "https://drive.google.com/drive/folders/1gb_2OhN8-s0KFOrCG-FNR4-Y6uLI9luk",
+      "area": "Харгант",
+      "folders": [
+        {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1-kuluzYW94DA89tI7bLoC_zyDHIoh7fB"
+        },
+        {
+          "name": "09. Site Rehabilitation & Closure Records",
+          "url": "https://drive.google.com/drive/folders/1m57dgiupp1yU1BN2YekdY_kGRjGRIzy6"
+        },
+        {
+          "name": "08. Field Working Products",
+          "url": "https://drive.google.com/drive/folders/18pxZEu4PK16W8EKnI8o7swzdwjZ1wc8I"
+        },
+        {
+          "name": "07. Geotechnical Data",
+          "url": "https://drive.google.com/drive/folders/1Sl3cXU8_0-rZIJuo40MHlrr9CvWm97jC"
+        },
+        {
+          "name": "06. Sampling & Dispatch",
+          "url": "https://drive.google.com/drive/folders/1B6gdoPClDBBRCvpERarOOXeDmFkx3FPJ"
+        },
+        {
+          "name": "05. Core & RC Photography",
+          "url": "https://drive.google.com/drive/folders/1dpOqvxoNdZakmu-oH_Oe7B40OnThhMZs"
+        },
+        {
+          "name": "04. Geological Logging",
+          "url": "https://drive.google.com/drive/folders/1c2N4vjPJXDMYMwB0j0NpHJB2ZoB2723Y"
+        },
+        {
+          "name": "03. Downhole Surveys",
+          "url": "https://drive.google.com/drive/folders/1zm4GvsHWuv_dBVuBSF9N_QuNFPrxSIqV"
+        },
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+        },
+        {
+          "name": "01. Collar Survey & Site Setup",
+          "url": "https://drive.google.com/drive/folders/1d8U6uNbGWcx3G3GYRbJDpZE3WayG8hzp"
+        },
+        {
+          "name": "00. Pre-Drill Planning & Readiness",
+          "url": "https://drive.google.com/drive/folders/12f90_0NqBGGrW8T25s0v2ZEIcsc1_hVr"
+        }
+      ]
     }
   },
   "dataInventory": {
@@ -4377,6 +4427,38 @@
             "url": "https://docs.google.com/spreadsheets/d/15Vd2Lis3uXXlSap1hQzYpGqfKI2ZI_zX/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           }
         ]
+      }
+    },
+    "KHDH2601": {
+      "geological": {
+        "url": "https://drive.google.com/drive/folders/1c2N4vjPJXDMYMwB0j0NpHJB2ZoB2723Y",
+        "count": 0,
+        "latest": "",
+        "files": []
+      },
+      "geotechnical": {
+        "url": "https://drive.google.com/drive/folders/1Sl3cXU8_0-rZIJuo40MHlrr9CvWm97jC",
+        "count": 0,
+        "latest": "",
+        "files": []
+      },
+      "photos": {
+        "url": "https://drive.google.com/drive/folders/1dpOqvxoNdZakmu-oH_Oe7B40OnThhMZs",
+        "count": 0,
+        "latest": "",
+        "formats": {}
+      },
+      "pxrf": {
+        "url": "https://drive.google.com/drive/folders/1-kuluzYW94DA89tI7bLoC_zyDHIoh7fB",
+        "count": 0,
+        "latest": "",
+        "files": []
+      },
+      "surveys": {
+        "url": "https://drive.google.com/drive/folders/1zm4GvsHWuv_dBVuBSF9N_QuNFPrxSIqV",
+        "count": 0,
+        "latest": "",
+        "files": []
       }
     },
     "STDH2601": {
