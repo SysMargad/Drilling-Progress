@@ -166,3 +166,43 @@ for(const rig of ['', 'C-1800','CSD-1300']){
 }
 selectedRig='';
 console.log('New consumption data reconciles across grains and rig filters; water estimates remain separate from costs.');
+
+// Month selection keeps October costs out of November and remains usable without source costs.
+context.fixture={collar:[{id:'X',site:'Нэргүй Өндөр'}],shifts:[
+ {date:'2026-10-31',rig:'C-1800',shift:'Өдөр',hole:'X',meters:10,hours:12},
+ {date:'2026-11-01',rig:'C-1800',shift:'Өдөр',hole:'X',meters:20,hours:12}
+],finance:{period:'2026-10',rigShifts:[{date:'2026-10-31',rig:'C-1800',shift:'Өдөр',laborCost:100,foodCost:50}]}};
+vm.runInContext("D=fixture;financialMonth='2026-11'",context);
+let monthHtml=vm.runInContext('renderFinancialTab()',context);
+assert.ok(monthHtml.includes('value="2026-10"'));
+assert.ok(monthHtml.includes('value="2026-11" selected'));
+assert.ok(monthHtml.includes('2026-11 сарын санхүүгийн эх өгөгдөл синк хийгдээгүй'));
+assert.ok(!monthHtml.includes('rig-cost-line'));
+assert.ok(!monthHtml.includes('Нийт зардал (₮)'));
+for(const period of ['shift','day','week','month']){
+ context.grainUnderTest=period;
+ const monthRows=vm.runInContext('financialRows(grainUnderTest)',context);
+ near(monthRows.reduce((n,r)=>n+r.drilledMeters,0),20);
+ assert.ok(monthRows.every(r=>r.totalCost===null));
+}
+vm.runInContext("financialMonth='2026-10'",context);
+for(const period of ['shift','day','week','month']){
+ context.grainUnderTest=period;
+ const monthRows=vm.runInContext('financialRows(grainUnderTest)',context);
+ near(monthRows.reduce((n,r)=>n+r.drilledMeters,0),10);
+ near(monthRows.reduce((n,r)=>n+r.totalCost,0),150);
+ const series=vm.runInContext('financialRigSeries(grainUnderTest)',context).flatMap(s=>s.points);
+ near(series.reduce((n,r)=>n+r.meters,0),10);
+}
+context.fixture.finance={period:'2026-11',rigShifts:[{date:'2026-11-01',rig:'C-1800',shift:'Өдөр',laborCost:200,foodCost:75}]};
+vm.runInContext("financialMonth='2026-11'",context);
+for(const period of ['shift','day','week','month']){
+ context.grainUnderTest=period;
+ const monthRows=vm.runInContext('financialRows(grainUnderTest)',context);
+ near(monthRows.reduce((n,r)=>n+r.drilledMeters,0),20);
+ near(monthRows.reduce((n,r)=>n+r.totalCost,0),275);
+}
+selectedRig='CSD-1300';
+assert.ok(vm.runInContext('renderFinancialTab()',context).includes('id="financial-month"'));
+selectedRig='';
+console.log('Financial month selector verified: both months, four grains, no cross-month costs, missing sources and empty rig filters.');

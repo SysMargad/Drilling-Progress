@@ -18,21 +18,29 @@ function holes(){return D.collar.filter(h=>(h.site||SITE)===$('#site').value&&(!
 function shifts(){const ids=new Set(holes().map(h=>h.id));return D.shifts.filter(s=>ids.has(s.hole)&&(!$('#rig').value||s.rig===$('#rig').value));}
 function depth(id){const rows=D.shifts.filter(s=>s.hole===id);return rows.length?Math.max(...rows.map(s=>s.to)):null;}
 function status(h){if(h.finish)return ['Дууссан',''];if(D.shifts.some(s=>s.hole===h.id))return ['Өрөмдөж байна','active'];return ['Төлөвлөсөн','planned'];}
-let financialGrain='shift';
+let financialGrain='shift',financialMonth='';
+function financialMonths(){return [...new Set([...D.shifts.map(row=>row.date.slice(0,7)),D.finance?.period].filter(Boolean))].sort().reverse();}
+function selectedFinancialMonth(){return financialMonth||D.finance?.period||financialMonths()[0]||'';}
+function financialFinance(){return D.finance?.period===selectedFinancialMonth()?D.finance:null;}
+function financialControls(){
+  return `<div class="chart-controls"><label class="chart-month">Сар <select id="financial-month" aria-label="Санхүүгийн сар">${financialMonths().map(month=>`<option value="${month}"${month===selectedFinancialMonth()?' selected':''}>${month.slice(0,4)} оны ${Number(month.slice(5))}-р сар</option>`).join('')}</select></label><div class="chart-periods" role="group" aria-label="Санхүүгийн графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button class="chart-period-button ${financialGrain===value?'active':''}" data-financial-grain="${value}" aria-pressed="${financialGrain===value}">${label}</button>`).join('')}</div></div>`;
+}
 const financialGrainLabel=()=>({shift:'Ээлжийн',day:'Өдрийн',week:'7 хоногийн',month:'Сарын'}[financialGrain]);
 const currency=(value,digits=0)=>value==null||Number.isNaN(Number(value))?'—':`₮ ${Number(value).toLocaleString('en-US',{minimumFractionDigits:digits,maximumFractionDigits:digits})}`;
 function financialWater(){
-  if(!D.finance?.water)return null;
+  const finance=financialFinance();
+  if(!finance?.water)return null;
   const area=$('#area').value,ids=new Set(holes().map(h=>h.id));
-  return {...D.finance.water,records:D.finance.water.records.filter(r=>!area||ids.has(r.hole)),
-    dailyRecords:(D.finance.water.dailyRecords||[]).filter(r=>!area||D.shifts.some(s=>s.date===r.date&&s.rig===r.rig&&ids.has(s.hole)))};
+  return {...finance.water,records:finance.water.records.filter(r=>!area||ids.has(r.hole)),
+    dailyRecords:(finance.water.dailyRecords||[]).filter(r=>!area||D.shifts.some(s=>s.date===r.date&&s.rig===r.rig&&ids.has(s.hole)))};
 }
 function financialRows(grain=financialGrain){
+  const finance=financialFinance();
   if(!D||!D.shifts?.length)return [];
-  const financeAvailable=Boolean(D.finance?.period&&Array.isArray(D.finance.rigShifts));
+  const financeAvailable=Boolean(finance?.period&&Array.isArray(finance.rigShifts));
   const rigs=selectedRigs(FINANCE_RIGS);
-  const operationRows=shifts().filter(row=>!financeAvailable||row.date.startsWith(D.finance.period));
-  const sourceRows=DrillingCosts.records(operationRows,rigs,D.finance?.mud,D.finance?.fuel,D.finance?.diamond,financialWater());
+  const operationRows=shifts().filter(row=>row.date.startsWith(selectedFinancialMonth()+'-'));
+  const sourceRows=DrillingCosts.records(operationRows,rigs,finance?.mud,finance?.fuel,finance?.diamond,financialWater());
   const groupMap=new Map();
   const periodStart=date=>{
     const day=new Date(`${date}T00:00:00Z`);
@@ -40,7 +48,7 @@ function financialRows(grain=financialGrain){
     if(grain==='month')day.setUTCDate(1);
     return day.toISOString().slice(0,10);
   };
-  for(const row of sourceRows){
+  for(const row of sourceRows.filter(row=>row.date.startsWith(selectedFinancialMonth()+'-'))){
     const shiftKey=`${row.date}|${row.rig}|${row.shift}`;
     const period=grain==='shift'?row.date+'|'+row.shift:grain==='day'?row.date:periodStart(row.date);
     const periodDate=grain==='shift'?row.date:period.split('|')[0];
@@ -63,7 +71,8 @@ function financialRows(grain=financialGrain){
     groupMap.set(period,entry);
   }
   if(financeAvailable){
-    for(const row of D.finance.rigShifts){
+    for(const row of finance.rigShifts){
+      if(!row.date.startsWith(selectedFinancialMonth()+'-'))continue;
       if($('#rig').value&&row.rig!==$('#rig').value)continue;
       const shiftKey=`${row.date}|${row.rig}|${row.shift}`;
       const period=grain==='shift'?`${row.date}|${row.shift}`:grain==='day'?row.date:periodStart(row.date);
@@ -125,17 +134,18 @@ function financialRows(grain=financialGrain){
   return rows;
 }
 function financialRigSeries(grain=financialGrain){
-  const financeAvailable=Boolean(D.finance?.period&&Array.isArray(D.finance.rigShifts));
+  const finance=financialFinance();
+  const financeAvailable=Boolean(finance?.period&&Array.isArray(finance.rigShifts));
   const rigs=selectedRigs(FINANCE_RIGS);
-  const operationRows=shifts().filter(row=>!financeAvailable||row.date.startsWith(D.finance.period));
-  const sourceRows=DrillingCosts.records(operationRows,rigs,D.finance?.mud,D.finance?.fuel,D.finance?.diamond,financialWater()),groups=new Map();
+  const operationRows=shifts().filter(row=>row.date.startsWith(selectedFinancialMonth()+'-'));
+  const sourceRows=DrillingCosts.records(operationRows,rigs,finance?.mud,finance?.fuel,finance?.diamond,financialWater()),groups=new Map();
   const periodStart=date=>{
     const day=new Date(`${date}T00:00:00Z`);
     if(grain==='week')day.setUTCDate(day.getUTCDate()-((day.getUTCDay()+6)%7));
     if(grain==='month')day.setUTCDate(1);
     return day.toISOString().slice(0,10);
   };
-  for(const row of sourceRows){
+  for(const row of sourceRows.filter(row=>row.date.startsWith(selectedFinancialMonth()+'-'))){
     const start=grain==='shift'?row.date:grain==='day'?row.date:periodStart(row.date);
     const shiftOrder=row.shift==='Өдөр'?0:1;
     const key=grain==='shift'?`${start}|${shiftOrder}`:start;
@@ -157,7 +167,8 @@ function financialRigSeries(grain=financialGrain){
     groups.set(groupKey,entry);
   }
   if(financeAvailable){
-    for(const row of D.finance.rigShifts){
+    for(const row of finance.rigShifts){
+      if(!row.date.startsWith(selectedFinancialMonth()+'-'))continue;
       if($('#rig').value&&row.rig!==$('#rig').value)continue;
       const start=grain==='shift'?row.date:grain==='day'?row.date:periodStart(row.date);
       const shiftOrder=row.shift==='Өдөр'?0:1;
@@ -195,7 +206,7 @@ function financialRigSeries(grain=financialGrain){
   });
 }
 function renderFinancialChart(rows){
-  if(!D.finance?.period)return '<div class="empty">Цалин, хоолны эх сурвалж синк хийгдээгүй байна.</div>';
+  if(!financialFinance())return `<div class="empty">${selectedFinancialMonth()} сарын санхүүгийн эх өгөгдөл синк хийгдээгүй байна.</div>`;
   if(!rows.length)return '<div class="empty">Санхүүгийн өгөгдөл байхгүй.</div>';
   const series=financialRigSeries(),width=1200,height=350,left=82,right=30,top=28,bottom=58,plotHeight=height-top-bottom;
   const allPoints=series.flatMap(item=>item.points),maxValue=Math.max(...allPoints.map(point=>point.value||0),1);
@@ -224,8 +235,10 @@ function renderFinancialChart(rows){
   return svg;
 }
 function renderFinancialTab(){
+  const finance=financialFinance();
   const rows=financialRows(financialGrain);
-  if(!rows.length)return '<div class="empty">Шүүлтүүрт тохирох санхүүгийн өгөгдөл байхгүй.</div>';
+  const chartPanel=`<section class="panel financial-panel"><div class="panel-head"><div><h2>Өрөм тус бүрийн 1 метрийн зардал (₮/м)</h2><span class="sub">C-1800 болон CSD-1300 · ${selectedFinancialMonth()}</span></div>${financialControls()}</div>${renderFinancialChart(rows)}</section>`;
+  if(!rows.length||!finance)return `<div class="financial-wrap">${chartPanel}</div>`;
   const completed=rows.filter(row=>row.drilledMeters>0&&Number.isFinite(row.dailyCostPerMeter));
   const latest=completed.at(-1),previous=completed.at(-2),last=rows.at(-1),prior=rows.at(-2);
   const dailyValue=latest?.dailyCostPerMeter??null,previousValue=previous?.dailyCostPerMeter??null;
@@ -255,31 +268,24 @@ function renderFinancialTab(){
   ];
   const categories=[['fuelCost','Түлш'],['mudCost','Өрөмдлөгийн шавар'],['diamondCost','Алмазан хошуу + reaming shell (тооцоот)'],['laborCost','Үндсэн цалин'],['foodCost','Хоолны зардал'],['bonusCost','Метрийн бонус'],['incentiveCost','Урамшуулал']];
   const breakdown=categories.map(([key,label])=>({key,label,current:rows.some(row=>row[key]==null)?null:rows.reduce((total,row)=>total+row[key],0)}));
-  const controls=[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button class="chart-period-button ${financialGrain===value?'active':''}" data-financial-grain="${value}" aria-pressed="${financialGrain===value}">${label}</button>`).join('');
   const breakdownMax=Math.max(...breakdown.map(item=>item.current||0),1);
   const costRows=breakdown.map(item=>{
     if(item.current==null){
       const status='Эх сурвалж синк хийгдээгүй';
       return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${status}</strong></div></div>`;
     }
-    const usage=item.key==='fuelCost'?`<div class="sub cost-usage">Өрөмд олгосон: ${fmt(totalFuelUsage,2)} л</div>`:item.key==='mudCost'?`<div class="sub cost-usage">Хуваарилсан хэрэглээ: ${fmt(totalMudUsage,2)} кг · ${fmt(rows.reduce((total,row)=>total+row.mudUsageBags,0),2)} шуудай (${fmt(D.finance?.mud?.bagKg||25,0)} кг)</div>`:'';
+    const usage=item.key==='fuelCost'?`<div class="sub cost-usage">Өрөмд олгосон: ${fmt(totalFuelUsage,2)} л</div>`:item.key==='mudCost'?`<div class="sub cost-usage">Хуваарилсан хэрэглээ: ${fmt(totalMudUsage,2)} кг · ${fmt(rows.reduce((total,row)=>total+row.mudUsageBags,0),2)} шуудай (${fmt(finance?.mud?.bagKg||25,0)} кг)</div>`:'';
     return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.current,0)}</strong></div>${usage}<div class="cost-bar"><span style="width:${((item.current||0)/breakdownMax)*100}%"></span></div></div>`;
   }).join('');
   return `<div class="financial-wrap">
-    <section class="panel financial-panel">
-      <div class="panel-head">
-        <div><h2>Өрөм тус бүрийн 1 метрийн зардал (₮/м)</h2><span class="sub">C-1800 болон CSD-1300</span></div>
-        <div class="chart-periods" role="group" aria-label="Санхүүгийн графикийн хугацаа">${controls}</div>
-      </div>
-      ${renderFinancialChart(rows)}
-    </section>
+    ${chartPanel}
     <div class="kpis">${kpis.map(item=>`<article class="kpi${item.tone?` financial-trend ${item.tone}`:''}"><div class="label">${item.label}</div><div class="value">${item.value}</div>${item.note?`<div class="note">${esc(item.note)}</div>`:''}</article>`).join('')}</div>
     <section class="panel">
       <h2>Зардлын задаргаа</h2>
       <div class="cost-breakdown">${costRows}</div>
-      <p class="sub">Усны бүртгэлтэй хэмжээ: ${fmt(rows.reduce((n,r)=>n+r.waterKnownLitres,0),0)} л${rows.some(r=>r.waterEstimated)?' · рейсээс тооцсон таамаг':''}. ${D.finance?.water?'1 рейс = '+fmt(D.finance.water.litresPerTrip,0)+' л'+(D.finance.water.estimated?' (багтаамж баталгаажаагүй)':'')+'. ':''}Тайлангүй усны хэрэглээг 0 гэж үзээгүй. Усны машины түлшийг өртөгт оруулаагүй.</p>
-      ${(D.finance?.fuel?.coverage||[]).some(r=>r.recordedShifts<r.expectedShifts)?'<p class="sub">Түлш: зарим өдөр ээлжийн олголт дутуу. Нийт нь зөвхөн бүртгэлтэй олголт; дутуу ээлжийг 0 гэж үзээгүй.</p>':''}
-      ${D.finance?.diamond?`<p class="sub">Алмазан хошуу + reaming shell: ${currency(D.finance.diamond.ratePerMeter,0)}/м × бүртгэлтэй метр. ${fmt(D.finance.diamond.plannedMeters,0)} м төлөвлөгөөний ${currency(D.finance.diamond.totalBudget,0)} төсвийг хуваарилсан тооцоо; бодит солилт/элэгдэл биш. <a href="${esc(D.finance.diamond.sourceUrl)}" target="_blank" rel="noopener noreferrer">Эх тооцоо</a></p>`:''}
+      <p class="sub">Усны бүртгэлтэй хэмжээ: ${fmt(rows.reduce((n,r)=>n+r.waterKnownLitres,0),0)} л${rows.some(r=>r.waterEstimated)?' · рейсээс тооцсон таамаг':''}. ${finance?.water?'1 рейс = '+fmt(finance.water.litresPerTrip,0)+' л'+(finance.water.estimated?' (багтаамж баталгаажаагүй)':'')+'. ':''}Тайлангүй усны хэрэглээг 0 гэж үзээгүй. Усны машины түлшийг өртөгт оруулаагүй.</p>
+      ${(finance?.fuel?.coverage||[]).some(r=>r.recordedShifts<r.expectedShifts)?'<p class="sub">Түлш: зарим өдөр ээлжийн олголт дутуу. Нийт нь зөвхөн бүртгэлтэй олголт; дутуу ээлжийг 0 гэж үзээгүй.</p>':''}
+      ${finance?.diamond?`<p class="sub">Алмазан хошуу + reaming shell: ${currency(finance.diamond.ratePerMeter,0)}/м × бүртгэлтэй метр. ${fmt(finance.diamond.plannedMeters,0)} м төлөвлөгөөний ${currency(finance.diamond.totalBudget,0)} төсвийг хуваарилсан тооцоо; бодит солилт/элэгдэл биш. <a href="${esc(finance.diamond.sourceUrl)}" target="_blank" rel="noopener noreferrer">Эх тооцоо</a></p>`:''}
     </section>
     <section class="panel">
       <h2>Дэлгэрэнгүй бүртгэл</h2>
@@ -515,7 +521,7 @@ document.addEventListener('click',e=>{
   const hole=e.target.closest('[data-hole]');if(hole)openHole(hole.dataset.hole);if(e.target.closest('#refresh-log'))refreshLog();
   const dataHole=e.target.closest('[data-data-hole]');if(dataHole)openHoleData(dataHole.dataset.dataHole);
 });
-document.addEventListener('change',event=>{if(event.target.id==='chart-month'){chartMonth=event.target.value;$('#chart-panel').innerHTML=chart();}});
+document.addEventListener('change',event=>{if(event.target.id==='chart-month'){chartMonth=event.target.value;$('#chart-panel').innerHTML=chart();}if(event.target.id==='financial-month'){financialMonth=event.target.value;render();}});
 for(const selector of ['#site','#area','#rig'])$(selector).addEventListener('change',()=>{selectedHole=null;render();});$('.close').addEventListener('click',()=>$('#detail').close());
 $('#detail').addEventListener('click',e=>{if(e.target===$('#detail')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 $('#export').addEventListener('click',()=>{
