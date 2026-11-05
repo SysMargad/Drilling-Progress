@@ -105,10 +105,17 @@ def validate_audit(audit, data):
 
 
 def validate_finance(finance):
-    if set(finance) - {'diamond', 'water'} not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
+    if set(finance) - {'diamond', 'water', 'payPeriods'} not in ({'period', 'daily', 'rigShifts'}, {'period', 'daily', 'rigShifts', 'mud'}, {'period', 'daily', 'rigShifts', 'mud', 'fuel'}):
         raise ValueError('Finance data must contain aggregate fields only')
     if not isinstance(finance['period'], str) or not re.fullmatch(r'\d{4}-\d{2}', finance['period']):
         raise ValueError('Invalid finance period')
+    # Which dates the actual pay-period workbooks cover (payroll_import.py): file name and dates, no amounts.
+    for item in finance.get('payPeriods', []):
+        if (set(item) != {'file', 'start', 'end', 'source', 'bonus'} or not isinstance(item['file'], str)
+                or item['source'] not in {'drive', 'snapshot'} or not isinstance(item['bonus'], bool)
+                or not item['start'].startswith(finance['period'] + '-') or not item['end'].startswith(finance['period'] + '-')
+                or date.fromisoformat(item['end']) < date.fromisoformat(item['start'])):
+            raise ValueError('Invalid pay-period provenance')
     if 'fuel' in finance:
         validate_fuel(finance['fuel'], finance['period'])
     if 'water' in finance:

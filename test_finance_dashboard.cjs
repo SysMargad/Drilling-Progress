@@ -251,3 +251,19 @@ assert.equal(vm.runInContext("financialRows('day')",context).find(r=>r.date==='2
 assert.ok(vm.runInContext("financialGrain='day';renderFinancialTab()",context).includes('1 ээлж тайлангүй</small>'));
 selectedRig='';
 console.log('Unreported rig-shifts read "Тайлангүй", not 0 m, and October holds 124 slots.');
+
+// Pay periods read from the crew pay workbooks name their dates and the bonus source under the cost breakdown;
+// the days they do not cover still come from attendance × rate.
+context.fixture={collar:[{id:'X',site:'Нэргүй Өндөр'}],shifts:[{date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'X',meters:10,hours:12}],
+  finance:{period:'2026-10',rigShifts:[],payPeriods:[{file:'Pay 2026.10.16-2026.10.31.xlsx',start:'2026-10-16',end:'2026-10-31',source:'snapshot',bonus:true}]}};
+for(const rig of ['C-1800','CSD-1300'])for(const shift of ['Өдөр','Шөнө'])context.fixture.finance.rigShifts.push({date:'2026-10-01',rig,shift,laborCost:100,foodCost:50,bonusCost:0,incentiveCost:0});
+vm.runInContext("D=fixture;financialMonth='2026-10';financialGrain='shift'",context);
+let paid=vm.runInContext('renderFinancialTab()',context);
+assert.equal((paid.match(/10-16 – 10-31: цалингийн хүснэгт \(бодит, өдөр бүр 4 ээлжид тэнцүү\); бусад өдөр: ирц × тариф/g)||[]).length,2,'labour and incentive');
+assert.ok(paid.includes('Цалингийн хүснэгтийн бодит метрийн бонус (Pay 2026.10.16-2026.10.31.xlsx): сарын бүх ээлжид өрөмдсөн метрээр хуваарилсан'));
+context.fixture.finance.payPeriods.unshift({file:'Pay 2026.10.01-2026.10.15.xlsx',start:'2026-10-01',end:'2026-10-15',source:'drive',bonus:false});
+paid=vm.runInContext('renderFinancialTab()',context);
+assert.ok(paid.includes('10-01 – 10-15: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү); 10-16 – 10-31: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү)</div>'),'whole month covered');
+delete context.fixture.finance.payPeriods;
+assert.ok(!vm.runInContext('renderFinancialTab()',context).includes('цалингийн хүснэгт'));
+console.log('Pay-period sources named under the cost breakdown.');

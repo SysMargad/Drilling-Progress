@@ -1,0 +1,106 @@
+{
+  "about": "Date totals of the drill-crew pay-period workbooks (Drive file id, name), read by payroll_import.py. Each date: base pay and the non-bonus additions of the people who worked it (before the 13% loading); bonus: the masters' metre bonus of the month. No names or per-person amounts. The sync reads each listed file from Drive and uses these verified totals when Drive cannot be read; a new file can be listed with its id and name alone.",
+  "payrolls": [
+    {
+      "id": "1vywMyIJCejSge876iD1hycpBdhbUVfMe",
+      "name": "Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx",
+      "modifiedTime": "2026-11-05T09:25:09.810Z",
+      "start": "2026-10-16",
+      "end": "2026-10-31",
+      "people": 30,
+      "daily": [
+        {
+          "date": "2026-10-16",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-17",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-18",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-19",
+          "base": 4016666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-20",
+          "base": 4016666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-21",
+          "base": 3866666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-22",
+          "base": 4016666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-23",
+          "base": 4016666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-24",
+          "base": 4016666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-25",
+          "base": 3866666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-26",
+          "base": 3866666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-27",
+          "base": 3866666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-28",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-29",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-30",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        },
+        {
+          "date": "2026-10-31",
+          "base": 4166666.67,
+          "incentive": 184261.91
+        }
+      ],
+      "bonus": {
+        "month": "2026-10",
+        "amount": 60602000.0,
+        "meters": 6060.2
+      },
+      "totals": {
+        "days": 387.0,
+        "base": 64716666.67,
+        "additions": 63550190.58,
+        "deductions": 2440000.0
+      }
+    }
+  ]
+}

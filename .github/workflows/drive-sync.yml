@@ -12,9 +12,11 @@ on:
       - 'consumption_model.py'
       - 'shift_audit.py'
       - 'photo_import.py'
+      - 'payroll_import.py'
       - 'input/consumption-corrections.json'
       - 'input/shift-audit.json'
       - 'input/foreman-reports.json'
+      - 'input/payroll.json'
   schedule:
     # Every 3 hours (UTC+8 08, 11, 14, … 05): new reports, hole folders and collar rows are registered.
     # GitHub starts scheduled runs late (5-7 hours seen); denser runs keep the gap to a new report short.
@@ -74,6 +76,7 @@ jobs:
           python -B -m unittest test_consumption_model -v
           python -B -m unittest test_photo_import -v
           python -B -m unittest test_shift_audit -v
+          python -B -m unittest test_payroll_import -v
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs

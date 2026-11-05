@@ -285,13 +285,19 @@ function renderFinancialTab(){
   const categories=[['fuelCost','Түлш'],['mudCost','Өрөмдлөгийн шавар'],['diamondCost','Алмазан хошуу + reaming shell (тооцоот)'],['laborCost','Үндсэн цалин'],['foodCost','Хоолны зардал'],['bonusCost','Метрийн бонус'],['incentiveCost','Урамшуулал']];
   const breakdown=categories.map(([key,label])=>({key,label,current:rows.some(row=>row[key]==null)?null:rows.reduce((total,row)=>total+row[key],0)}));
   const breakdownMax=Math.max(...breakdown.map(item=>item.current||0),1);
+  // Pay periods read from the crew pay workbooks (actual pay) replace the attendance × rate model on their dates.
+  const payPeriods=finance?.attendance?(finance.payPeriods||[]):[],payMonth=selectedFinancialMonth();
+  const payMonthDays=payMonth?new Date(Number(payMonth.slice(0,4)),Number(payMonth.slice(5)),0).getDate():0;
+  const payCovered=payPeriods.reduce((n,p)=>n+Number(p.end.slice(8))-Number(p.start.slice(8))+1,0);
+  const payNote=key=>!payPeriods.length?'':key==='bonusCost'?(payPeriods.some(p=>p.bonus)?`<div class="sub cost-usage">Цалингийн хүснэгтийн бодит метрийн бонус (${payPeriods.filter(p=>p.bonus).map(p=>esc(p.file)).join(', ')}): сарын бүх ээлжид өрөмдсөн метрээр хуваарилсан</div>`:'')
+    :['laborCost','incentiveCost'].includes(key)?`<div class="sub cost-usage">${payPeriods.map(p=>`${p.start.slice(5)} – ${p.end.slice(5)}: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү)`).join('; ')}${payCovered<payMonthDays?'; бусад өдөр: ирц × тариф':''}</div>`:'';
   const costRows=breakdown.map(item=>{
     if(item.current==null){
       const status='Эх сурвалж синк хийгдээгүй';
       return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${status}</strong></div></div>`;
     }
     const usage=item.key==='fuelCost'?`<div class="sub cost-usage">Өрөмд олгосон: ${fmt(totalFuelUsage,2)} л</div>`:item.key==='mudCost'?`<div class="sub cost-usage">Хуваарилсан хэрэглээ: ${fmt(totalMudUsage,2)} кг · ${fmt(rows.reduce((total,row)=>total+row.mudUsageBags,0),2)} шуудай (${fmt(finance?.mud?.bagKg||25,0)} кг)</div>`:'';
-    return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.current,0)}</strong></div>${usage}<div class="cost-bar"><span style="width:${((item.current||0)/breakdownMax)*100}%"></span></div></div>`;
+    return `<div class="cost-row"><div class="cost-label"><span>${item.label}</span><strong>${currency(item.current,0)}</strong></div>${usage}${payNote(item.key)}<div class="cost-bar"><span style="width:${((item.current||0)/breakdownMax)*100}%"></span></div></div>`;
   }).join('');
   return `<div class="financial-wrap">
     ${chartPanel}

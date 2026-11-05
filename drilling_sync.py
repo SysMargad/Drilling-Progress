@@ -40,6 +40,9 @@ FINANCE_RIGS = {"C-1800", "CSD-1300"}
 FINANCE_FOLDER_ID = "1j8QjgqCHBh50pJwl68hBpTCvTu1tUYgj"
 DIAMOND_SHEET_ID = "1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8"
 SALARY_SOURCE_ID = "1pIjJeUEM86RkUy4TIvgboWBlq8-scGIy"
+# Header cells of a pay-period workbook (actual pay for e.g. 2026.10.16-31; see payroll_import.py). It also has
+# Нэр and Албан тушаал columns, so the attendance search must pass it over.
+PAYROLL_HEADERS = ("тооцсон цалин", "нийт ажилласан хоног")
 FINANCE_SHEET_MIME = "application/vnd.google-apps.spreadsheet"
 XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 FOLDER_MIME = "application/vnd.google-apps.folder"
@@ -1032,7 +1035,7 @@ def drive_finance_aggregates(credentials_path, shifts, salary_source_id=SALARY_S
             _salary_table(sheets)
             salary_sheets = sheets
         if attendance_sheets is None and _finance_has_headers(
-                sheets, ("нэр", "албан тушаал"), exact=True):
+                sheets, ("нэр", "албан тушаал"), exact=True) and not _finance_has_headers(sheets, PAYROLL_HEADERS):
             _attendance_layout(sheets)
             attendance_sheets = sheets
         if products_sheets is None and _finance_has_headers(sheets, ('бүтээгдэхүүн', 'тоо хэмжээ', 'нэгж', 'үнэ')):
@@ -1322,6 +1325,12 @@ def main():
                 if data.get('finance') is not None:
                     data['finance'] = apply_uploaded_fuel(data['finance'], finance_shifts(data))
                     data['finance'] = apply_diamond_budget(data['finance'])
+                    # Actual pay of the listed pay periods (input/payroll.json) replaces the attendance model on their dates.
+                    from payroll_import import load_payrolls, apply_payroll
+                    payrolls, payroll_note = (load_payrolls(Drive(args.credentials), workbook_rows)
+                                              if args.source == 'drive' else load_payrolls())
+                    data['finance'] = apply_payroll(data['finance'], payrolls, finance_shifts(data))
+                    finance_note = '; '.join(filter(None, (finance_note, payroll_note)))
                     from consumption_model import load_corrections, apply_corrections
                     correction_config = load_corrections()
                     if args.source == 'drive':
