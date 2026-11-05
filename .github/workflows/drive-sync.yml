@@ -10,11 +10,15 @@ on:
       - 'validate_data.py'
       - 'requirements.txt'
       - 'consumption_model.py'
+      - 'shift_audit.py'
+      - 'photo_import.py'
       - 'input/consumption-corrections.json'
+      - 'input/shift-audit.json'
   schedule:
-    # Every 12 hours (08:00 and 20:00 UTC+8): new hole folders and collar rows are registered.
-    # GitHub starts scheduled runs late (5-7 hours seen), but the 12-hour spacing holds.
-    - cron: '0 0,12 * * *'
+    # Every 3 hours (UTC+8 08, 11, 14, … 05): new reports, hole folders and collar rows are registered.
+    # GitHub starts scheduled runs late (5-7 hours seen); denser runs keep the gap to a new report short.
+    # One run reads ~15 workbooks and lists the hole folders: far inside the Drive API quota.
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -68,11 +72,13 @@ jobs:
           python -B -m unittest test_chat_report -v
           python -B -m unittest test_consumption_model -v
           python -B -m unittest test_photo_import -v
+          python -B -m unittest test_shift_audit -v
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs
           node test_mapping.cjs
           node test_drilling_data.cjs
+          node test_audit_dashboard.cjs
       - name: Report collection failure
         if: steps.collection.outcome == 'failure'
         run: echo '::warning::Drive collection failed. Previous valid data and the failed attempt log are preserved.'

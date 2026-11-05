@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {aggregate,title,depthSeries}=require('./dist/chart-model.js');
+const {aggregate,fill,title,depthSeries}=require('./dist/chart-model.js');
 const real=require('./dist/data.json');
 for(const grain of ['shift','day','week','month']){
   const groups=aggregate(real.shifts,grain);
@@ -60,11 +60,11 @@ console.log('Report provenance preserved across all aggregation periods.');
 // Overview chart, KPI cards and rig performance use the same month or all-time rows.
 const fs=require('node:fs'),vm=require('node:vm');
 let overviewRig='',overviewArea='';
-const overviewContext=vm.createContext({DrillingChart:require('./dist/chart-model.js'),document:{
+const overviewContext=vm.createContext({DrillingChart:require('./dist/chart-model.js'),AuditModel:require('./dist/audit-model.js'),document:{
  addEventListener:()=>{},querySelector:s=>({value:s==='#site'?'Нэргүй Өндөр':s==='#rig'?overviewRig:s==='#area'?overviewArea:'',hidden:true})
 },window:{addEventListener:()=>{}}});
 const appSource=fs.readFileSync('dist/app.js','utf8');
-vm.runInContext(appSource.split('function dataRows()')[0],overviewContext);
+vm.runInContext(appSource.split('function dataRows()')[0]+appSource.slice(appSource.indexOf('let auditMonth'),appSource.indexOf('function auditCell')),overviewContext);
 overviewContext.fixture=real;
 vm.runInContext('D=fixture',overviewContext);
 for(const month of ['2026-10','2026-11','','2026-10','']){
@@ -96,3 +96,25 @@ for(const month of ['2026-10','2026-11','','2026-10','']){
 overviewRig='';overviewArea='Харгант';
 assert.ok(vm.runInContext('overviewRows()',overviewContext).every(s=>real.collar.some(h=>h.id===s.hole&&h.targetArea==='Харгант')));
 console.log('Overview month filtering verified: chart, KPIs, rig performance, all-time reset, period grouping and rig/area filters.');
+
+// A month's shift and day axes keep every period up to the audit date; an unreported shift is a gap with a mark, never a 0 m bar.
+const sparse=[row('2026-10-01','Өдөр','C-1800',15),row('2026-10-03','Шөнө','C-1800',30)].map(r=>({...r,hole:'DTDH2603'}));
+const filled=fill(aggregate(sparse,'shift','2026-10'),'shift','2026-10','2026-10-04');
+assert.deepEqual(filled.map(g=>g.key),['2026-10-01|0','2026-10-01|1','2026-10-02|0','2026-10-02|1','2026-10-03|0','2026-10-03|1','2026-10-04|0','2026-10-04|1']);
+assert.deepEqual(filled[1],{key:'2026-10-01|1',label:'01',secondary:'Ш',start:'2026-10-01',end:'2026-10-01',target:30,amounts:{},counts:{},rows:[]});
+assert.equal(fill(aggregate(sparse,'day','2026-10'),'day','2026-10').length,31);
+assert.equal(fill(aggregate(sparse,'week','2026-10'),'week','2026-10').length,aggregate(sparse,'week','2026-10').length);
+assert.equal(fill(aggregate(sparse,'day'),'day','').length,2,'the all-time view is not filled');
+const slot=(date,shift,status)=>({rig:'C-1800',date,shift,status,meters:null,records:[],issues:[{kind:'gap',text:'DTDH2603: 248–257 м (9 м) тайлангүй'}],folderUrl:''});
+overviewContext.fixture={...real,shifts:sparse,shiftAudit:{through:'2026-10-04',rigs:['C-1800','CSD-1300'],months:[],slots:[slot('2026-10-01','Шөнө','MISSING_REPORT'),slot('2026-10-02','Өдөр','UNVERIFIED')]}};
+overviewArea='';
+vm.runInContext("D=fixture;chartMonth='2026-10';grain='shift'",overviewContext);
+let marked=vm.runInContext('chart()',overviewContext);
+assert.equal((marked.match(/class="audit-mark audit-missing-report"/g)||[]).length,1);
+assert.equal((marked.match(/class="audit-mark audit-unverified"/g)||[]).length,1);
+assert.ok(marked.includes('2026-10-01 Шөнө · C-1800 · Тайлан дутуу · тайлангүй — DTDH2603: 248–257 м (9 м) тайлангүй'));
+assert.equal(vm.runInContext('chartBars.length',overviewContext),2,'unreported shifts get no bar');
+overviewArea='Замт Хөндий';
+assert.ok(!vm.runInContext('chart()',overviewContext).includes('audit-mark'),'an area filter hides other areas, so no marks');
+overviewArea='';
+console.log('Month axes keep unreported shifts in place, marked from the shift audit.');

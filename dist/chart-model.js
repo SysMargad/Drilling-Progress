@@ -24,6 +24,21 @@
     }
     return [...groups.values()].sort((a,b)=>a.key.localeCompare(b.key));
   }
+  // Shift and day bars of one month: every period up to `through` keeps its place on the axis, so a shift
+  // without a report shows as a gap at its date instead of the axis closing over it.
+  function fill(groups,grain,month,through){
+    if(!month||!['shift','day'].includes(grain))return groups;
+    const first=utc(month+'-01'),last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0));
+    const end=through&&utc(through)<last?utc(through):last,byKey=new Map(groups.map(group=>[group.key,group])),filled=[];
+    for(let day=first;day<=end;day=add(day,1)){
+      for(const part of grain==='shift'?['0','1']:['']){
+        const date=iso(day),key=grain==='shift'?date+'|'+part:date;
+        filled.push(byKey.get(key)||{key,label:date.slice(8),secondary:grain==='shift'?(part==='0'?'Ө':'Ш'):'',start:date,end:date,
+          target:grain==='shift'?30:60,amounts:{},counts:{},rows:[]});
+      }
+    }
+    return filled;
+  }
   function title(groups){if(!groups.length)return 'Гүйцэтгэл';const first=groups[0].start.slice(0,7),last=groups.at(-1).end.slice(0,7);return first===last?'Гүйцэтгэл · '+first.slice(0,4)+' оны '+Number(first.slice(5))+'-р сар':'Гүйцэтгэл · '+first.replace('-','.')+' – '+last.replace('-','.');}
   function depthSeries(rows,hole){
     const list=rows.filter(row=>row.hole===hole).slice().sort((a,b)=>a.date.localeCompare(b.date)||(a.shift==='Өдөр'?0:1)-(b.shift==='Өдөр'?0:1)||a.rig.localeCompare(b.rig));
@@ -37,5 +52,5 @@
     }
     return segments;
   }
-  const api={aggregate,title,depthSeries};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.DrillingChart=api;
+  const api={aggregate,fill,title,depthSeries};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.DrillingChart=api;
 })(globalThis);

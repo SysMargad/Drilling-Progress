@@ -225,3 +225,29 @@ selectedRig='CSD-1300';
 assert.ok(vm.runInContext('renderFinancialTab()',context).includes('id="financial-month"'));
 selectedRig='';
 console.log('Financial month selector verified: both months, four grains, no cross-month costs, missing sources and empty rig filters.');
+
+// A rig-shift without a shift report is "Тайлангүй" in the details, never 0 m (checked on the published data,
+// whatever shifts the sources add later).
+selectedRig='';
+context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
+vm.runInContext("D=fixture;financialMonth='2026-10';financialGrain='shift'",context);
+const unreportedRows=vm.runInContext("financialRows('shift')",context);
+for(const row of unreportedRows)if(!row.reportedShifts)assert.equal(row.drilledMeters,0);
+const detailMarkup=vm.runInContext('renderFinancialTab()',context);
+assert.equal((detailMarkup.match(/<td data-label="Метр">Тайлангүй<\/td>/g)||[]).length,unreportedRows.filter(r=>!r.reportedShifts&&r.unreportedShifts).length);
+// The daily water total is not a shift: no slots, so it reads — rather than Тайлангүй.
+assert.ok(unreportedRows.filter(r=>r.shiftLabel==='Өдрийн нийт').every(r=>r.reportedShifts+r.unreportedShifts===0));
+const october=vm.runInContext("financialRows('month')",context)[0];
+assert.equal(october.reportedShifts+october.unreportedShifts,124,'October has 31 days × 2 shifts × 2 rigs');
+assert.equal(october.reportedShifts,new Set(context.fixture.shifts.filter(s=>s.date.startsWith('2026-10-')).map(s=>s.date+s.rig+s.shift)).size);
+// Synthetic month: day shift of 2 October unreported by C-1800.
+context.fixture={collar:[{id:'X',site:'Нэргүй Өндөр'}],shifts:[{date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'X',meters:10,hours:12},{date:'2026-10-02',rig:'C-1800',shift:'Шөнө',hole:'X',meters:20,hours:12}],
+  finance:{period:'2026-10',rigShifts:[]}};
+selectedRig='C-1800';
+vm.runInContext("D=fixture;financialGrain='shift'",context);
+const synthetic=vm.runInContext('renderFinancialTab()',context);
+assert.ok(synthetic.includes('<td data-label="Метр">Тайлангүй</td>'));
+assert.equal(vm.runInContext("financialRows('day')",context).find(r=>r.date==='2026-10-02').unreportedShifts,1);
+assert.ok(vm.runInContext("financialGrain='day';renderFinancialTab()",context).includes('1 ээлж тайлангүй</small>'));
+selectedRig='';
+console.log('Unreported rig-shifts read "Тайлангүй", not 0 m, and October holds 124 slots.');

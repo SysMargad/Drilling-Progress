@@ -53,9 +53,49 @@ def validate(data):
         url = data.get(key, '')
         if url and (urlparse(url).scheme != 'https' or urlparse(url).hostname not in {'drive.google.com', 'docs.google.com'}):
             raise ValueError('Unexpected source URL')
+    for url in [s['sheet'].get('url', '') for s in data['shifts'] if s.get('sheet')] +                [r.get('url', '') for key in ('unassignedShifts', 'rejectedShifts') for r in data.get(key, [])]:
+        if url and (urlparse(url).scheme != 'https' or urlparse(url).hostname not in {'drive.google.com', 'docs.google.com'}):
+            raise ValueError('Unexpected source sheet URL')
+    for report in data.get('unlinkedReports', []):
+        drive_file(report['url'])
+    if 'shiftAudit' in data:
+        validate_audit(data['shiftAudit'], data)
     if 'finance' in data:
         validate_finance(data['finance'])
     return len(ids), len(seen)
+
+
+def drive_file(url):
+    parsed = urlparse(url)
+    if parsed.scheme != 'https' or parsed.hostname != 'drive.google.com' or not parsed.path.startswith('/file/d/'):
+        raise ValueError('Unexpected report URL')
+
+
+def validate_audit(audit, data):
+    """Every rig-shift slot classified once; a slot without a record never carries metres."""
+    from shift_audit import STATUSES
+    if set(audit['rigs']) - RIGS or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', audit['through']):
+        raise ValueError('Invalid shift audit header')
+    seen, months = set(), {}
+    for slot in audit['slots']:
+        key = (slot['rig'], slot['date'], slot['shift'])
+        if key in seen or slot['rig'] not in audit['rigs'] or slot['shift'] not in {'Өдөр', 'Шөнө'} or slot['status'] not in STATUSES:
+            raise ValueError('Invalid or duplicate shift audit slot')
+        seen.add(key)
+        date.fromisoformat(slot['date'])
+        if (slot['meters'] is None) != (not slot['records']):
+            raise ValueError('An unreported shift cannot carry metres')
+        for report in [x for r in slot['records'] for x in r['reports']] + slot.get('driveReports', []):
+            drive_file(report['url'])
+        if slot['folderUrl'] and urlparse(slot['folderUrl']).hostname != 'drive.google.com':
+            raise ValueError('Unexpected audit folder URL')
+        months[slot['date'][:7]] = months.get(slot['date'][:7], 0) + 1
+    for month in audit['months']:
+        if month['expected'] != months.get(month['month']) or sum(month['counts'].values()) != month['expected']:
+            raise ValueError('Shift audit counts do not add up')
+    recorded = {(s['rig'], s['date'], s['shift']) for s in data['shifts'] if s['rig'] in audit['rigs'] and s['date'] <= audit['through']}
+    if recorded - seen:
+        raise ValueError('Shift audit misses recorded shifts')
 
 
 def validate_finance(finance):

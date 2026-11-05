@@ -19,7 +19,8 @@ def apply_photos(data, path=PATH):
         existing = next((s for s in data['shifts'] if tuple(s[k] for k in ('date', 'rig', 'shift', 'hole')) == key), None)
         # Drive may later acquire the original report; prefer that authoritative row.
         if existing is None:
-            data['shifts'].append(row)
+            # Owner-verified photograph: the audit counts it as evidence for the shift.
+            data['shifts'].append({**row, 'origin': 'photo-records'})
     data['shifts'].sort(key=lambda s: (s['date'], s['rig'], s['shift']))
     dates = [s['date'] for s in data['shifts']]
     data['period'] = min(dates) + ' – ' + max(dates)

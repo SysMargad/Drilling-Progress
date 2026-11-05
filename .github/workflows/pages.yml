@@ -31,13 +31,16 @@ jobs:
           python -B -m unittest test_chat_report -v
           python -B -m unittest test_consumption_model -v
           python -B -m unittest test_photo_import -v
+          python -B -m unittest test_shift_audit -v
           python -B validate_data.py
           node --check dist/app.js
+          node --check dist/audit-model.js
           node test_chart.cjs
           node test_financial_costs.cjs
           node test_finance_dashboard.cjs
           node test_mapping.cjs
           node test_drilling_data.cjs
+          node test_audit_dashboard.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

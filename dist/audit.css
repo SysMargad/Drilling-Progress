@@ -1,0 +1,38 @@
+/* QA/QC rig-shift audit: one colour per status, the same in the calendar, badges, cards and legend. */
+:root{--audit-ok-bg:#dff3ea;--audit-ok:#146c50;--audit-idle-bg:#e3edf2;--audit-idle:#3d6476;--audit-missing-bg:#fde3e1;--audit-missing:#b3261e;
+  --audit-conflict-bg:#fff0d9;--audit-conflict:#975800;--audit-unverified-bg:#eef0f2;--audit-unverified:#5f6b73}
+[data-theme=dark]{--audit-ok-bg:#1d3a2e;--audit-ok:#7fdcb0;--audit-idle-bg:#243239;--audit-idle:#a8c4d2;--audit-missing-bg:#4a2220;--audit-missing:#ff8a80;
+  --audit-conflict-bg:#47331a;--audit-conflict:#ffc06b;--audit-unverified-bg:#2c2f33;--audit-unverified:#b6bcc2}
+.audit-verified-drilling{--bg:var(--audit-ok-bg);--fg:var(--audit-ok)}
+.audit-verified-non-drilling{--bg:var(--audit-idle-bg);--fg:var(--audit-idle)}
+.audit-missing-report{--bg:var(--audit-missing-bg);--fg:var(--audit-missing)}
+.audit-source-conflict{--bg:var(--audit-conflict-bg);--fg:var(--audit-conflict)}
+.audit-unverified{--bg:var(--audit-unverified-bg);--fg:var(--audit-unverified)}
+.badge[class*=audit-],[data-theme=dark] .badge[class*=audit-]{background:var(--bg);color:var(--fg);font-weight:600}
+.kpis.audit-kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:14px}
+.audit-kpis .kpi{cursor:default}
+.audit-kpis .kpi[class*=audit-] .value,[data-theme=dark] .audit-kpis .kpi[class*=audit-] .value{color:var(--fg)}
+.audit-kpis .kpi[class*=audit-]{box-shadow:inset 4px 0 0 var(--fg)}
+.audit-kpis .kpi .value{font-size:22px;overflow-wrap:anywhere}
+.audit-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:4px 0 12px;font-size:12px;color:var(--muted)}
+.audit-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px;background:var(--bg);border:1px solid var(--fg)}
+.audit-scroll{max-width:100%}
+.audit-grid{border-collapse:separate;border-spacing:2px;width:auto}
+.audit-grid th{font-size:11px;font-weight:600;padding:2px 3px;text-align:center;white-space:nowrap;color:var(--muted)}
+.audit-grid tbody th{text-align:left;padding-right:8px;position:sticky;left:0;background:white}
+[data-theme=dark] .audit-grid tbody th{background:#1c1c1e}
+.audit-grid td{padding:0;border:0}
+.audit-cell,[data-theme=dark] .audit-cell{min-width:30px;height:28px;padding:0 2px;border:1px solid transparent;border-radius:4px;background:var(--bg);color:var(--fg);
+  font-family:inherit;font-size:11px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;cursor:pointer}
+.audit-cell.audit-unverified,.audit-cell.audit-missing-report{border-style:dashed;border-color:var(--fg)}
+.audit-cell:focus-visible{outline:2px solid var(--fg);outline-offset:1px}
+.audit-issues td{vertical-align:top;white-space:normal}
+.audit-issues td:nth-child(5){min-width:320px}
+.audit-extra{margin:12px 0 0}
+.audit-extra summary{cursor:pointer;font-weight:600}
+.audit-extra li{margin:3px 0;overflow-wrap:anywhere}
+@media (max-width:640px){.audit-kpis{grid-template-columns:1fr 1fr}.audit-issues td:nth-child(5){min-width:220px}}
+.audit-mark{fill:var(--fg);font-size:14px;font-weight:700;cursor:help}
+.financial-details-table small.unreported{display:block;color:var(--audit-missing);font-weight:600}
+.audit-kpis .kpi .value.audit-text{font-size:15px;line-height:1.35}
+.audit-issues td:nth-child(1),.audit-issues td:nth-child(2),.audit-issues td:nth-child(3){white-space:nowrap}

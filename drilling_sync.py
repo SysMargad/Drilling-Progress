@@ -29,8 +29,10 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent
-TZ = timezone(timedelta(hours=8))
+# Asia/Ulaanbaatar: UTC+8 all year (no daylight saving since 2017). Fixed so Windows needs no tz database.
+TZ = timezone(timedelta(hours=8), "Asia/Ulaanbaatar")
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 RIGS = {"C-1800", "CSD-1300"}
 # Attendance codes, fuel and mud ledgers cover the two contracted rigs only.
@@ -100,12 +102,22 @@ def workbook_rows(content, suffix):
             root = ET.fromstring(z.read("xl/sharedStrings.xml"))
             shared = ["".join(t.text or "" for t in si.iter(f"{{{NS['s']}}}t"))
                       for si in root]
+        # Tab titles, so an audit can cite "2_Ээлжийн_бүртгэл" rather than the archive member name.
+        titles = {}
+        if {"xl/workbook.xml", "xl/_rels/workbook.xml.rels"} <= set(z.namelist()):
+            targets = {r.get("Id"): r.get("Target", "") for r in ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))}
+            for sheet in ET.fromstring(z.read("xl/workbook.xml")).iter(f"{{{NS['s']}}}sheet"):
+                target = targets.get(sheet.get(f"{{{REL}}}id"), "").lstrip("/")
+                titles[target if target.startswith("xl/") else "xl/" + target] = sheet.get("name")
         result = []
         for name in sorted(z.namelist()):
             if not re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name):
                 continue
             rows = []
             for row in ET.fromstring(z.read(name)).findall("s:sheetData/s:row", NS):
+                # Empty rows are left out of the file; pad them so a row's index + 1 is its sheet row number.
+                number = int(row.get("r") or len(rows) + 1)
+                rows.extend([] for _ in range(number - 1 - len(rows)))
                 cells = {}
                 for c in row.findall("s:c", NS):
                     letters = re.match(r"[A-Z]+", c.get("r", "A1"))[0]
@@ -120,7 +132,7 @@ def workbook_rows(content, suffix):
                         value = "".join(t.text or "" for t in c.findall("s:is//s:t", NS))
                     cells[index - 1] = value or ""
                 rows.append([cells.get(i, "") for i in range(max(cells, default=-1) + 1)])
-            result.append((name, rows))
+            result.append((titles.get(name, name), rows))
         return result
 
 
@@ -224,93 +236,140 @@ def canonical_rig(value):
     return "C-1800" if value == "C-1600" else value
 
 
-def parse_shifts(rows):
+def parse_shifts(rows, unassigned=None, rejected=None):
+    """Shift records of a sheet. Rows whose rig is not C-1800/CSD-1300 go to `unassigned`; with a
+    `rejected` list an invalid row is reported there (with its reason) instead of failing the sheet."""
     output = []
     headers = None
-    for row in rows:
-        names = [norm(v) for v in row]
-        if "dt" in names and any("source" in h for h in names) and any("hole id" in h for h in names):
-            headers = names
+    for row_number, row in enumerate(rows, start=1):
+        try:
+            item = _parse_shift_row(row, headers, unassigned, row_number)
+        except ValueError as error:
+            if rejected is None:
+                raise
+            rejected.append({**_row_identity(row, headers), "row": row_number, "reason": str(error)})
             continue
-        if not headers:
-            continue
-        def get(match):
-            i = next((i for i, h in enumerate(headers) if match(h)), -1)
-            return row[i] if 0 <= i < len(row) else ""
-        rig = canonical_rig(get(lambda x: x == "rig" or x.endswith(" rig")))
-        h = hole_id(get(lambda x: "hole id" in x))
-        if rig not in RIGS or not h:
-            continue
-        shift = get(lambda x: x == "shift" or x.endswith(" shift")).strip()
-        item = {"rig": rig, "source": get(lambda x: "source" in x),
-                "date": date(get(lambda x: x == "date" or x.endswith(" date"))),
-                "shift": shift, "driller": get(lambda x: x == "driller" or x.endswith(" driller")),
-                "hole": h, "from": number(get(lambda x: x.endswith("from"))),
-                "to": number(get(lambda x: x.endswith("to"))),
-                "meters": number(get(lambda x: x.endswith("drilled"))),
-                "st": number(get(lambda x: x == "st")),
-                "rt": number(get(lambda x: x == "rt")),
-                "dt": number(get(lambda x: x == "dt")),
-                "hours": number(get(lambda x: x == "shift hours (source)")),
-                "notes": get(lambda x: "work notes" in x)}
-        # The source shift duration is distinct from the subtotal of filled codes.
-        # Partially coded shifts may have a 6 h code subtotal but a 12 h duration.
-        if item['hours'] is None:
-            item['hours'] = number(get(lambda x: x.endswith('total') or x == 'total code hrs'))
-        # Owner correction (2026-10-22): this uncoded shift has DT=0;
-        # its source work notes explicitly report a 12-hour shift.
-        if (h == 'ZHDH2602' and rig == 'C-1800'
-                and item['date'] == '2026-10-19' and shift == 'Шөнө'
-                and item['from'] == 287 and item['to'] == 326):
-            if item['dt'] is None:
-                item['dt'] = 0.0
-                item['notes'] += ' | Owner correction 2026-10-22: DT=0.'
-            if item['hours'] is None and '12ц' in item['notes']:
-                item['hours'] = 12.0
-        # This zero-metre incident shift is fully accounted for by PT and OT.
-        if (h == 'DTDH2602' and rig == 'C-1800'
-                and item['date'] == '2026-10-18' and shift == 'Шөнө'
-                and item['from'] == 266 and item['to'] == 266
-                and item['meters'] == 0 and item['dt'] is None
-                and item['hours'] == 12
-                and number(get(lambda x: x == 'pt')) == 0.5
-                and number(get(lambda x: x == 'ot')) == 11.5):
-            item['dt'] = 0.0
-            item['notes'] += ' | DT=0: PT 0.5 + OT 11.5 accounts for all 12 hours.'
-        # Owner policy 2026-10-27: genuinely blank DT/total hours use 12 h.
-        # Keep explicit zero, malformed values and previously verified corrections.
-        assumed = []
-        for key, match in (('dt', lambda x: x == 'dt'),
-                           ('hours', lambda x: x == 'shift hours (source)' or x.endswith('total') or x == 'total code hrs')):
-            if item[key] is None and not str(get(match)).strip():
-                item[key] = 12.0
-                assumed.append('DT' if key == 'dt' else 'TOTAL')
-        if assumed:
-            item['notes'] += ' | User default 2026-10-27: ' + ', '.join(assumed) + '=12 h (source blank; estimated).'
-        water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
-        water = number(get(lambda h: h == water_header)) if water_header else None
-        if water is not None and water < 0:
-            raise ValueError('Invalid water consumption')
-        # Publish volume in m3 only when source units are explicit.
-        if water is not None and any(unit in water_header for unit in ('литр', 'liter', '(l)', '(л)')):
-            water /= 1000
-        elif water is not None and not any(unit in water_header for unit in ('м³', 'м3', 'm³', 'm3')):
-            water = None
-        item['waterUsageM3'] = water
-        if not item["date"] or shift not in {"Өдөр", "Шөнө"}:
-            raise ValueError(f"Missing/invalid date or shift for {h}")
-        for key in ("from", "to", "meters", "st", "rt", "dt", "hours"):
-            # A blank optional time code is unknown, not zero. Keep it null.
-            if key in {"st", "rt"} and item[key] is None and str(get(lambda x: x == key)).strip() in {"", "-", "—"}:
-                continue
-            if item[key] is None or item[key] < 0:
-                raise ValueError(f"Missing/invalid {key} for {h} on {item['date']}")
-        if abs(item["to"] - item["from"] - item["meters"]) > 0.05:
-            raise ValueError(f"Depth/meters mismatch for {h} on {item['date']}")
-        if item["dt"] + (item["st"] or 0) + (item["rt"] or 0) > item["hours"] + 0.01:
-            raise ValueError(f"Work hours mismatch for {h} on {item['date']}")
-        output.append(item)
+        if item == "header":
+            headers = [norm(v) for v in row]
+        elif item:
+            output.append(item)
     return output
+
+
+def _row_identity(row, headers):
+    """Rig, date, shift and hole of a rejected row, as far as they can be read."""
+    identity = {"rig": "", "date": "", "shift": "", "hole": ""}
+    if not headers:
+        return identity
+    def get(match):
+        i = next((i for i, h in enumerate(headers) if match(h)), -1)
+        return str(row[i]).strip() if 0 <= i < len(row) else ""
+    identity["rig"] = canonical_rig(get(lambda x: x == "rig" or x.endswith(" rig")))
+    identity["shift"] = get(lambda x: x == "shift" or x.endswith(" shift"))
+    identity["hole"] = hole_id(get(lambda x: "hole id" in x)) or ""
+    try:
+        identity["date"] = date(get(lambda x: x == "date" or x.endswith(" date")))
+    except ValueError:
+        pass
+    return identity
+
+
+def _parse_shift_row(row, headers, unassigned, row_number):
+    """"header" for the header row, None for rows that are not a shift, else the shift record."""
+    names = [norm(v) for v in row]
+    if "dt" in names and any("source" in h for h in names) and any("hole id" in h for h in names):
+        return "header"
+    if not headers:
+        return None
+    def get(match):
+        i = next((i for i, h in enumerate(headers) if match(h)), -1)
+        return row[i] if 0 <= i < len(row) else ""
+    rig = canonical_rig(get(lambda x: x == "rig" or x.endswith(" rig")))
+    h = hole_id(get(lambda x: "hole id" in x))
+    if h and rig not in RIGS and unassigned is not None and any(str(v).strip() for v in row):
+        # A row whose rig is blank or "Баталгаажаагүй" is kept aside for the audit, never guessed.
+        try:
+            day = date(get(lambda x: x == "date" or x.endswith(" date")))
+        except ValueError:
+            day = ""
+        shift = get(lambda x: x == "shift" or x.endswith(" shift")).strip()
+        if day and shift in {"Өдөр", "Шөнө"}:
+            unassigned.append({"rigText": str(get(lambda x: x == "rig" or x.endswith(" rig"))).strip(), "date": day,
+                               "shift": shift, "hole": h, "from": number(get(lambda x: x.endswith("from"))),
+                               "to": number(get(lambda x: x.endswith("to"))),
+                               "meters": number(get(lambda x: x.endswith("drilled"))),
+                               "source": str(get(lambda x: "source" in x)).strip(), "row": row_number})
+    if rig not in RIGS or not h:
+        return None
+    shift = get(lambda x: x == "shift" or x.endswith(" shift")).strip()
+    item = {"rig": rig, "source": get(lambda x: "source" in x),
+            "date": date(get(lambda x: x == "date" or x.endswith(" date"))),
+            "shift": shift, "driller": get(lambda x: x == "driller" or x.endswith(" driller")),
+            "hole": h, "from": number(get(lambda x: x.endswith("from"))),
+            "to": number(get(lambda x: x.endswith("to"))),
+            "meters": number(get(lambda x: x.endswith("drilled"))),
+            "st": number(get(lambda x: x == "st")),
+            "rt": number(get(lambda x: x == "rt")),
+            "dt": number(get(lambda x: x == "dt")),
+            "hours": number(get(lambda x: x == "shift hours (source)")),
+            "notes": get(lambda x: "work notes" in x), "sheetRow": row_number}
+    # The source shift duration is distinct from the subtotal of filled codes.
+    # Partially coded shifts may have a 6 h code subtotal but a 12 h duration.
+    if item['hours'] is None:
+        item['hours'] = number(get(lambda x: x.endswith('total') or x == 'total code hrs'))
+    # Owner correction (2026-10-22): this uncoded shift has DT=0;
+    # its source work notes explicitly report a 12-hour shift.
+    if (h == 'ZHDH2602' and rig == 'C-1800'
+            and item['date'] == '2026-10-19' and shift == 'Шөнө'
+            and item['from'] == 287 and item['to'] == 326):
+        if item['dt'] is None:
+            item['dt'] = 0.0
+            item['notes'] += ' | Owner correction 2026-10-22: DT=0.'
+        if item['hours'] is None and '12ц' in item['notes']:
+            item['hours'] = 12.0
+    # This zero-metre incident shift is fully accounted for by PT and OT.
+    if (h == 'DTDH2602' and rig == 'C-1800'
+            and item['date'] == '2026-10-18' and shift == 'Шөнө'
+            and item['from'] == 266 and item['to'] == 266
+            and item['meters'] == 0 and item['dt'] is None
+            and item['hours'] == 12
+            and number(get(lambda x: x == 'pt')) == 0.5
+            and number(get(lambda x: x == 'ot')) == 11.5):
+        item['dt'] = 0.0
+        item['notes'] += ' | DT=0: PT 0.5 + OT 11.5 accounts for all 12 hours.'
+    # Owner policy 2026-10-27: genuinely blank DT/total hours use 12 h.
+    # Keep explicit zero, malformed values and previously verified corrections.
+    assumed = []
+    for key, match in (('dt', lambda x: x == 'dt'),
+                       ('hours', lambda x: x == 'shift hours (source)' or x.endswith('total') or x == 'total code hrs')):
+        if item[key] is None and not str(get(match)).strip():
+            item[key] = 12.0
+            assumed.append('DT' if key == 'dt' else 'TOTAL')
+    if assumed:
+        item['notes'] += ' | User default 2026-10-27: ' + ', '.join(assumed) + '=12 h (source blank; estimated).'
+    water_header = next((h for h in headers if 'water consumption' in h or 'усны хэрэглээ' in h), '')
+    water = number(get(lambda h: h == water_header)) if water_header else None
+    if water is not None and water < 0:
+        raise ValueError('Invalid water consumption')
+    # Publish volume in m3 only when source units are explicit.
+    if water is not None and any(unit in water_header for unit in ('литр', 'liter', '(l)', '(л)')):
+        water /= 1000
+    elif water is not None and not any(unit in water_header for unit in ('м³', 'м3', 'm³', 'm3')):
+        water = None
+    item['waterUsageM3'] = water
+    if not item["date"] or shift not in {"Өдөр", "Шөнө"}:
+        raise ValueError(f"Missing/invalid date or shift for {h}")
+    for key in ("from", "to", "meters", "st", "rt", "dt", "hours"):
+        # A blank optional time code is unknown, not zero. Keep it null.
+        if key in {"st", "rt"} and item[key] is None and str(get(lambda x: x == key)).strip() in {"", "-", "—"}:
+            continue
+        if item[key] is None or item[key] < 0:
+            raise ValueError(f"Missing/invalid {key} for {h} on {item['date']}")
+    if abs(item["to"] - item["from"] - item["meters"]) > 0.05:
+        raise ValueError(f"Depth/meters mismatch for {h} on {item['date']}")
+    if item["dt"] + (item["st"] or 0) + (item["rt"] or 0) > item["hours"] + 0.01:
+        raise ValueError(f"Work hours mismatch for {h} on {item['date']}")
+    return item
 
 
 def _finance_number(value):
@@ -643,15 +702,55 @@ def report_metadata(file, hole, rig, folder_url):
             "fileId": file["id"], "folderUrl": folder_url}
 
 
+def daily_file(file, hole, rig, folder_url):
+    """Any photo or PDF in a hole's 02 folder; date and shift are read from its name when they are there."""
+    name = file.get("name", "")
+    if not hole or not (file.get("mimeType", "").startswith("image/") or file.get("mimeType") == "application/pdf"):
+        return None
+    report_date = shift = ""
+    match = re.search(r"(20\d{2})-?(\d{2})-?(\d{2})", name)
+    if match:
+        try:
+            report_date = datetime(int(match[1]), int(match[2]), int(match[3])).strftime("%Y-%m-%d")
+        except ValueError:
+            report_date = ""
+    token = re.search(r"(?:^|[_\s-])([dn])(?:[._\s-]|$)", name[match.end():] if match else name, re.I)
+    if token:
+        shift = "Өдөр" if token[1].lower() == "d" else "Шөнө"
+    rig = canonical_rig(rig or "")
+    return {"hole": hole, "rig": rig if rig in RIGS else "", "date": report_date, "shift": shift, "name": name,
+            "url": file.get("webViewLink") or f"https://drive.google.com/file/d/{file['id']}/view",
+            "fileId": file["id"], "folderUrl": folder_url}
+
+
+def report_stem(name):
+    """File name without image/PDF extensions ("x.JPG.jpg" -> "x"), lower case, for matching a sheet's Source."""
+    stem = str(name).strip().lower()
+    while re.search(r"\.(jpe?g|png|heic|pdf)$", stem):
+        stem = re.sub(r"\.(jpe?g|png|heic|pdf)$", "", stem)
+    return stem
+
+
 def attach_reports(rows, reports):
-    index = {}
+    """Link each shift to its raw Drive report: by hole, rig, date and shift, else by the file its Source cites."""
+    index, names = {}, {}
     for report in reports:
         key = (report["hole"], report["rig"], report["date"], report["shift"])
         group = index.setdefault(key, [])
         if not any(old["url"] == report["url"] for old in group):
             group.append(report)
+        names.setdefault(report_stem(report["name"]), []).append(report)
+    linked = set()
     for row in rows:
         row["reports"] = index.get((row["hole"], row["rig"], row["date"], row["shift"]), [])
+        if not row["reports"] and str(row.get("source", "")).strip():
+            candidates = names.get(report_stem(row["source"]), [])
+            # The same file name in two hole folders: the shift's own hole folder holds its report.
+            candidates = [r for r in candidates if r["hole"] == row["hole"]] or candidates[:1]
+            row["reports"] = [{**r, "hole": row["hole"], "rig": row["rig"], "date": row["date"],
+                               "shift": row["shift"], "match": "source"} for r in candidates[:1]]
+        linked.update(r["url"] for r in row["reports"])
+    return [r for r in reports if r["url"] not in linked]
 
 
 def inventory_section(name):
@@ -730,7 +829,8 @@ def drive_sources(folder, credentials_path):
                                     "modified": f.get("modifiedTime", ""),
                                     "content": drive.download(f), "suffix": ".xlsx"})
             elif daily:
-                report = report_metadata(f, hole, rig, f"https://drive.google.com/drive/folders/{fid}")
+                folder_url = f"https://drive.google.com/drive/folders/{fid}"
+                report = report_metadata(f, hole, rig, folder_url) or daily_file(f, hole, rig, folder_url)
                 if report:
                     reports.append(report)
             elif hole and section:
@@ -958,14 +1058,29 @@ def drive_finance_aggregates(credentials_path, shifts, salary_source_id=SALARY_S
 
 
 
+# A shift's measured values; two sources that differ only in notes or file names do not conflict.
+SHIFT_VALUES = ("from", "to", "meters", "st", "rt", "dt", "hours")
+
+
 def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None):
     collar, shifts, warnings, provenance = {}, {}, [], []
+    conflicts, unassigned, rejected = {}, {}, {}
     collar_url, shift_url = seed.get("collarUrl", ""), seed.get("shiftUrl", "")
     for source in records:
         c, s = [], []
-        for _, rows in workbook_rows(source["content"], source["suffix"]):
+        for tab, rows in workbook_rows(source["content"], source["suffix"]):
             c.extend(parse_collar(rows))
-            s.extend(parse_shifts(rows))
+            aside, invalid = [], []
+            for item in parse_shifts(rows, aside, invalid):
+                # The structured record keeps the sheet row it came from; its raw report is linked below.
+                item["sheet"] = {"name": source["name"], "tab": tab, "row": item.pop("sheetRow"), "url": source["url"]}
+                s.append(item)
+            for row in aside:
+                key = (row["date"], row["shift"], row["hole"], row["from"], row["to"], row["source"])
+                unassigned.setdefault(key, {**row, "sheet": source["name"], "tab": tab, "url": source["url"]})
+            for row in invalid:
+                rejected.setdefault((row["reason"], row["date"], row["hole"]),
+                                    {**row, "sheet": source["name"], "tab": tab, "url": source["url"]})
         if not c and not s:
             continue
         provenance.append({"name": source["name"], "url": source["url"], "collarRows": len(c), "shiftRows": len(s)})
@@ -983,8 +1098,18 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
                     warnings.append(f"Collar conflict: {h['id']} / {k}; newer file/first row retained")
         for item in s:
             key = (item["rig"], item["date"], item["shift"], item["hole"])
-            if key in shifts and shifts[key] != item:
+            kept = shifts.get(key)
+            differing = {k: [kept[k], item[k]] for k in SHIFT_VALUES if kept and kept[k] != item[k]}
+            if differing:
                 warnings.append(f"Shift conflict: {' / '.join(key)}; newer file retained")
+                conflict = conflicts.setdefault(key, {"rig": key[0], "date": key[1], "shift": key[2], "hole": key[3],
+                                                      "kept": f"{kept['sheet']['name']} / {kept['sheet']['tab']} мөр {kept['sheet']['row']}",
+                                                      "fields": {}, "others": []})
+                for k, values in differing.items():
+                    conflict["fields"].setdefault(k, [values[0]])
+                    if values[1] not in conflict["fields"][k]:
+                        conflict["fields"][k].append(values[1])
+                conflict["others"].append(f"{item['sheet']['name']} / {item['sheet']['tab']} мөр {item['sheet']['row']}")
             shifts.setdefault(key, item)
     if not collar or not shifts:
         raise ValueError("No recognized collar and shift records; previous dashboard data preserved")
@@ -1010,7 +1135,10 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
         raise ValueError("Shift holes missing from collar: " + ", ".join(sorted(unknown)))
     if report_index is None:
         report_index = [report for row in seed.get("shifts", []) for report in row.get("reports", [])]
-    attach_reports(list(shifts.values()), report_index)
+        unlinked = seed.get("unlinkedReports", [])
+        attach_reports(list(shifts.values()), report_index)
+    else:
+        unlinked = attach_reports(list(shifts.values()), report_index)
     for item in shifts.values():
         if 'User default 2026-10-27:' in item.get('notes', ''):
             warnings.append(f"Estimated time: {item['hole']} / {item['date']} / {item['shift']}; blank DT/total uses owner-approved 12 h")
@@ -1025,7 +1153,14 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
             "shifts": sorted(shifts.values(), key=lambda x: (x["date"], x["rig"], x["shift"])),
             "folderMap": folder_map,
             "dataInventory": inventory if inventory is not None else seed.get("dataInventory", {}),
-            "syncWarnings": sorted(set(warnings)), "sources": provenance}
+            "syncWarnings": sorted(set(warnings)), "sources": provenance,
+            # Audit evidence: numeric disagreements between sheets, rows with no known rig, rows that
+            # failed validation (the rest of the sheet still loads) and Drive reports no shift cites.
+            "sourceConflicts": list(conflicts.values()),
+            "unassignedShifts": sorted(unassigned.values(), key=lambda r: (r["date"], r["shift"], r["hole"])),
+            "rejectedShifts": sorted(rejected.values(), key=lambda r: (r["date"], r["hole"], r["reason"])),
+            "unlinkedReports": sorted(({k: r[k] for k in ("hole", "rig", "date", "shift", "name", "url", "folderUrl")}
+                                       for r in unlinked), key=lambda r: (r["hole"], r["date"], r["name"]))}
     if finance is not None:
         data["finance"] = finance
     elif seed.get("finance") is not None:
@@ -1083,6 +1218,24 @@ def publish(data, repository):
     # Retry an earlier unpushed data commit even when the current data is unchanged.
     git("push", "origin", "HEAD:main")
     LOG.info("GitHub data push completed; GitHub Pages deploys the validated commit")
+
+
+def shift_changes(before, after):
+    """Shift records added, removed or changed between two datasets, for the collection log."""
+    def index(data):
+        return {(s["rig"], s["date"], s["shift"], s["hole"]): {k: s.get(k) for k in SHIFT_VALUES} for s in data.get("shifts", [])}
+    old, new = index(before), index(after)
+    label = lambda key: " / ".join(key)
+    result = {"added": sorted(label(k) for k in new.keys() - old.keys()),
+              "removed": sorted(label(k) for k in old.keys() - new.keys()),
+              "changed": sorted(label(k) for k in new.keys() & old.keys() if new[k] != old[k])}
+    return {k: v[:40] for k, v in result.items() if v}
+
+
+def ulaanbaatar_date(moment=None):
+    """Calendar date in Ulaanbaatar; GitHub runners run in UTC, eight hours behind the site."""
+    moment = moment or datetime.now(TZ)
+    return moment.astimezone(TZ).date().isoformat()
 
 
 def finance_shifts(data):
@@ -1161,6 +1314,9 @@ def main():
                                 'Consumption Sheet refresh failed; verified snapshot used (' + type(correction_error).__name__ + ')')))
                     data = apply_corrections(data, correction_config)
                     data = apply_daily_water(data)
+                from shift_audit import build_audit, load_confirmations
+                data["shiftAudit"] = build_audit(data, sorted(RIGS), ulaanbaatar_date(), load_confirmations())
+                trail = shift_changes(seed, data)
                 changed = signature(seed) != signature(data)
                 if not changed:
                     data = seed  # Stable metadata prevents empty periodic commits.
@@ -1169,13 +1325,18 @@ def main():
                 LOG.info("Prepared %d holes, %d shifts, %.2f m; %d source conflicts",
                          len(data["collar"]), len(data["shifts"]),
                          sum(s["meters"] for s in data["shifts"]), len(data["syncWarnings"]))
+                month = data["shiftAudit"]["months"][-1]
                 event.update({"status": "updated" if changed else "unchanged",
                               "completedAt": datetime.now(TZ).isoformat(timespec="seconds"),
                               "files": len(records), "holes": len(data["collar"]),
                               "shifts": len(data["shifts"]),
                               "meters": round(sum(s["meters"] for s in data["shifts"]), 3),
+                              # Audit trail: which shift records this run added, removed or changed.
+                              "changes": trail,
+                              "audit": {"month": month["month"], "expected": month["expected"], **month["counts"]},
                               "note": "; ".join(note for note in (
-                                  f"{len(data['syncWarnings'])} source conflicts" if data["syncWarnings"] else "",
+                                  f"{len(data['sourceConflicts'])} numeric source conflicts" if data.get("sourceConflicts") else "",
+                                  f"{len(data['rejectedShifts'])} rows rejected by validation" if data.get("rejectedShifts") else "",
                                   finance_note) if note)})
                 append_data_log(log_path, event)
                 recorded = True
@@ -1187,6 +1348,10 @@ def main():
                 if not recorded:
                     event.update({"status": "failed", "completedAt": datetime.now(TZ).isoformat(timespec="seconds"),
                                   "error": f"HTTP {e.code}" if isinstance(e, urllib.error.HTTPError) else type(e).__name__})
+                    # Validation messages name the sheet value at fault (hole, date, field); other
+                    # errors may carry request details, so only their type is logged.
+                    if isinstance(e, ValueError):
+                        event["validation"] = str(e)[:300]
                     append_data_log(log_path, event)
                 # Credentials and request URLs are intentionally excluded from logs.
                 LOG.error("Update failed (%s): %s", type(e).__name__,

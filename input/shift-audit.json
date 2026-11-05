@@ -1,0 +1,7 @@
+{
+  "about": "Тайлангүй ээлжид өрөм юу хийснийг (нүүсэн, зогссон, засвар) эзэмшигч нотолгоотой нь бүртгэнэ. status зөвхөн VERIFIED_NON_DRILLING; метр нэмэх, тайлан зохиохыг shift_audit.py зөвшөөрөхгүй, гүний завсартай ээлжид баталгаа хүчингүй. 'example' мөрийг уншдаггүй — 'confirmed' жагсаалтад нэмнэ.",
+  "example": {"rig": "CSD-1300", "date": "2026-10-30", "shift": "Өдөр", "status": "VERIFIED_NON_DRILLING",
+              "reason": "ZHDH2606-аас UGDH2601 руу нүүсэн", "evidence": "Нүүлтийн тэмдэглэл / Drive файлын холбоос",
+              "confirmedBy": "Нэр", "confirmedAt": "2026-11-06"},
+  "confirmed": []
+}
