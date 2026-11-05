@@ -333,10 +333,21 @@ function overviewRows(){
   return shifts().filter(row=>!chartMonth||row.date.startsWith(chartMonth+'-'));
 }
 function overviewPeriodLabel(){return chartMonth?chartMonth.slice(0,4)+' оны '+Number(chartMonth.slice(5))+'-р сар':'Нийт хугацаа';}
+// Metres estimated from depth for unreported shifts (the shift audit) in a month ('' = all), for the rig and
+// area filters: the whole gap for its only unreported shift, an even share of a gap over several.
+function estimatedMetres(month){
+  const ids=new Set(holes().map(h=>h.id)),rig=$('#rig').value;
+  const total=(D.shiftAudit?.slots||[]).filter(s=>(!month||s.date.startsWith(month+'-'))&&(!rig||s.rig===rig))
+    .reduce((n,s)=>n+(s.inferred||[]).filter(i=>ids.has(i.hole)).reduce((k,i)=>k+(i.exact?i.meters:i.meters/i.shifts),0),0);
+  return Math.round(total*10)/10;
+}
 function kpis(){
-  const rows=['overview','rop','utilization'].includes(tab)?overviewRows():shifts(),dt=sum(rows,'dt'),hours=sum(rows,'hours');
-  const cards=[['Тайлант хугацаанд өрөмдсөн',fmt(sum(rows,'meters')),'м','overview'],['Бүртгэлтэй цооног',holes().length,'ш','holes'],['Өрөмдлөгийн ашиглалт',hours?fmt(dt/hours*100):'—','%','utilization'],['Дундаж хурд · ROP',dt?fmt(sum(rows,'meters')/dt,2):'—','м/ц','rop']];
-  return '<div class="kpis">'+cards.map(([label,value,unit,target])=>`<button class="kpi ${tab===target?'selected':''}" data-go="${target}" aria-pressed="${tab===target}"><span class="label">${label}</span><span class="value">${value} <small>${unit}</small></span></button>`).join('')+'</div>';
+  const overview=['overview','rop','utilization'].includes(tab),rows=overview?overviewRows():shifts(),dt=sum(rows,'dt'),hours=sum(rows,'hours');
+  // Drilled metres include the estimates for unreported shifts; ROP and utilisation use reported hours only.
+  const reported=sum(rows,'meters'),estimated=estimatedMetres(overview?chartMonth:'');
+  const cards=[['Тайлант хугацаанд өрөмдсөн',fmt(reported+estimated),'м','overview',estimated?`тайлангаар ${fmt(reported)} м + тайлангүй ээлжид гүнээр ~${fmt(estimated)} м`:''],
+    ['Бүртгэлтэй цооног',holes().length,'ш','holes'],['Өрөмдлөгийн ашиглалт',hours?fmt(dt/hours*100):'—','%','utilization'],['Дундаж хурд · ROP',dt?fmt(reported/dt,2):'—','м/ц','rop']];
+  return '<div class="kpis">'+cards.map(([label,value,unit,target,note])=>`<button class="kpi ${tab===target?'selected':''}" data-go="${target}" aria-pressed="${tab===target}"><span class="label">${label}</span><span class="value">${value} <small>${unit}</small></span>${note?`<span class="note">${note}</span>`:''}</button>`).join('')+'</div>';
 }
 function barPeriod(bar){return (bar.group.start===bar.group.end?bar.group.start:bar.group.start+' – '+bar.group.end)+(grain==='shift'?' · '+(bar.group.secondary==='Ө'?'Өдөр':'Шөнө'):'');}
 function barDifference(bar){const difference=bar.meters-bar.target;return difference<0?'Нормоос дутуу: '+fmt(-difference)+' м':difference>0?'Нормоос давсан: '+fmt(difference)+' м':'Норм биелсэн';}
@@ -411,7 +422,7 @@ function chart(){
   svg+=`<polyline data-target-line="${grain}" points="${points.join(' ')}" fill="none" stroke="#ba5264" stroke-width="1.8" stroke-dasharray="6 4"/>`;
   const last=groups.at(-1);svg+=`<text class="target-label" x="${W-right-3}" y="${y(last.target)-7}" text-anchor="end">Норм ${fmt(last.target)} м</text></svg>`;
   return html+`<div class="chart-canvas" tabindex="0" aria-label="Графикийг хэвтээ гүйлгэж үзэх">${svg}</div>`
-    +(estimated?'<p class="sub chart-note">Цайвар багана — тайлангүй ээлжийн метрийг өмнөх ба дараах тайлангийн гүнээс тооцсон (тайлан биш; KPI-д ороогүй).</p>':'');
+    +(estimated?'<p class="sub chart-note">Цайвар багана — тайлангүй ээлжийн метрийг өмнөх ба дараах тайлангийн гүнээс тооцсон (тайлан биш; «Тайлант хугацаанд өрөмдсөн»-д орсон, ROP ба ашиглалтад ороогүй).</p>':'');
 }
 function rigs(){return selectedRigs().map(rig=>{const rows=overviewRows().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${RIG_COLORS[rig]}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
 function holeTable(){

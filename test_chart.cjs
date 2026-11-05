@@ -93,6 +93,23 @@ for(const month of ['2026-10','2026-11','','2026-10','']){
   assert.ok(kpis.includes(expected.reduce((n,r)=>n+r.meters,0).toLocaleString('en-US',{maximumFractionDigits:1})));
  }
 }
+// The drilled-metres KPI adds the estimates for unreported shifts (from depth) to the reported metres, per month and rig.
+overviewRig='';
+vm.runInContext("chartMonth='2026-10';tab='overview'",overviewContext);
+const estimate=s=>(s.inferred||[]).reduce((n,i)=>n+(i.exact?i.meters:i.meters/i.shifts),0);
+for(const rig of ['', 'C-1800', 'CSD-1300']){
+ overviewRig=rig;
+ const reported=real.shifts.filter(s=>s.date.startsWith('2026-10-')&&(!rig||s.rig===rig)).reduce((n,s)=>n+s.meters,0);
+ const estimated=Math.round(real.shiftAudit.slots.filter(s=>s.date.startsWith('2026-10-')&&(!rig||s.rig===rig)).reduce((n,s)=>n+estimate(s),0)*10)/10;
+ const card=vm.runInContext('kpis()',overviewContext).split('</button>')[0];
+ assert.ok(estimated>0);
+ assert.ok(card.includes(`<span class="value">${(reported+estimated).toLocaleString('en-US',{maximumFractionDigits:1})} <small>м</small></span>`),rig);
+ assert.ok(card.includes(`тайлангаар ${reported.toLocaleString('en-US',{maximumFractionDigits:1})} м + тайлангүй ээлжид гүнээр ~${estimated.toLocaleString('en-US',{maximumFractionDigits:1})} м`),rig);
+ assert.equal(vm.runInContext('estimatedMetres(chartMonth)',overviewContext),estimated);
+}
+overviewRig='';
+assert.equal(vm.runInContext("D={...D,shiftAudit:undefined};estimatedMetres('2026-10')",overviewContext),0,'no audit, nothing estimated');
+vm.runInContext('D=fixture',overviewContext);
 overviewRig='';overviewArea='Харгант';
 assert.ok(vm.runInContext('overviewRows()',overviewContext).every(s=>real.collar.some(h=>h.id===s.hole&&h.targetArea==='Харгант')));
 console.log('Overview month filtering verified: chart, KPIs, rig performance, all-time reset, period grouping and rig/area filters.');
