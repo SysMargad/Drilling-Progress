@@ -1,5 +1,5 @@
 'use strict';
-let logRegister={},D,tab='overview',query='',grain='day',chartMonth='',dataLog=[],logError='',selectedHole=null,chartBars=[];
+let logRegister={},D,tab='overview',query='',grain='day',chartMonth=null,dataLog=[],logError='',selectedHole=null,chartBars=[];
 const $=selector=>document.querySelector(selector);
 const fmt=(n,d=1)=>n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -322,8 +322,15 @@ function renderFinancialTab(){
     </section>
   </div>`;
 }
+function overviewMonths(){return [...new Set(D.shifts.map(row=>row.date.slice(0,7)))].sort().reverse();}
+function overviewRows(){
+  const months=overviewMonths();
+  if(chartMonth===null||(chartMonth&&!months.includes(chartMonth)))chartMonth=months[0]||'';
+  return shifts().filter(row=>!chartMonth||row.date.startsWith(chartMonth+'-'));
+}
+function overviewPeriodLabel(){return chartMonth?chartMonth.slice(0,4)+' оны '+Number(chartMonth.slice(5))+'-р сар':'Нийт хугацаа';}
 function kpis(){
-  const rows=shifts(),dt=sum(rows,'dt'),hours=sum(rows,'hours');
+  const rows=['overview','rop','utilization'].includes(tab)?overviewRows():shifts(),dt=sum(rows,'dt'),hours=sum(rows,'hours');
   const cards=[['Тайлант хугацаанд өрөмдсөн',fmt(sum(rows,'meters')),'м','overview'],['Бүртгэлтэй цооног',holes().length,'ш','holes'],['Өрөмдлөгийн ашиглалт',hours?fmt(dt/hours*100):'—','%','utilization'],['Дундаж хурд · ROP',dt?fmt(sum(rows,'meters')/dt,2):'—','м/ц','rop']];
   return '<div class="kpis">'+cards.map(([label,value,unit,target])=>`<button class="kpi ${tab===target?'selected':''}" data-go="${target}" aria-pressed="${tab===target}"><span class="label">${label}</span><span class="value">${value} <small>${unit}</small></span></button>`).join('')+'</div>';
 }
@@ -353,12 +360,10 @@ window.addEventListener('blur',hideBarTooltip);
 document.addEventListener('keydown',event=>{const bar=event.target.closest('g[data-bar-index]');if(bar&&['Enter',' '].includes(event.key)){event.preventDefault();openBarReports(chartBars[Number(bar.dataset.barIndex)]);}});
 function chart(){
   hideBarTooltip();chartBars=[];
-  const months=[...new Set(D.shifts.map(row=>row.date.slice(0,7)))].sort().reverse();
-  if(!months.includes(chartMonth))chartMonth=months[0]||'';
-  const rows=shifts(),groups=DrillingChart.aggregate(rows,grain,chartMonth),rigs=selectedRigs();
-  const controls=`<div class="chart-controls"><label class="chart-month">Сар <select id="chart-month" aria-label="Гүйцэтгэлийн сар">${months.map(month=>`<option value="${month}"${month===chartMonth?' selected':''}>${month.slice(0,4)} оны ${Number(month.slice(5))}-р сар</option>`).join('')}</select></label><div class="chart-periods" role="group" aria-label="Графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button data-grain="${value}" aria-pressed="${grain===value}">${label}</button>`).join('')}</div></div>`;
+  const rows=overviewRows(),months=overviewMonths(),groups=DrillingChart.aggregate(rows,grain,chartMonth),rigs=selectedRigs();
+  const controls=`<div class="chart-controls"><label class="chart-month">Сар <select id="chart-month" aria-label="Гүйцэтгэлийн сар"><option value=""${chartMonth===''?' selected':''}>Нийт хугацаа</option>${months.map(month=>`<option value="${month}"${month===chartMonth?' selected':''}>${month.slice(0,4)} оны ${Number(month.slice(5))}-р сар</option>`).join('')}</select></label><div class="chart-periods" role="group" aria-label="Графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button data-grain="${value}" aria-pressed="${grain===value}">${label}</button>`).join('')}</div></div>`;
   const targetLabels={shift:'30 м / ээлж / өрөм',day:'60 м / өдөр / өрөм',week:'420 м / 7 хоног / өрөм',month:'60 м × сарын хоног / өрөм'};
-  let html=`<div class="panel-head"><h2>${chartMonth?'Гүйцэтгэл · '+chartMonth.slice(0,4)+' оны '+Number(chartMonth.slice(5))+'-р сар':'Гүйцэтгэл'}</h2>${controls}</div>`;
+  let html=`<div class="panel-head"><h2>Гүйцэтгэл · ${overviewPeriodLabel()}</h2>${controls}</div>`;
   if(!groups.length)return html+'<div class="empty">Ээлжийн өгөгдөл байхгүй.</div>';
   const W=Math.max(600,groups.length*(grain==='shift'?44:48)+90),H=280,left=45,right=18,top=30,bottom=grain==='shift'?58:40,plotH=H-top-bottom,step=(W-left-right)/groups.length;
   const high=Math.max(...groups.map(g=>Math.max(g.target,...Object.values(g.amounts)))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
@@ -388,7 +393,7 @@ function chart(){
   const last=groups.at(-1);svg+=`<text class="target-label" x="${W-right-3}" y="${y(last.target)-7}" text-anchor="end">Норм ${fmt(last.target)} м</text></svg>`;
   return html+`<div class="chart-canvas" tabindex="0" aria-label="Графикийг хэвтээ гүйлгэж үзэх">${svg}</div>`;
 }
-function rigs(){return selectedRigs().map(rig=>{const rows=shifts().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${{'C-1800':'#128875','CSD-1300':'#dc8a3b'}[rig]||RIG_COLORS[rig]}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
+function rigs(){return selectedRigs().map(rig=>{const rows=overviewRows().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${{'C-1800':'#128875','CSD-1300':'#dc8a3b'}[rig]||RIG_COLORS[rig]}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
 function holeTable(){
   const list=holes().filter(h=>h.id.toLowerCase().includes(query.toLowerCase()));
   return '<div class="table-scroll"><table><thead><tr><th>Цооног</th><th>Талбай</th><th>Участик</th><th>Өрөм</th><th>Төлөв</th><th>Төлөвлөсөн</th><th>Ээлжийн гүн</th><th>Collar гүн</th><th>Ахиц</th></tr></thead><tbody>'+list.map(h=>{
@@ -416,7 +421,7 @@ function holeDepthChart(h){
   return html+'<div class="chart-canvas">'+svg+'</div>';
 }
 function shiftTable(){const rows=shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())).sort((a,b)=>b.date.localeCompare(a.date)||a.rig.localeCompare(b.rig));return `<div class="table-scroll"><table><thead><tr><th>Огноо / ээлж</th><th>Өрөм</th><th>Цооног</th><th>Өрөмдөгч</th><th>Гүний интервал</th><th>Метр</th><th>DT / ST цаг</th><th>ROP м/ц</th></tr></thead><tbody>${rows.map(s=>`<tr title="${esc(s.notes)}"><td>${s.date}<br><small>${esc(s.shift)}</small></td><td>${s.rig}</td><td><button class="hole-link" data-hole="${s.hole}">${s.hole}</button></td><td>${esc(s.driller)}</td><td>${fmt(s.from)} – ${fmt(s.to)}</td><td><strong>${fmt(s.meters)}</strong></td><td>${fmt(s.dt)} / ${fmt(s.st)}</td><td>${s.dt?fmt(s.meters/s.dt,2):'—'}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Ээлж олдсонгүй.</td></tr>'}</tbody></table></div>`;}
-function performanceTable(){return `<section class="panel"><h2>${tab==='rop'?'Дундаж хурд · ROP':'Өрөмдлөгийн ашиглалт'}</h2><div class="table-scroll"><table><thead><tr><th>Өрөм</th><th>Өрөмдсөн</th><th>DT цаг</th><th>Нийт цаг</th><th>Ашиглалт</th><th>ROP м/ц</th></tr></thead><tbody>${selectedRigs().map(r=>{const rows=shifts().filter(s=>s.rig===r),dt=sum(rows,'dt'),hours=sum(rows,'hours'),m=sum(rows,'meters');return `<tr><td>${r}</td><td>${fmt(m)} м</td><td>${fmt(dt)}</td><td>${fmt(hours)}</td><td>${hours?fmt(dt/hours*100)+'%':'—'}</td><td>${dt?fmt(m/dt,2):'—'}</td></tr>`;}).join('')}</tbody></table></div></section>`;}
+function performanceTable(){return `<section class="panel"><h2>${tab==='rop'?'Дундаж хурд · ROP':'Өрөмдлөгийн ашиглалт'}</h2><div class="table-scroll"><table><thead><tr><th>Өрөм</th><th>Өрөмдсөн</th><th>DT цаг</th><th>Нийт цаг</th><th>Ашиглалт</th><th>ROP м/ц</th></tr></thead><tbody>${selectedRigs().map(r=>{const rows=overviewRows().filter(s=>s.rig===r),dt=sum(rows,'dt'),hours=sum(rows,'hours'),m=sum(rows,'meters');return `<tr><td>${r}</td><td>${fmt(m)} м</td><td>${fmt(dt)}</td><td>${fmt(hours)}</td><td>${hours?fmt(dt/hours*100)+'%':'—'}</td><td>${dt?fmt(m/dt,2):'—'}</td></tr>`;}).join('')}</tbody></table></div></section>`;}
 function dataRows(){const ids=new Set(holes().map(h=>h.id));return DrillingData.rows(D.collar.filter(h=>ids.has(h.id)),D.shifts,D.dataInventory,D.folderMap,logRegister).filter(r=>r.id.toLowerCase().includes(query.toLowerCase()));}
 const dataLink=(url,html)=>url?`<a class="data-link" href="${esc(url)}" target="_blank" rel="noopener">${html}</a>`:html;
 const dataCell=(html,note='',url='')=>dataLink(url,html)+(note?`<small>${note}</small>`:'');
@@ -513,7 +518,7 @@ function render(){
   if(tab==='financial')content+=renderFinancialTab();
   if(tab==='mapping')content+=renderMapping();
   if(tab==='drilling-data')content+=drillingData();
-  if(tab==='overview')content+='<div class="grid"><section class="panel" id="chart-panel">'+chart()+'</section><section class="panel"><h2>Өрмийн гүйцэтгэл</h2>'+rigs()+'</section></div>';
+  if(tab==='overview')content+='<div class="grid"><section class="panel" id="chart-panel">'+chart()+'</section><section class="panel"><h2>Өрмийн гүйцэтгэл · '+overviewPeriodLabel()+'</h2>'+rigs()+'</section></div>';
   if(tab==='holes')content+='<section class="panel"><div class="panel-head"><h2>Цооногийн ахиц</h2><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="'+esc(query)+'"></div><div id="table">'+holeTable()+'</div></section>';
   if(tab==='shifts')content+='<section class="panel"><div class="panel-head"><h2>Ээлжийн бүртгэл</h2><input class="search" aria-label="Ээлж хайх" placeholder="Цооног, нэр, огноо…" value="'+esc(query)+'"></div><div id="table">'+shiftTable()+'</div></section>';
   if(tab==='rop'||tab==='utilization')content+=performanceTable();if(tab==='sources')content+=sources();if(tab==='data-log')content+=logTable();
@@ -535,7 +540,7 @@ document.addEventListener('click',e=>{
   const hole=e.target.closest('[data-hole]');if(hole)openHole(hole.dataset.hole);if(e.target.closest('#refresh-log'))refreshLog();
   const dataHole=e.target.closest('[data-data-hole]');if(dataHole)openHoleData(dataHole.dataset.dataHole);
 });
-document.addEventListener('change',event=>{if(event.target.id==='chart-month'){chartMonth=event.target.value;$('#chart-panel').innerHTML=chart();}if(event.target.id==='financial-month'){financialMonth=event.target.value;render();}});
+document.addEventListener('change',event=>{if(event.target.id==='chart-month'){chartMonth=event.target.value;render();}if(event.target.id==='financial-month'){financialMonth=event.target.value;render();}});
 for(const selector of ['#site','#area','#rig'])$(selector).addEventListener('change',()=>{selectedHole=null;render();});$('.close').addEventListener('click',()=>$('#detail').close());
 $('#detail').addEventListener('click',e=>{if(e.target===$('#detail')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 $('#export').addEventListener('click',()=>{

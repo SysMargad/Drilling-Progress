@@ -56,3 +56,43 @@ for(const grain of ['shift','day','week','month']){
  }
 }
 console.log('Report provenance preserved across all aggregation periods.');
+
+// Overview chart, KPI cards and rig performance use the same month or all-time rows.
+const fs=require('node:fs'),vm=require('node:vm');
+let overviewRig='',overviewArea='';
+const overviewContext=vm.createContext({DrillingChart:require('./dist/chart-model.js'),document:{
+ addEventListener:()=>{},querySelector:s=>({value:s==='#site'?'Нэргүй Өндөр':s==='#rig'?overviewRig:s==='#area'?overviewArea:'',hidden:true})
+},window:{addEventListener:()=>{}}});
+const appSource=fs.readFileSync('dist/app.js','utf8');
+vm.runInContext(appSource.split('function dataRows()')[0],overviewContext);
+overviewContext.fixture=real;
+vm.runInContext('D=fixture',overviewContext);
+for(const month of ['2026-10','2026-11','','2026-10','']){
+ overviewContext.monthUnderTest=month;
+ vm.runInContext('chartMonth=monthUnderTest',overviewContext);
+ for(const rig of ['', 'C-1800','CSD-1300']){
+  overviewRig=rig;
+  const expected=real.shifts.filter(s=>(!month||s.date.startsWith(month+'-'))&&(!rig||s.rig===rig));
+  const selected=vm.runInContext('overviewRows()',overviewContext);
+  assert.equal(selected.length,expected.length);
+  assert.equal(selected.reduce((n,r)=>n+r.meters,0),expected.reduce((n,r)=>n+r.meters,0));
+  for(const period of ['shift','day','week','month']){
+   overviewContext.periodUnderTest=period;
+   const html=vm.runInContext('grain=periodUnderTest;chart()',overviewContext);
+   const bars=vm.runInContext('chartBars',overviewContext);
+   assert.ok(Math.abs(bars.reduce((n,r)=>n+r.meters,0)-expected.reduce((n,r)=>n+r.meters,0))<1e-6);
+   assert.ok(html.includes('>Нийт хугацаа</option>'));
+   assert.equal(vm.runInContext('chartMonth',overviewContext),month);
+  }
+  const cards=vm.runInContext('rigs()',overviewContext),kpis=vm.runInContext('kpis()',overviewContext);
+  for(const name of rig?[rig]:['C-1800','CSD-1300']){
+   const rows=expected.filter(s=>s.rig===name),meters=rows.reduce((n,r)=>n+r.meters,0);
+   assert.ok(cards.includes(`<span>${meters.toLocaleString('en-US',{maximumFractionDigits:1})} м</span>`));
+   assert.ok(cards.includes(`<span>${rows.length} ээлж</span>`));
+  }
+  assert.ok(kpis.includes(expected.reduce((n,r)=>n+r.meters,0).toLocaleString('en-US',{maximumFractionDigits:1})));
+ }
+}
+overviewRig='';overviewArea='Харгант';
+assert.ok(vm.runInContext('overviewRows()',overviewContext).every(s=>real.collar.some(h=>h.id===s.hole&&h.targetArea==='Харгант')));
+console.log('Overview month filtering verified: chart, KPIs, rig performance, all-time reset, period grouping and rig/area filters.');
