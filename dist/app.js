@@ -429,7 +429,7 @@ const logFileNote=log=>dataLink(log.file.url,'✓ '+esc(log.format))+(log.files.
 function dataTable(){
   if(!D.dataInventory)return '<div class="empty">Drive дээрх файлын жагсаалт хараахан уншигдаагүй. Дараагийн Drive синкээр орно.</div>';
   const list=dataRows();
-  return '<div class="table-scroll"><table class="data-table"><thead><tr><th>Цооног</th><th>Участик</th><th>Өрөмдлөг</th><th>Collar</th><th>Кернийн зураг</th><th>Геологийн лог</th><th>Геотехникийн лог</th><th>pXRF</th><th>Хазайлтын хэмжилт</th><th>Лог хийх боломж</th><th>Лог хийгдсэн эсэх</th></tr></thead><tbody>'+list.map(r=>{
+  return '<div class="table-scroll"><table class="data-table"><thead><tr><th>Цооног</th><th>Участик</th><th>Өрөмдлөг</th><th>Collar</th><th>Кернийн зураг</th><th>pXRF</th><th>Хазайлтын хэмжилт</th><th>Геологийн лог</th><th>Геотехникийн лог</th></tr></thead><tbody>'+list.map(r=>{
     const h=r.hole,state=status(h),g=r.geology,t=r.geotech,p=r.photos;
     const formats=Object.entries(p.formats).map(([format,count])=>format+' '+count).join(' · ');
     const geology=logStatus(g.done)+(g.done?'<small>'+logFileNote(g)+'</small>':g.state==='handwritten'?'<small>'+dataLink(g.url,'Гар бичмэл')+' · '+g.handwritten+' зураг/PDF</small>':g.state==='other'?'<small>'+dataLink(g.url,g.files.length+' файл')+'</small>':'');
@@ -438,21 +438,17 @@ function dataTable(){
       +'<td><span class="badge '+state[1]+'">'+state[0]+'</span><small>'+esc(h.start||'—')+' – '+esc(h.finish||'…')+'</small></td>'
       +'<td>'+(r.collar.depth==null?'—':fmt(r.collar.depth)+' м')+'<small>'+(r.collar.registered?'E/N '+(r.collar.coordinates?'✓':'—')+' · Z '+(r.collar.elevation?'✓':'—'):'Collar-д мөргүй · Drive хавтаснаас бүртгэсэн')+'</small></td>'
       +'<td>'+(p.count?dataCell(p.count+' зураг',esc(formats)+(p.boxes==null?'':' · '+fmt(p.boxes,0)+' хайрцаг'),p.url):dataCell('—',p.boxes==null?'':fmt(p.boxes,0)+' хайрцаг'))+'</td>'
-      +'<td>'+geology+'</td><td>'+geotech+'</td>'
       +'<td>'+(r.pxrf.count?dataCell(r.pxrf.count+' файл','',r.pxrf.url):'—')+'</td>'
       +'<td>'+(r.surveys.count?dataCell(r.surveys.count+' файл','',r.surveys.url):'—')+'</td>'
-      +'<td><span class="badge '+readinessClass(r.readiness.state)+'">'+esc(r.readiness.label)+'</span>'+(r.readiness.missing.length?'<small>Дутуу: '+r.readiness.missing.map(esc).join(', ')+'</small>':'')+'</td>'
-      +'<td><span class="badge '+loggedClass(r)+'">'+esc(r.logged.label)+'</span>'+(r.logged.state==='unknown'?'':'<small>Геологи '+registerText(r.logged.geology)+' · Геотехник '+registerText(r.logged.geotech)+' · XRF '+registerText(r.logged.pxrf)+'</small>')+'</td></tr>';
+      +'<td>'+geology+'</td><td>'+geotech+'</td></tr>';
   }).join('')+'</tbody></table></div>'+(list.length?'':'<div class="empty">Цооног олдсонгүй.</div>');
 }
 function drillingData(){
-  const all=D.dataInventory?dataRows():[],finished=all.filter(r=>r.hole.finish),counts={},logged={};all.forEach(r=>{counts[r.readiness.state]=(counts[r.readiness.state]||0)+1;logged[r.logged.state]=(logged[r.logged.state]||0)+1;});
-  const summary=Object.keys(DrillingData.LABELS).filter(state=>counts[state]).map(state=>`<span class="badge ${readinessClass(state)}">${DrillingData.LABELS[state]}: ${counts[state]}</span>`).join('')
-    +(all.length?'<span class="data-summary-gap"></span>'+['done','partial','none'].filter(state=>logged[state]).map(state=>`<span class="badge ${{done:'',partial:'active',none:'warn'}[state]}">Лог ${DrillingData.LOGGED[state].toLocaleLowerCase()}: ${logged[state]}</span>`).join(''):'')
-    +[['geology','Геологи'],['geotech','Геотехник']].map(([key,title])=>{const done=finished.filter(r=>r[key].done).length;
-      return finished.length?'<span class="data-summary-gap"></span>'+[['done','хийгдсэн',done],['missing','хийгдээгүй',finished.length-done]].filter(([,,count])=>count).map(([style,label,count])=>`<span class="badge log-${style}">${title} ${label}: ${count}</span>`).join(''):'';}).join('');
+  const all=D.dataInventory?dataRows():[],finished=all.filter(r=>r.hole.finish);
+  const summary=finished.length?[['geology','Геологи'],['geotech','Геотехник']].map(([key,title])=>{const done=finished.filter(r=>r[key].done).length;
+    return [['done','хийгдсэн',done],['missing','хийгдээгүй',finished.length-done]].filter(([,,count])=>count).map(([style,label,count])=>`<span class="badge log-${style}">${title} ${label}: ${count}</span>`).join('');}).join('<span class="data-summary-gap"></span>'):'';
   return `<section class="panel"><div class="panel-head"><div><h2>Drilling Data</h2><span class="sub">Лог хийхэд хэрэгтэй дата · бүртгэлтэй ${D.collar.length} цооног</span></div><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="${esc(query)}"></div>${summary?`<div class="data-summary">${summary}</div>`:''}<div id="table">${dataTable()}</div>
-    <p class="sub data-note">Drive дээрх цооногийн хавтсуудын (03 хэмжилт, 04 геологи, 05 зураг, 07 геотехник, 10 pXRF) файлын нэрээр тодорхойлсон; файлын агуулгыг шалгаагүй. Зураг нэг нэрээр нэг тоологдоно (CR2 ба JPG хуулбар нэг зураг). Лог хийхэд collar-ын эцсийн гүн, геотехникийн лог эсвэл Technical Data (хайрцгийн гүн), мөн кернийн зураг (AI лог) эсвэл геологийн лог (нэрэнд нь Log, logging гэх мэт үг орсон файл) хэрэгтэй; хоёулаа байвал геологич + AI давхар лог. 04 / 07 хавтсанд нэрэнд нь log орсон файл байвал геологи / геотехник хийгдсэн (ногоон), үгүй бол хийгдээгүй (улаан); дээрх «хийгдсэн / хийгдээгүй» тоо дууссан цооногоор. «Лог хийгдсэн эсэх» нь collar файлын «Geology log», «Geotechnical log», «XRF Combined log» баганаас (Completed = ✓). Drive-д шинээр үүссэн цооногийн хавтас collar-д мөргүй байсан ч автоматаар бүртгэгдэнэ (12 цаг тутам). Цооног дээр дарж файлуудыг харна.</p></section>`;
+    <p class="sub data-note">Drive дээрх цооногийн хавтсуудын (03 хэмжилт, 04 геологи, 05 зураг, 07 геотехник, 10 pXRF) файлын нэрээр тодорхойлсон; файлын агуулгыг шалгаагүй. Зураг нэг нэрээр нэг тоологдоно (CR2 ба JPG хуулбар нэг зураг). 04 / 07 хавтсанд нэрэнд нь Log, logging гэх мэт үг орсон файл байвал геологи / геотехник хийгдсэн (ногоон), үгүй бол хийгдээгүй (улаан); дээрх «хийгдсэн / хийгдээгүй» тоо дууссан цооногоор. Drive-д шинээр үүссэн цооногийн хавтас collar-д мөргүй байсан ч автоматаар бүртгэгдэнэ (12 цаг тутам). Цооног дээр дарж файлуудыг харна.</p></section>`;
 }
 function openHoleData(id){
   const h=D.collar.find(x=>x.id===id),r=DrillingData.row(h,D.dataInventory,D.shifts.filter(s=>s.hole===id).length,D.folderMap),own=D.dataInventory?.[id]||{};

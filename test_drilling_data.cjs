@@ -108,21 +108,20 @@ vm.runInContext('D=fixture',context);
 let page=vm.runInContext('drillingData()',context);
 assert.equal((page.match(/data-data-hole=/g)||[]).length,collar.length+2);
 for(const h of [...collar,{id:'STDH2601'},{id:'UGDH2602'}])assert.ok(page.includes(`data-data-hole="${h.id}"`));
-assert.ok(page.includes('Геологич + AI: 1'));
-assert.ok(page.includes('Лог хийгдсэн: 1'));
-assert.ok(page.includes('Лог хийгдээгүй: 7'));
+// The table ends with the geological and geotechnical log columns; readiness and the collar register are not columns.
+assert.ok(page.includes('<th>Хазайлтын хэмжилт</th><th>Геологийн лог</th><th>Геотехникийн лог</th></tr>'));
+for(const removed of ['Лог хийх боломж','Лог хийгдсэн эсэх','Геологич + AI','Лог хийгдээгүй'])assert.ok(!page.includes(removed),removed);
 // Logging counted over finished holes: geological logs on Drive for DTDH2606, ZHDH2603, ZHDH2604; geotechnical for DTDH2606 only.
 assert.ok(page.includes('Геологи хийгдсэн: 3'));
 assert.ok(page.includes('Геологи хийгдээгүй: 3'));
 assert.ok(page.includes('Геотехник хийгдсэн: 1'));
 assert.ok(page.includes('Геотехник хийгдээгүй: 5'));
 const cells=id=>page.split(`data-data-hole="${id}"`)[1].split('</tr>')[0].split('<td>');
-assert.ok(cells('DTDH2606')[5].startsWith('<strong class="log-done">Хийгдсэн</strong>'));
-assert.ok(cells('DTDH2602')[5].startsWith('<strong class="log-missing">Хийгдээгүй</strong>'));
-assert.ok(cells('DTDH2602')[6].startsWith('<strong class="log-missing">Хийгдээгүй</strong>'));
-assert.ok(page.includes('Геологи ✓ · Геотехник ✓ · XRF in progress'));
+assert.equal(cells('DTDH2606').length,9);
+assert.ok(cells('DTDH2606')[7].startsWith('<strong class="log-done">Хийгдсэн</strong>'));
+assert.ok(cells('DTDH2602')[7].startsWith('<strong class="log-missing">Хийгдээгүй</strong>'));
+assert.ok(cells('DTDH2602')[8].startsWith('<strong class="log-missing">Хийгдээгүй</strong>'));
 assert.ok(page.includes('Drive хавтаснаас бүртгэсэн'));
-assert.ok(page.includes('Лог хийгдсэн эсэх'));
 assert.deepEqual([...vm.runInContext('areaList(D.collar)',context)],['Дорнын Төмөр','Замт Хөндий','Уртын гол','Сант']);
 area='Сант';page=vm.runInContext('drillingData()',context);
 assert.equal((page.match(/data-data-hole=/g)||[]).length,1);
