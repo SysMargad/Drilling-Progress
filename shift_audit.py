@@ -34,17 +34,26 @@ def months_between(first, last):
 
 
 def load_confirmations(path=CONFIG):
-    """Owner confirmations for slots without a report (rig move, standby), with their evidence."""
+    """Owner confirmations, each with its evidence: `confirmed` slots without a report (rig move, standby)
+    and `reports` that reached the owner but not the hole's Drive folder, with the depths they state."""
     if not Path(path).exists():
-        return []
-    confirmed = json.loads(Path(path).read_text(encoding='utf-8')).get('confirmed', [])
+        return {'confirmed': [], 'reports': []}
+    config = json.loads(Path(path).read_text(encoding='utf-8'))
+    confirmed, reports = config.get('confirmed', []), config.get('reports', [])
     for row in confirmed:
         if row.get('status') != 'VERIFIED_NON_DRILLING' or row.get('shift') not in SHIFTS:
             raise ValueError('Shift audit confirmations may only record verified non-drilling shifts')
         if not all(str(row.get(key, '')).strip() for key in ('rig', 'date', 'reason', 'evidence', 'confirmedBy', 'confirmedAt')):
             raise ValueError('Shift audit confirmation needs rig, date, reason, evidence, confirmedBy and confirmedAt')
         Date.fromisoformat(row['date'])
-    return confirmed
+    for row in reports:
+        if row.get('shift') not in SHIFTS or not all(str(row.get(key, '')).strip() for key in
+                                                     ('rig', 'date', 'hole', 'source', 'evidence', 'confirmedBy', 'confirmedAt')):
+            raise ValueError('A confirmed report needs rig, date, shift, hole, source, evidence, confirmedBy and confirmedAt')
+        if not all(isinstance(row.get(key), (int, float)) for key in ('from', 'to')) or row['to'] < row['from']:
+            raise ValueError('A confirmed report states the depths it covers (from <= to)')
+        Date.fromisoformat(row['date'])
+    return {'confirmed': confirmed, 'reports': reports}
 
 
 def daily_folder(data, hole):
@@ -56,12 +65,12 @@ def daily_folder(data, hole):
 def evidence(record):
     if record.get('reports'):
         return 'report'
-    if record.get('origin') == 'photo-records':
+    if record.get('origin') == 'photo-records' or record.get('ownerReport'):
         return 'owner'
     return 'sheet' if str(record.get('source', '')).strip() else ''
 
 
-def build_audit(data, rigs, through, confirmations=()):
+def build_audit(data, rigs, through, confirmations=None):
     """Classify every rig-shift slot from the first shift month through `through` (YYYY-MM-DD)."""
     shifts = [s for s in data['shifts'] if s['rig'] in rigs]
     through_day = Date.fromisoformat(through)
@@ -226,7 +235,24 @@ def build_audit(data, rigs, through, confirmations=()):
                       'SOURCE_CONFLICT' if slot['records'] else None)
                 slot.setdefault('driveReports', []).append({'name': report['name'], 'url': report['url']})
 
-    confirmed = {(c['rig'], c['date'], c['shift']): c for c in confirmations}
+    # A report the owner received is evidence for the sheet row only when the row states the same depths.
+    for report in (confirmations or {}).get('reports', []):
+        slot = slots.get((report['rig'], report['date'], report['shift']))
+        if not slot:
+            continue
+        stated = f'{report["hole"]} {m(report["from"])}–{m(report["to"])} м ({report["source"]})'
+        record = next((r for r in slot['records'] if r['hole'] == report['hole']), None)
+        if record is None:
+            slot['holes'].add(report['hole'])
+            issue(slot, 'confirmation', f'Эзэмшигч тайлан ирснийг баталсан: {stated} — хүснэгтэд мөр алга', 'MISSING_REPORT')
+        elif abs(record['from'] - report['from']) <= TOLERANCE and abs(record['to'] - report['to']) <= TOLERANCE:
+            record['ownerReport'] = report
+            issue(slot, 'confirmation', f'Эзэмшигч баталгаажуулсан эх тайлан: {stated} — {report["evidence"]} '
+                  f'({report["confirmedBy"]}, {report["confirmedAt"]})')
+        else:
+            issue(slot, 'confirmation', f'Эзэмшигчийн баталсан тайлан {stated}, хүснэгтэд {m(record["from"])}–{m(record["to"])} м', 'SOURCE_CONFLICT')
+
+    confirmed = {(c['rig'], c['date'], c['shift']): c for c in (confirmations or {}).get('confirmed', [])}
     for rig in rigs:
         for slot in by_rig[rig]:
             if slot['records']:

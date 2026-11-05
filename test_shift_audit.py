@@ -88,6 +88,30 @@ class ShiftAuditTests(unittest.TestCase):
         self.assertEqual(confirmed['status'], 'VERIFIED_NON_DRILLING')
         self.assertIn('WhatsApp зураг (Owner, 2026-11-05)', confirmed['issues'][0]['text'])
 
+    def test_report_received_by_the_owner_verifies_a_row_only_at_the_same_depths(self):
+        report = lambda day, name, start, end, source: {'rig': 'C-1800', 'date': day, 'shift': name, 'hole': 'A', 'from': start, 'to': end,
+                                                        'source': source, 'evidence': 'Зураг эзэмшигчид ирсэн', 'confirmedBy': 'Owner', 'confirmedAt': '2026-11-05'}
+        shifts = [shift('C-1800', '2026-10-29', 'Шөнө', 'A', 395, 428), shift('C-1800', '2026-10-30', 'Шөнө', 'A', 431, 446, reports=[], source='ffff5.jpg'),
+                  shift('C-1800', '2026-10-31', 'Өдөр', 'A', 446, 461, reports=[], source='ffff6.jpg'),
+                  shift('C-1800', '2026-10-31', 'Шөнө', 'A', 461, 470, reports=[], source='ffff7.jpg')]
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'shift-audit.json'
+            path.write_text(json.dumps({'reports': [report('2026-10-30', 'Шөнө', 431, 446, 'ffff5.jpg'), report('2026-10-31', 'Өдөр', 446, 461, 'ffff6.jpg'),
+                                                    report('2026-10-31', 'Шөнө', 461, 475, 'ffff7.jpg'), report('2026-10-30', 'Өдөр', 428, 431, 'ffff4.jpg')]}), encoding='utf-8')
+            confirmations = load_confirmations(path)
+            path.write_text(json.dumps({'reports': [{**report('2026-10-30', 'Шөнө', 431, 446, 'x'), 'to': None}]}), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'depths'):
+                load_confirmations(path)
+        result = build_audit({'shifts': shifts, 'collar': [hole('A')]}, RIGS, '2026-10-31', confirmations)
+        for day, name in (('2026-10-30', 'Шөнө'), ('2026-10-31', 'Өдөр')):
+            confirmed = slot(result, 'C-1800', day, name)
+            self.assertEqual((confirmed['status'], confirmed['records'][0]['evidence']), ('VERIFIED_DRILLING', 'owner'))
+        self.assertIn('хүснэгтэд 461–470 м', ' '.join(i['text'] for i in slot(result, 'C-1800', '2026-10-31', 'Шөнө')['issues']))
+        self.assertEqual(slot(result, 'C-1800', '2026-10-31', 'Шөнө')['status'], 'SOURCE_CONFLICT')
+        received = slot(result, 'C-1800', '2026-10-30', 'Өдөр')
+        self.assertEqual((received['status'], received['meters']), ('MISSING_REPORT', None), 'a report never becomes metres without its sheet row')
+        self.assertTrue(any('хүснэгтэд мөр алга' in i['text'] for i in received['issues']))
+
     def test_hole_change_within_a_shift_is_a_transition_not_an_error(self):
         result = audit([shift('C-1800', '2026-10-10', 'Өдөр', 'A', 370, 374), shift('C-1800', '2026-10-10', 'Өдөр', 'B', 0, 5)],
                        [hole('A', start='2026-09-27', finish='2026-10-10', depth=374), hole('B', start='2026-10-10')])

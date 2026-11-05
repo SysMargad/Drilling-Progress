@@ -8,12 +8,12 @@ import json
 import unittest
 from pathlib import Path
 
-from shift_audit import build_audit
+from shift_audit import build_audit, load_confirmations
 
 ROOT = Path(__file__).resolve().parent
 DATA = json.loads((ROOT / 'dist' / 'data.json').read_text(encoding='utf-8'))
 # Later reports (e.g. the first UGDH2601 shift on 1 November) decide October's last slots, so audit through the data.
-AUDIT = build_audit(DATA, ('C-1800', 'CSD-1300'), max(s['date'] for s in DATA['shifts']))
+AUDIT = build_audit(DATA, ('C-1800', 'CSD-1300'), max(s['date'] for s in DATA['shifts']), load_confirmations())
 
 
 def slot(rig, day, name):
@@ -81,6 +81,15 @@ class OctoberAuditTests(unittest.TestCase):
         self.assertEqual([(r['hole'], r['from'], r['to']) for r in night['records']], [('ZHDH2604', 395, 428)])
         self.assertIn('428–431 м', texts(slot('C-1800', 30, 'Өдөр')))
         self.assertEqual(slot('C-1800', 31, 'Шөнө')['status'], 'MISSING_REPORT')
+
+    def test_zhdh2604_reports_of_30_and_31_october_received_by_the_owner(self):
+        # 2026-11-05: the 30 Oct night (ffff5.jpg) and 31 Oct day (ffff6.jpg) reports reached the owner, not Drive;
+        # depth runs 431 -> 446 -> 461 m. The 30 Oct day and 31 Oct night shifts are still without a report.
+        chain = [slot('C-1800', 30, 'Шөнө'), slot('C-1800', 31, 'Өдөр')]
+        self.assertEqual([(r['from'], r['to'], r['evidence']) for s in chain for r in s['records']], [(431, 446, 'owner'), (446, 461, 'owner')])
+        self.assertEqual([s['status'] for s in chain], ['VERIFIED_DRILLING'] * 2)
+        self.assertEqual((slot('C-1800', 30, 'Өдөр')['status'], slot('C-1800', 30, 'Өдөр')['meters']), ('MISSING_REPORT', None))
+        self.assertIn('ZHDH2604: 461–500 м (39 м) тайлангүй', texts(slot('C-1800', 31, 'Шөнө')))
 
     def test_csd1300_end_of_month_move_and_ugdh2601_start(self):
         for day, name in ((29, 'Шөнө'), (30, 'Өдөр'), (30, 'Шөнө')):
