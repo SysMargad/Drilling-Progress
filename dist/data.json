@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-05",
-  "updatedAt": "2026-11-05T03:34:15+08:00",
-  "period": "2026-10-01 – 2026-11-03",
+  "updatedAt": "2026-11-05T10:21:48+08:00",
+  "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
@@ -2899,6 +2899,35 @@
           "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
         }
       ]
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261104_d_STDH2601_C-1800.jpg",
+      "date": "2026-11-04",
+      "shift": "Өдөр",
+      "driller": "Баттөр (зурагт бичигдсэн; овог тодорхойгүй)",
+      "hole": "STDH2601",
+      "from": 18.0,
+      "to": 27.0,
+      "meters": 9.0,
+      "st": 5.0,
+      "rt": null,
+      "dt": 4.0,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг 18–27 м (9 м). Casing PQ 12–24 м (12 м). Цагийн задаргаа баталгаажсан: PT=1, RP=2 (Casing/Rod run-pull), ST=5, DT=4; нийт 12 цаг. Материал: shoe bit 1, bit 1, polymer 1, bentonite 2 (нэгж тодорхойгүй). Тайлбар: цооног нуралттай, casing суулгаж өрөмдсөн гэж тэмдэглэсэн.",
+      "waterUsageM3": null,
+      "reports": [
+        {
+          "hole": "STDH2601",
+          "rig": "C-1800",
+          "date": "2026-11-04",
+          "shift": "Өдөр",
+          "name": "20261104_d_STDH2601_C-1800.jpg",
+          "url": "https://drive.google.com/file/d/1GCZ5kKbdl7_i9TVwEv44cvPUd8wY4bZG/view?usp=drivesdk",
+          "fileId": "1GCZ5kKbdl7_i9TVwEv44cvPUd8wY4bZG",
+          "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+        }
+      ]
     }
   ],
   "folderMap": {
@@ -5273,6 +5302,7 @@
     "Unreported time codes: DTDH2606 / 2026-10-17 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-18 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-03 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: STDH2601 / 2026-11-04 / Өдөр / RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-11-02 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-11-02 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-19 / Шөнө / ST, RT; preserved as null",
@@ -5325,16 +5355,16 @@
   ],
   "sources": [
     {
+      "name": "STDH2601 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 2
+    },
+    {
       "name": "NUDH_COLLAR.xlsx",
       "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
       "collarRows": 20,
       "shiftRows": 0
-    },
-    {
-      "name": "STDH2601 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 1
     },
     {
       "name": "UGDH2601 - Drilling Shift Report Table",
