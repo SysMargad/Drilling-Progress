@@ -616,6 +616,41 @@
       "shifts": 109,
       "meters": 3092.3,
       "note": "77 source conflicts"
+    },
+    {
+      "id": "0c855ded-3ffe-4f68-9fd4-8301c9348aed",
+      "source": "drive",
+      "startedAt": "2026-11-05T17:37:30+08:00",
+      "status": "updated",
+      "completedAt": "2026-11-05T17:39:41+08:00",
+      "files": 15,
+      "holes": 17,
+      "shifts": 109,
+      "meters": 3092.3,
+      "changes": {
+        "added": [
+          "C-1800 / 2026-10-16 / Шөнө / ZHDH2602",
+          "C-1800 / 2026-10-17 / Шөнө / ZHDH2602",
+          "C-1800 / 2026-10-17 / Өдөр / ZHDH2602",
+          "C-1800 / 2026-10-18 / Шөнө / ZHDH2602"
+        ],
+        "removed": [
+          "C-1800 / 2026-10-16 / Шөнө / ZHDH2612",
+          "C-1800 / 2026-10-17 / Шөнө / ZHDH2612",
+          "C-1800 / 2026-10-17 / Өдөр / ZHDH2612",
+          "C-1800 / 2026-10-18 / Шөнө / DTDH2602"
+        ]
+      },
+      "audit": {
+        "month": "2026-11",
+        "expected": 20,
+        "VERIFIED_DRILLING": 6,
+        "VERIFIED_NON_DRILLING": 0,
+        "MISSING_REPORT": 4,
+        "SOURCE_CONFLICT": 0,
+        "UNVERIFIED": 10
+      },
+      "note": ""
     }
   ]
 }
