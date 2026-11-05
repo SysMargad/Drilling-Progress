@@ -36,7 +36,7 @@
     const technical=geotechLog?null:geotechFiles.find(f=>DATA_FILE.test(f.name))||null;
     const handwritten=geologyFiles.filter(f=>HANDWRITTEN.test(f.name));
     const geology={url:section('geological')?.url||'',files:geologyFiles,file:geologyLog,format:geologyLog?format(geologyLog):'',
-      state:geologyLog?'log':handwritten.length?'handwritten':geologyFiles.length?'other':'none',handwritten:handwritten.length};
+      state:geologyLog?'log':handwritten.length?'handwritten':geologyFiles.length?'other':'none',handwritten:handwritten.length,done:!!geologyLog};
     const geotech={url:section('geotechnical')?.url||'',files:geotechFiles,file:geotechLog||technical,format:geotechLog?format(geotechLog):'',
       state:geotechLog?'log':technical?'technical':'none',done:!!geotechLog};
     const photos={url:section('photos')?.url||'',count:section('photos')?.count||0,formats:section('photos')?.formats||{},

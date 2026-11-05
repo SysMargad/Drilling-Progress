@@ -6,7 +6,7 @@ vm.runInContext(fs.readFileSync('dist/app.js','utf8').split('function kpis()')[0
 const data={collar:[{id:'X',site:'Нэргүй Өндөр'}],shifts:[{date:'2026-10-01',rig:'C-1800',shift:'Өдөр',hole:'X',meters:10}],finance:{period:'2026-10',rigShifts:[]}};
 for(const day of ['01','02'])for(const rig of ['C-1800','CSD-1300'])for(const shift of ['Өдөр','Шөнө'])data.finance.rigShifts.push({date:`2026-10-${day}`,rig,shift,laborCost:100,foodCost:50,incentiveCost:25,bonusCost:day==='01'&&rig==='C-1800'&&shift==='Өдөр'?200:0});
 context.fixture=data;
-vm.runInContext('D=fixture',context);
+vm.runInContext('D=fixture;financialMonth=D.finance.period',context);
 for(const grain of ['shift','day','week','month']){
  context.grainUnderTest=grain;
  const rows=vm.runInContext('financialRows(grainUnderTest)',context);
@@ -51,8 +51,9 @@ assert.deepEqual(detailDates,[...detailDates].sort().reverse(),'details table li
 console.log('Consumption dashboard verified: four periods, rig filter, details and chart consistency.');
 
 selectedRig='';
+// Sources reconcile within the finance month; the page itself opens on the latest month.
 context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
-vm.runInContext('D=fixture',context);
+vm.runInContext('D=fixture;financialMonth=D.finance.period',context);
 const confirmed=context.fixture.finance.mud,confirmedKg=confirmed.totalBags*confirmed.bagKg,confirmedCost=confirmed.totalBags*confirmed.pricePerBag;
 for(const period of ['shift','day','week','month']){
  context.grainUnderTest=period;
@@ -121,7 +122,7 @@ for(const rig of ['', 'C-1800', 'CSD-1300']){
  const expected=context.fixture.shifts.filter(r=>r.date.startsWith(context.fixture.finance.period)&&(!rig||r.rig===rig)).reduce((n,r)=>n+r.meters*diamond.ratePerMeter,0);
  for(const period of ['shift','day','week','month']){
   context.grainUnderTest=period;
-  vm.runInContext('D=fixture',context);
+  vm.runInContext('D=fixture;financialMonth=D.finance.period',context);
   const rows=vm.runInContext('financialRows(grainUnderTest)',context);
   near(rows.reduce((n,r)=>n+r.diamondCost,0),expected);
   for(const row of rows)near(row.totalCost,row.allCosts.reduce((n,c)=>n+c.value,0));
@@ -133,7 +134,7 @@ for(const rig of ['', 'C-1800', 'CSD-1300']){
  }
 }
 selectedRig='';
-vm.runInContext('D=fixture',context);
+vm.runInContext('D=fixture;financialMonth=D.finance.period',context);
 const withDiamond=vm.runInContext("financialRows('month').reduce((n,r)=>n+r.totalCost,0)",context);
 delete context.fixture.finance.diamond;
 const withoutDiamond=vm.runInContext("financialRows('month').reduce((n,r)=>n+r.totalCost,0)",context);
@@ -148,7 +149,7 @@ assert.ok(split.filter(r=>!r.meters).every(r=>r.diamondCost===0));
 console.log('Diamond estimates reconcile across four periods and both rigs; totals include them exactly once; split shifts and zero metres verified.');
 
 context.fixture=JSON.parse(fs.readFileSync('dist/data.json','utf8'));
-vm.runInContext('D=fixture',context);
+vm.runInContext('D=fixture;financialMonth=D.finance.period',context);
 for(const rig of ['', 'C-1800','CSD-1300']){
  selectedRig=rig;
  const expectedWater=[...context.fixture.finance.water.records,...(context.fixture.finance.water.dailyRecords||[])].filter(r=>!rig||r.rig===rig).reduce((n,r)=>n+r.litres,0);
@@ -176,9 +177,14 @@ vm.runInContext("D=fixture;financialMonth='2026-11'",context);
 let monthHtml=vm.runInContext('renderFinancialTab()',context);
 assert.ok(monthHtml.includes('value="2026-10"'));
 assert.ok(monthHtml.includes('value="2026-11" selected'));
-assert.ok(monthHtml.includes('2026-11 сарын санхүүгийн эх өгөгдөл синк хийгдээгүй'));
+assert.ok(monthHtml.includes('2026-11 сарын ирц (цалин, хоол) Drive-д ороогүй тул ₮/м тооцох боломжгүй'));
 assert.ok(!monthHtml.includes('rig-cost-line'));
-assert.ok(!monthHtml.includes('Нийт зардал (₮)'));
+// The month without payroll still lists its drilling; the costs it lacks say so instead of ₮0.
+assert.ok(monthHtml.includes('<div class="label">Нийт өрөмдсөн метр (м)</div><div class="value">20</div>'));
+assert.ok(monthHtml.includes('<div class="label">Нийт зардал (₮)</div><div class="value">—</div>'));
+assert.ok(monthHtml.includes('<span>Үндсэн цалин</span><strong>Эх сурвалж синк хийгдээгүй</strong>'));
+assert.ok(monthHtml.includes('data-label="Хугацаа">2026-11-01'));
+assert.ok(!monthHtml.includes('data-label="Хугацаа">2026-10-31'));
 for(const period of ['shift','day','week','month']){
  context.grainUnderTest=period;
  const monthRows=vm.runInContext('financialRows(grainUnderTest)',context);
@@ -202,6 +208,19 @@ for(const period of ['shift','day','week','month']){
  near(monthRows.reduce((n,r)=>n+r.drilledMeters,0),20);
  near(monthRows.reduce((n,r)=>n+r.totalCost,0),275);
 }
+// A month whose fuel ledger has no days yet: fuel is unknown, not ₮0, so ₮/м waits for it.
+context.fixture.finance.fuel={daily:[{date:'2026-10-31',litres:10,cost:54000}],allocations:[{date:'2026-10-31',rig:'C-1800',shift:'Өдөр',hole:'X',litres:10,cost:54000}]};
+assert.ok(vm.runInContext("financialRows('month')",context).every(r=>r.fuelCost===null&&r.totalCost===null));
+monthHtml=vm.runInContext('renderFinancialTab()',context);
+assert.ok(monthHtml.includes('2026-11 сарын түлшний бүртгэл Drive-д ороогүй'));
+assert.ok(monthHtml.includes('<span>Түлш</span><strong>Эх сурвалж синк хийгдээгүй</strong>'));
+vm.runInContext("financialMonth='2026-10'",context);
+assert.ok(vm.runInContext("financialRows('month')",context).every(r=>r.fuelCost!==null));
+delete context.fixture.finance.fuel;
+// The page opens on the latest month, as the overview chart does.
+vm.runInContext("financialMonth=''",context);
+assert.equal(vm.runInContext('selectedFinancialMonth()',context),'2026-11');
+vm.runInContext("financialMonth='2026-11'",context);
 selectedRig='CSD-1300';
 assert.ok(vm.runInContext('renderFinancialTab()',context).includes('id="financial-month"'));
 selectedRig='';

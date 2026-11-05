@@ -20,8 +20,17 @@ function depth(id){const rows=D.shifts.filter(s=>s.hole===id);return rows.length
 function status(h){if(h.finish)return ['Дууссан',''];if(D.shifts.some(s=>s.hole===h.id))return ['Өрөмдөж байна','active'];return ['Төлөвлөсөн','planned'];}
 let financialGrain='shift',financialMonth='';
 function financialMonths(){return [...new Set([...D.shifts.map(row=>row.date.slice(0,7)),D.finance?.period].filter(Boolean))].sort().reverse();}
-function selectedFinancialMonth(){return financialMonth||D.finance?.period||financialMonths()[0]||'';}
-function financialFinance(){return D.finance?.period===selectedFinancialMonth()?D.finance:null;}
+// The latest month opens first, as on the overview chart.
+function selectedFinancialMonth(){return financialMonth||financialMonths()[0]||'';}
+// Each source covers its own dates: attendance (labour, food) one month, fuel and water their ledger days, the diamond
+// estimate every metre. A month without attendance or fuel still shows its metres and the costs it has; ₮/м needs both.
+function financialFinance(){
+  const finance=D.finance,month=selectedFinancialMonth(),inMonth=row=>row.date.startsWith(month+'-'),fuel=finance?.fuel;
+  if(!finance)return null;
+  return {...finance,attendance:finance.period===month&&Array.isArray(finance.rigShifts),fuelMissing:!!fuel&&!(fuel.daily||[]).some(inMonth),
+    fuel:fuel&&{...fuel,daily:(fuel.daily||[]).filter(inMonth),allocations:(fuel.allocations||[]).filter(inMonth),coverage:(fuel.coverage||[]).filter(inMonth)}};
+}
+const financialMissing=finance=>[finance.attendance?'':'ирц (цалин, хоол)',finance.fuelMissing?'түлшний бүртгэл':''].filter(Boolean);
 function financialControls(){
   return `<div class="chart-controls"><label class="chart-month">Сар <select id="financial-month" aria-label="Санхүүгийн сар">${financialMonths().map(month=>`<option value="${month}"${month===selectedFinancialMonth()?' selected':''}>${month.slice(0,4)} оны ${Number(month.slice(5))}-р сар</option>`).join('')}</select></label><div class="chart-periods" role="group" aria-label="Санхүүгийн графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button class="chart-period-button ${financialGrain===value?'active':''}" data-financial-grain="${value}" aria-pressed="${financialGrain===value}">${label}</button>`).join('')}</div></div>`;
 }
@@ -37,7 +46,7 @@ function financialWater(){
 function financialRows(grain=financialGrain){
   const finance=financialFinance();
   if(!D||!D.shifts?.length)return [];
-  const financeAvailable=Boolean(finance?.period&&Array.isArray(finance.rigShifts));
+  const financeAvailable=Boolean(finance?.attendance),fuelMissing=Boolean(finance?.fuelMissing),costsComplete=financeAvailable&&!fuelMissing;
   const rigs=selectedRigs(FINANCE_RIGS);
   const operationRows=shifts().filter(row=>row.date.startsWith(selectedFinancialMonth()+'-'));
   const sourceRows=DrillingCosts.records(operationRows,rigs,finance?.mud,finance?.fuel,finance?.diamond,financialWater());
@@ -96,7 +105,7 @@ function financialRows(grain=financialGrain){
   const sortedEntries=[...groupMap.entries()].sort(([,a],[,b])=>a.date.localeCompare(b.date)||(a.shiftOrder??0)-(b.shiftOrder??0));
   for(let i=0;i<sortedEntries.length;i++){
     const [date,entry]=sortedEntries[i];
-    const totalCost=financeAvailable?entry.fuelCost+entry.mudCost+entry.diamondCost+entry.laborCost+entry.foodCost+entry.bonusCost+entry.incentiveCost:null;
+    const totalCost=costsComplete?entry.fuelCost+entry.mudCost+entry.diamondCost+entry.laborCost+entry.foodCost+entry.bonusCost+entry.incentiveCost:null;
     const dailyCostPerMeter=totalCost!=null&&entry.drilledMeters>0?totalCost/entry.drilledMeters:null;
     if(totalCost!=null)runningCost += totalCost;
     runningMeters += entry.drilledMeters;
@@ -105,7 +114,7 @@ function financialRows(grain=financialGrain){
       period:date,
       periodEnd:entry.endDate,
       drilledMeters:entry.drilledMeters,
-      fuelCost:entry.fuelCost,
+      fuelCost:fuelMissing?null:entry.fuelCost,
       mudCost:entry.mudCost,diamondCost:entry.diamondCost,
       fuelUsageL:entry.fuelUsageL,fuelRecords:entry.fuelRecords,mudUsageKg:entry.mudUsageKg,mudUsageBags:entry.mudUsageBags,
       waterUsageM3:entry.waterUsageKnown&&entry.waterUsageRecords>0?entry.waterUsageM3:null,waterKnownRecords:entry.waterKnownRecords,waterKnownLitres:entry.waterKnownLitres,waterPartial:!entry.waterUsageKnown,waterEstimated:entry.waterEstimated,
@@ -115,14 +124,14 @@ function financialRows(grain=financialGrain){
       incentiveCost:financeAvailable?entry.incentiveCost:null,
       totalCost,
       dailyCostPerMeter,
-      cumulativeCostPerMeter:financeAvailable&&runningMeters>0?runningCost/runningMeters:null,
-      completion:financeAvailable?'AGGREGATED':'MISSING',
-      note:financeAvailable?'':'Цалин, хоолны эх сурвалж синк хийгдээгүй',
+      cumulativeCostPerMeter:costsComplete&&runningMeters>0?runningCost/runningMeters:null,
+      completion:costsComplete?'AGGREGATED':'MISSING',
+      note:costsComplete?'':financialMissing(finance||{}).join(', ')+' синк хийгдээгүй',
       rigs:[...entry.rigs].join(', '),
       shifts:entry.shifts.size,
       shiftLabel:[...entry.shiftLabels].join(', '),
       holes:[...entry.holes].join(', '),
-      allCosts: [{key:'fuelCost',label:'Түлш',value:entry.fuelCost},{key:'mudCost',label:'Өрөмдлөгийн шавар',value:entry.mudCost},{key:'diamondCost',label:'Алмазан хошуу + reaming shell (тооцоот)',value:entry.diamondCost},{key:'laborCost',label:'Цалин',value:financeAvailable?entry.laborCost:null},{key:'foodCost',label:'Хоол',value:financeAvailable?entry.foodCost:null},{key:'bonusCost',label:'Метрийн бонус',value:financeAvailable?entry.bonusCost:null},{key:'incentiveCost',label:'Урамшуулал',value:financeAvailable?entry.incentiveCost:null}],
+      allCosts: [{key:'fuelCost',label:'Түлш',value:fuelMissing?null:entry.fuelCost},{key:'mudCost',label:'Өрөмдлөгийн шавар',value:entry.mudCost},{key:'diamondCost',label:'Алмазан хошуу + reaming shell (тооцоот)',value:entry.diamondCost},{key:'laborCost',label:'Цалин',value:financeAvailable?entry.laborCost:null},{key:'foodCost',label:'Хоол',value:financeAvailable?entry.foodCost:null},{key:'bonusCost',label:'Метрийн бонус',value:financeAvailable?entry.bonusCost:null},{key:'incentiveCost',label:'Урамшуулал',value:financeAvailable?entry.incentiveCost:null}],
     });
   }
   let previous=null;
@@ -135,7 +144,7 @@ function financialRows(grain=financialGrain){
 }
 function financialRigSeries(grain=financialGrain){
   const finance=financialFinance();
-  const financeAvailable=Boolean(finance?.period&&Array.isArray(finance.rigShifts));
+  const financeAvailable=Boolean(finance?.attendance),costsComplete=financeAvailable&&!finance?.fuelMissing;
   const rigs=selectedRigs(FINANCE_RIGS);
   const operationRows=shifts().filter(row=>row.date.startsWith(selectedFinancialMonth()+'-'));
   const sourceRows=DrillingCosts.records(operationRows,rigs,finance?.mud,finance?.fuel,finance?.diamond,financialWater()),groups=new Map();
@@ -193,11 +202,11 @@ function financialRigSeries(grain=financialGrain){
       const row=groups.get(`${period.key}|${rig}`);
       if(!row)return {key:period.key,date:period.date,shift:period.shift,rig,value:null,cumulative:null,meters:0};
       const cost=row.fuelCost+row.mudCost+row.diamondCost+row.laborCost+row.foodCost+row.bonusCost+row.incentiveCost;
-      if(financeAvailable)runningCost+=cost;
+      if(costsComplete)runningCost+=cost;
       runningMeters+=row.meters;
       return {
-        key:period.key,date:row.date,shift:row.shift,rig,value:financeAvailable&&row.meters?cost/row.meters:null,
-        cumulative:financeAvailable&&runningMeters?runningCost/runningMeters:null,meters:row.meters,
+        key:period.key,date:row.date,shift:row.shift,rig,value:costsComplete&&row.meters?cost/row.meters:null,
+        cumulative:costsComplete&&runningMeters?runningCost/runningMeters:null,meters:row.meters,
         fuelCost:row.fuelCost,mudCost:row.mudCost,diamondCost:row.diamondCost,fuelUsageL:row.fuelUsageL,fuelRecords:row.fuelRecords,mudUsageKg:row.mudUsageKg,mudUsageBags:row.mudUsageBags,
         laborCost:row.laborCost,foodCost:row.foodCost,bonusCost:row.bonusCost,incentiveCost:row.incentiveCost,holes:[...row.holes].join(', '),
       };
@@ -206,8 +215,10 @@ function financialRigSeries(grain=financialGrain){
   });
 }
 function renderFinancialChart(rows){
-  if(!financialFinance())return `<div class="empty">${selectedFinancialMonth()} сарын санхүүгийн эх өгөгдөл синк хийгдээгүй байна.</div>`;
+  const finance=financialFinance();
+  if(!finance)return '<div class="empty">Санхүүгийн эх өгөгдөл синк хийгдээгүй байна.</div>';
   if(!rows.length)return '<div class="empty">Санхүүгийн өгөгдөл байхгүй.</div>';
+  if(financialMissing(finance).length)return `<div class="empty">${selectedFinancialMonth()} сарын ${financialMissing(finance).join(', ')} Drive-д ороогүй тул ₮/м тооцох боломжгүй. Өрөмдсөн метр болон бүртгэлтэй зардлыг доор харуулав.</div>`;
   const series=financialRigSeries(),width=1200,height=350,left=82,right=30,top=28,bottom=58,plotHeight=height-top-bottom;
   const allPoints=series.flatMap(item=>item.points),maxValue=Math.max(...allPoints.map(point=>point.value||0),1);
   const xAt=(index,total)=>left+(index/(Math.max(total-1,1)))*(width-left-right);
@@ -247,13 +258,14 @@ function renderFinancialTab(){
   const tone=(current,before)=>current==null||before==null||current===before?'flat':current>before?'up':'down';
   const costTone=tone(dailyValue,previousValue);
   const comparisonNote=change!=null?`${periodLabel(latest)}: ${currency(dailyValue)} /м ↔ ${periodLabel(previous)}: ${currency(previousValue)} /м`:'Өмнөх хугацааны ₮/м бүртгэл алга';
-  const periodNote=latest?periodLabel(latest)+(change==null?'':` · ${change>0?'▲':change<0?'▼':'•'} ${fmt(Math.abs(change),1)}%`):'Өрөмдсөн метрийн бүртгэл алга';
+  const missing=financialMissing(finance);
+  const periodNote=latest?periodLabel(latest)+(change==null?'':` · ${change>0?'▲':change<0?'▼':'•'} ${fmt(Math.abs(change),1)}%`):missing.length?missing.join(', ')+' синк хийгдээгүй':'Өрөмдсөн метрийн бүртгэл алга';
   const totalMeters=rows.reduce((sum,r)=>sum+r.drilledMeters,0);
   const totalCost=rows.some(row=>row.totalCost==null)?null:rows.reduce((sum,r)=>sum+r.totalCost,0);
   const totalFuel=rows.reduce((sum,r)=>sum+r.fuelCost,0);
   const totalFuelUsage=rows.reduce((sum,r)=>sum+r.fuelUsageL,0),totalMudUsage=rows.reduce((sum,r)=>sum+r.mudUsageKg,0);
   const priorRows=rows.slice(0,-1),priorMeters=priorRows.reduce((total,row)=>total+row.drilledMeters,0);
-  const fuelUnit=totalMeters?totalFuel/totalMeters:null,priorFuelUnit=priorMeters?priorRows.reduce((total,row)=>total+row.fuelCost,0)/priorMeters:null;
+  const fuelUnit=totalMeters&&!finance.fuelMissing?totalFuel/totalMeters:null,priorFuelUnit=priorMeters&&!finance.fuelMissing?priorRows.reduce((total,row)=>total+row.fuelCost,0)/priorMeters:null;
   const cumulativeNote=prior?.cumulativeCostPerMeter!=null?`${periodLabel(last)}: ${currency(last.cumulativeCostPerMeter)} /м ↔ ${periodLabel(prior)}: ${currency(prior.cumulativeCostPerMeter)} /м`:'';
   const fuelNote=priorFuelUnit!=null?`${periodLabel(last)}: ${currency(fuelUnit)} /м ↔ ${periodLabel(prior)}: ${currency(priorFuelUnit)} /м`:'';
   const kpis=[
@@ -263,7 +275,7 @@ function renderFinancialTab(){
     {label:'Нийт зардал (₮)',value:currency(totalCost,0)},
     {label:'Нийт өрөмдсөн метр (м)',value:fmt(totalMeters,1)},
     {label:'Түлшний зардал (₮/м)',value:currency(fuelUnit,0),tone:tone(fuelUnit,priorFuelUnit),note:fuelNote},
-    {label:'Нийт түлшний олголт (л)',value:fmt(totalFuelUsage,2)},
+    {label:'Нийт түлшний олголт (л)',value:finance.fuelMissing?'—':fmt(totalFuelUsage,2)},
     {label:'Нийт шаврын хэрэглээ (кг)',value:fmt(totalMudUsage,2)},
   ];
   const categories=[['fuelCost','Түлш'],['mudCost','Өрөмдлөгийн шавар'],['diamondCost','Алмазан хошуу + reaming shell (тооцоот)'],['laborCost','Үндсэн цалин'],['foodCost','Хоолны зардал'],['bonusCost','Метрийн бонус'],['incentiveCost','Урамшуулал']];
@@ -411,16 +423,17 @@ const dataCell=(html,note='',url='')=>dataLink(url,html)+(note?`<small>${note}</
 const readinessClass=state=>({dual:'',ai:'',geologist:'',missing:'warn',drilling:'active'}[state]??'planned');
 const loggedClass=(r)=>({done:'',partial:'active',none:r.hole.finish?'warn':'planned'}[r.logged.state]??'planned');
 const registerText=value=>!value?'—':/complete/i.test(value)?'✓':esc(value);
-// Geotechnical logging is done once a file named as a log is in the hole's 07 folder.
-const geotechStatus=r=>`<strong class="geotech-${r.geotech.done?'done':'missing'}">${r.geotech.done?'Хийгдсэн':'Хийгдээгүй'}</strong>`;
+// Geological / geotechnical logging is done once a file named as a log is in the hole's 04 / 07 folder.
+const logStatus=done=>`<strong class="log-${done?'done':'missing'}">${done?'Хийгдсэн':'Хийгдээгүй'}</strong>`;
+const logFileNote=log=>dataLink(log.file.url,'✓ '+esc(log.format))+(log.files.length>1?' · + '+(log.files.length-1)+' файл':'');
 function dataTable(){
   if(!D.dataInventory)return '<div class="empty">Drive дээрх файлын жагсаалт хараахан уншигдаагүй. Дараагийн Drive синкээр орно.</div>';
   const list=dataRows();
   return '<div class="table-scroll"><table class="data-table"><thead><tr><th>Цооног</th><th>Участик</th><th>Өрөмдлөг</th><th>Collar</th><th>Кернийн зураг</th><th>Геологийн лог</th><th>Геотехникийн лог</th><th>pXRF</th><th>Хазайлтын хэмжилт</th><th>Лог хийх боломж</th><th>Лог хийгдсэн эсэх</th></tr></thead><tbody>'+list.map(r=>{
     const h=r.hole,state=status(h),g=r.geology,t=r.geotech,p=r.photos;
     const formats=Object.entries(p.formats).map(([format,count])=>format+' '+count).join(' · ');
-    const geology=g.state==='log'?dataCell('✓ '+esc(g.format),g.files.length>1?'+ '+(g.files.length-1)+' файл':'',g.file.url):g.state==='handwritten'?dataCell('Гар бичмэл',g.handwritten+' зураг/PDF · лог файлгүй',g.url):g.state==='other'?dataCell(g.files.length+' файл','лог файлгүй',g.url):'—';
-    const geotech=geotechStatus(r)+(t.done?'<small>'+dataLink(t.file.url,'✓ '+esc(t.format))+(t.files.length>1?' · + '+(t.files.length-1)+' файл':'')+'</small>':t.state==='technical'?'<small>'+dataLink(t.file.url,'Technical Data')+' · загварт хөрвүүлэх</small>':'');
+    const geology=logStatus(g.done)+(g.done?'<small>'+logFileNote(g)+'</small>':g.state==='handwritten'?'<small>'+dataLink(g.url,'Гар бичмэл')+' · '+g.handwritten+' зураг/PDF</small>':g.state==='other'?'<small>'+dataLink(g.url,g.files.length+' файл')+'</small>':'');
+    const geotech=logStatus(t.done)+(t.done?'<small>'+logFileNote(t)+'</small>':t.state==='technical'?'<small>'+dataLink(t.file.url,'Technical Data')+' · загварт хөрвүүлэх</small>':'');
     return '<tr><td><button class="hole-link" data-data-hole="'+esc(r.id)+'">'+esc(r.id)+'</button></td><td>'+esc(areaOf(h))+'</td>'
       +'<td><span class="badge '+state[1]+'">'+state[0]+'</span><small>'+esc(h.start||'—')+' – '+esc(h.finish||'…')+'</small></td>'
       +'<td>'+(r.collar.depth==null?'—':fmt(r.collar.depth)+' м')+'<small>'+(r.collar.registered?'E/N '+(r.collar.coordinates?'✓':'—')+' · Z '+(r.collar.elevation?'✓':'—'):'Collar-д мөргүй · Drive хавтаснаас бүртгэсэн')+'</small></td>'
@@ -433,12 +446,13 @@ function dataTable(){
   }).join('')+'</tbody></table></div>'+(list.length?'':'<div class="empty">Цооног олдсонгүй.</div>');
 }
 function drillingData(){
-  const all=D.dataInventory?dataRows():[],finished=all.filter(r=>r.hole.finish),geotechDone=finished.filter(r=>r.geotech.done).length,counts={},logged={};all.forEach(r=>{counts[r.readiness.state]=(counts[r.readiness.state]||0)+1;logged[r.logged.state]=(logged[r.logged.state]||0)+1;});
+  const all=D.dataInventory?dataRows():[],finished=all.filter(r=>r.hole.finish),counts={},logged={};all.forEach(r=>{counts[r.readiness.state]=(counts[r.readiness.state]||0)+1;logged[r.logged.state]=(logged[r.logged.state]||0)+1;});
   const summary=Object.keys(DrillingData.LABELS).filter(state=>counts[state]).map(state=>`<span class="badge ${readinessClass(state)}">${DrillingData.LABELS[state]}: ${counts[state]}</span>`).join('')
     +(all.length?'<span class="data-summary-gap"></span>'+['done','partial','none'].filter(state=>logged[state]).map(state=>`<span class="badge ${{done:'',partial:'active',none:'warn'}[state]}">Лог ${DrillingData.LOGGED[state].toLocaleLowerCase()}: ${logged[state]}</span>`).join(''):'')
-    +(finished.length?'<span class="data-summary-gap"></span>'+[['done','хийгдсэн',geotechDone],['missing','хийгдээгүй',finished.length-geotechDone]].filter(([,,count])=>count).map(([style,label,count])=>`<span class="badge geotech-${style}">Геотехник ${label}: ${count}</span>`).join(''):'');
+    +[['geology','Геологи'],['geotech','Геотехник']].map(([key,title])=>{const done=finished.filter(r=>r[key].done).length;
+      return finished.length?'<span class="data-summary-gap"></span>'+[['done','хийгдсэн',done],['missing','хийгдээгүй',finished.length-done]].filter(([,,count])=>count).map(([style,label,count])=>`<span class="badge log-${style}">${title} ${label}: ${count}</span>`).join(''):'';}).join('');
   return `<section class="panel"><div class="panel-head"><div><h2>Drilling Data</h2><span class="sub">Лог хийхэд хэрэгтэй дата · бүртгэлтэй ${D.collar.length} цооног</span></div><input class="search" aria-label="Цооног хайх" placeholder="Цооног хайх…" value="${esc(query)}"></div>${summary?`<div class="data-summary">${summary}</div>`:''}<div id="table">${dataTable()}</div>
-    <p class="sub data-note">Drive дээрх цооногийн хавтсуудын (03 хэмжилт, 04 геологи, 05 зураг, 07 геотехник, 10 pXRF) файлын нэрээр тодорхойлсон; файлын агуулгыг шалгаагүй. Зураг нэг нэрээр нэг тоологдоно (CR2 ба JPG хуулбар нэг зураг). Лог хийхэд collar-ын эцсийн гүн, геотехникийн лог эсвэл Technical Data (хайрцгийн гүн), мөн кернийн зураг (AI лог) эсвэл геологийн лог (нэрэнд нь Log, logging гэх мэт үг орсон файл) хэрэгтэй; хоёулаа байвал геологич + AI давхар лог. 07 хавтсанд нэрэнд нь log орсон файл байвал геотехник хийгдсэн гэж тооцно; дээрх «Геотехник хийгдсэн / хийгдээгүй» тоо дууссан цооногоор. «Лог хийгдсэн эсэх» нь collar файлын «Geology log», «Geotechnical log», «XRF Combined log» баганаас (Completed = ✓). Drive-д шинээр үүссэн цооногийн хавтас collar-д мөргүй байсан ч автоматаар бүртгэгдэнэ (12 цаг тутам). Цооног дээр дарж файлуудыг харна.</p></section>`;
+    <p class="sub data-note">Drive дээрх цооногийн хавтсуудын (03 хэмжилт, 04 геологи, 05 зураг, 07 геотехник, 10 pXRF) файлын нэрээр тодорхойлсон; файлын агуулгыг шалгаагүй. Зураг нэг нэрээр нэг тоологдоно (CR2 ба JPG хуулбар нэг зураг). Лог хийхэд collar-ын эцсийн гүн, геотехникийн лог эсвэл Technical Data (хайрцгийн гүн), мөн кернийн зураг (AI лог) эсвэл геологийн лог (нэрэнд нь Log, logging гэх мэт үг орсон файл) хэрэгтэй; хоёулаа байвал геологич + AI давхар лог. 04 / 07 хавтсанд нэрэнд нь log орсон файл байвал геологи / геотехник хийгдсэн (ногоон), үгүй бол хийгдээгүй (улаан); дээрх «хийгдсэн / хийгдээгүй» тоо дууссан цооногоор. «Лог хийгдсэн эсэх» нь collar файлын «Geology log», «Geotechnical log», «XRF Combined log» баганаас (Completed = ✓). Drive-д шинээр үүссэн цооногийн хавтас collar-д мөргүй байсан ч автоматаар бүртгэгдэнэ (12 цаг тутам). Цооног дээр дарж файлуудыг харна.</p></section>`;
 }
 function openHoleData(id){
   const h=D.collar.find(x=>x.id===id),r=DrillingData.row(h,D.dataInventory,D.shifts.filter(s=>s.hole===id).length,D.folderMap),own=D.dataInventory?.[id]||{};
@@ -446,7 +460,7 @@ function openHoleData(id){
     const items=key==='photos'?(entry?.count?`<p>${entry.count} зураг · ${esc(Object.entries(entry.formats||{}).map(([f,n])=>f+' '+n).join(' · '))}${entry.latest?' · сүүлд '+esc(entry.latest.slice(0,10)):''}</p>`:'<p class="sub">Зураг алга.</p>')
       :files.length?`<ul>${files.map(f=>`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>${f.modified?` <small>${esc(f.modified.slice(0,10))}</small>`:''}</li>`).join('')}</ul>${entry.count>files.length?`<p class="sub">… бусад ${entry.count-files.length} файл</p>`:''}`:'<p class="sub">Файл алга.</p>';
     return `<section class="data-files"><h3>${entry?.url?dataLink(entry.url,esc(title)+' ↗'):esc(title)}</h3>${items}</section>`;};
-  $('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(id)}</h2><p>${esc(areaOf(h))} · <span class="badge ${readinessClass(r.readiness.state)}">${esc(r.readiness.label)}</span>${r.readiness.missing.length?' · Дутуу: '+r.readiness.missing.map(esc).join(', '):''}</p><p>Лог: <span class="badge ${loggedClass(r)}">${esc(r.logged.label)}</span>${r.logged.state==='unknown'?'':` · Геологи ${registerText(r.logged.geology)} · Геотехник ${registerText(r.logged.geotech)} · XRF ${registerText(r.logged.pxrf)}`}</p><p>Геотехник (07 хавтас): ${geotechStatus(r)}</p>${r.folderUrl?`<p>${dataLink(r.folderUrl,'Цооногийн Drive хавтас ↗')}</p>`:''}`
+  $('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(id)}</h2><p>${esc(areaOf(h))} · <span class="badge ${readinessClass(r.readiness.state)}">${esc(r.readiness.label)}</span>${r.readiness.missing.length?' · Дутуу: '+r.readiness.missing.map(esc).join(', '):''}</p><p>Лог: <span class="badge ${loggedClass(r)}">${esc(r.logged.label)}</span>${r.logged.state==='unknown'?'':` · Геологи ${registerText(r.logged.geology)} · Геотехник ${registerText(r.logged.geotech)} · XRF ${registerText(r.logged.pxrf)}`}</p><p>Геологи (04 хавтас): ${logStatus(r.geology.done)} · Геотехник (07 хавтас): ${logStatus(r.geotech.done)}</p>${r.folderUrl?`<p>${dataLink(r.folderUrl,'Цооногийн Drive хавтас ↗')}</p>`:''}`
     +list('photos','05 · Кернийн зураг')+list('geological','04 · Геологийн лог')+list('geotechnical','07 · Геотехникийн лог')+list('pxrf','10 · pXRF')+list('surveys','03 · Хазайлтын хэмжилт');
   $('#detail').showModal();
 }
@@ -529,7 +543,7 @@ for(const selector of ['#site','#area','#rig'])$(selector).addEventListener('cha
 $('#detail').addEventListener('click',e=>{if(e.target===$('#detail')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 $('#export').addEventListener('click',()=>{
   const records=tab==='data-log'?dataLog:tab==='drilling-data'?(D.dataInventory?dataRows():[]).map(r=>({hole:r.id,area:areaOf(r.hole),status:status(r.hole)[0],collarDepth:r.collar.depth,coordinates:r.collar.coordinates,elevation:r.collar.elevation,
-    photos:r.photos.count,photoFormats:Object.entries(r.photos.formats).map(([f,n])=>f+' '+n).join(' '),boxes:r.photos.boxes,geologicalLog:r.geology.state,geologicalFile:r.geology.file?.name||'',geologicalFiles:r.geology.files.length,
+    photos:r.photos.count,photoFormats:Object.entries(r.photos.formats).map(([f,n])=>f+' '+n).join(' '),boxes:r.photos.boxes,geologicalLog:r.geology.state,geologicalFile:r.geology.file?.name||'',geologicalDone:r.geology.done?'Хийгдсэн':'Хийгдээгүй',geologicalFiles:r.geology.files.length,
     geotechnicalLog:r.geotech.state,geotechnicalFile:r.geotech.file?.name||'',geotechnicalDone:r.geotech.done?'Хийгдсэн':'Хийгдээгүй',pxrfFiles:r.pxrf.count,surveyFiles:r.surveys.count,readiness:r.readiness.label,missing:r.readiness.missing.join('; '),
     logged:r.logged.label,geologyLog:r.logged.geology,geotechLog:r.logged.geotech,pxrfLog:r.logged.pxrf})):tab==='shifts'?shifts().filter(x=>(x.hole+' '+x.driller+' '+x.date).toLowerCase().includes(query.toLowerCase())):holes().filter(x=>x.id.toLowerCase().includes(query.toLowerCase())).map(h=>({...h,site:SITE,shiftDepth:depth(h.id),status:status(h)[0]}));
   if(!records.length){alert('Татах бүртгэл байхгүй.');return;}

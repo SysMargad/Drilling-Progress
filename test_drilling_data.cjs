@@ -36,6 +36,7 @@ const state=id=>by[id].readiness.state;
 assert.equal(state('DTDH2606'),'dual');
 assert.equal(by.DTDH2606.geology.state,'log');
 assert.equal(by.DTDH2606.geology.format,'Excel');
+assert.equal(by.DTDH2606.geology.done,true);
 assert.equal(by.DTDH2606.geotech.state,'log');
 assert.equal(by.DTDH2606.geotech.done,true);
 assert.equal(by.DTDH2606.geotech.file.name,'DTDH2606_Geotechnical_Log.xlsx');
@@ -44,6 +45,7 @@ assert.equal(by.DTDH2606.folderUrl,'https://drive.google.com/drive/folders/DTDH2
 // Photos without the geologist's Excel: AI log; field sheet scans alone are not an Excel log.
 assert.equal(state('DTDH2602'),'ai');
 assert.equal(by.DTDH2602.geology.state,'handwritten');
+assert.equal(by.DTDH2602.geology.done,false,'field sheet scans are not a geological log');
 assert.equal(by.DTDH2602.geotech.state,'technical');
 assert.equal(by.DTDH2602.geotech.done,false,'Technical Data is not a geotechnical log');
 assert.equal(by.DTDH2602.pxrf.count,0,'files named delete are not data');
@@ -109,9 +111,15 @@ for(const h of [...collar,{id:'STDH2601'},{id:'UGDH2602'}])assert.ok(page.includ
 assert.ok(page.includes('Геологич + AI: 1'));
 assert.ok(page.includes('Лог хийгдсэн: 1'));
 assert.ok(page.includes('Лог хийгдээгүй: 7'));
-// Geotechnical logging counted over finished holes: only DTDH2606 has a geotechnical log on Drive.
+// Logging counted over finished holes: geological logs on Drive for DTDH2606, ZHDH2603, ZHDH2604; geotechnical for DTDH2606 only.
+assert.ok(page.includes('Геологи хийгдсэн: 3'));
+assert.ok(page.includes('Геологи хийгдээгүй: 3'));
 assert.ok(page.includes('Геотехник хийгдсэн: 1'));
 assert.ok(page.includes('Геотехник хийгдээгүй: 5'));
+const cells=id=>page.split(`data-data-hole="${id}"`)[1].split('</tr>')[0].split('<td>');
+assert.ok(cells('DTDH2606')[5].startsWith('<strong class="log-done">Хийгдсэн</strong>'));
+assert.ok(cells('DTDH2602')[5].startsWith('<strong class="log-missing">Хийгдээгүй</strong>'));
+assert.ok(cells('DTDH2602')[6].startsWith('<strong class="log-missing">Хийгдээгүй</strong>'));
 assert.ok(page.includes('Геологи ✓ · Геотехник ✓ · XRF in progress'));
 assert.ok(page.includes('Drive хавтаснаас бүртгэсэн'));
 assert.ok(page.includes('Лог хийгдсэн эсэх'));
