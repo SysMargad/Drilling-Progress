@@ -223,7 +223,7 @@ function renderFinancialChart(rows){
   const allPoints=series.flatMap(item=>item.points),maxValue=Math.max(...allPoints.map(point=>point.value||0),1);
   const xAt=(index,total)=>left+(index/(Math.max(total-1,1)))*(width-left-right);
   const yAt=(value)=>top+plotHeight-((value/maxValue)*plotHeight);
-  const colors={'C-1800':'#dc8a3b','CSD-1300':'#128875'};
+  const colors=RIG_COLORS;
   const pointSvg=(item)=>{
     const {rig,points}=item,color=colors[rig],label=rig;
     const paths=[];
@@ -393,7 +393,7 @@ function chart(){
   const last=groups.at(-1);svg+=`<text class="target-label" x="${W-right-3}" y="${y(last.target)-7}" text-anchor="end">Норм ${fmt(last.target)} м</text></svg>`;
   return html+`<div class="chart-canvas" tabindex="0" aria-label="Графикийг хэвтээ гүйлгэж үзэх">${svg}</div>`;
 }
-function rigs(){return selectedRigs().map(rig=>{const rows=overviewRows().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${{'C-1800':'#128875','CSD-1300':'#dc8a3b'}[rig]||RIG_COLORS[rig]}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
+function rigs(){return selectedRigs().map(rig=>{const rows=overviewRows().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${RIG_COLORS[rig]}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
 function holeTable(){
   const list=holes().filter(h=>h.id.toLowerCase().includes(query.toLowerCase()));
   return '<div class="table-scroll"><table><thead><tr><th>Цооног</th><th>Талбай</th><th>Участик</th><th>Өрөм</th><th>Төлөв</th><th>Төлөвлөсөн</th><th>Ээлжийн гүн</th><th>Collar гүн</th><th>Ахиц</th></tr></thead><tbody>'+list.map(h=>{
