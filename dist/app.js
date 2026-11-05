@@ -8,9 +8,9 @@ const sum=(rows,key)=>rows.reduce((total,row)=>total+row[key],0),SITE='Нэрг�
 const RIGS=['C-1800','CSD-1300'],FINANCE_RIGS=['C-1800','CSD-1300'],RIG_COLORS={'C-1800':'#dc8a3b','CSD-1300':'#128875'};
 const selectedRigs=(list=RIGS)=>list.filter(rig=>!$('#rig').value||rig===$('#rig').value);
 function knownHours(rows,key){const known=rows.filter(row=>Number.isFinite(row[key]));return known.length?(known.length<rows.length?'≥ ':'')+fmt(sum(known,key)):'—';}
-function areaOf(h){const area=(h.targetArea||'').toLocaleLowerCase();if(area==='дорнын төмөр'||(!area&&h.id.startsWith('DTDH')))return 'Дорнын Төмөр';if(area==='замт хөндий'||(!area&&h.id.startsWith('ZHDH')))return 'Замт Хөндий';return h.targetArea||'—';}
+function areaOf(h){const area=(h.targetArea||'').toLocaleLowerCase();if(h.id.startsWith('KHDH'))return 'Харгант';if(area==='дорнын төмөр'||(!area&&h.id.startsWith('DTDH')))return 'Дорнын Төмөр';if(area==='замт хөндий'||(!area&&h.id.startsWith('ZHDH')))return 'Замт Хөндий';return h.targetArea||'—';}
 // New areas (from the collar sheet or a Drive area folder) join the filter and map without code changes.
-const AREA_ORDER=['Дорнын Төмөр','Замт Хөндий','Уртын гол','Сант'],AREA_COLORS={'Дорнын Төмөр':'#16b99a','Замт Хөндий':'#f29b44','Уртын гол':'#5b8def','Сант':'#c062d6'};
+const AREA_ORDER=['Дорнын Төмөр','Замт Хөндий','Уртын гол','Сант','Харгант'],AREA_COLORS={'Дорнын Төмөр':'#16b99a','Замт Хөндий':'#f29b44','Уртын гол':'#5b8def','Сант':'#c062d6','Харгант':'#e3bd4b'};
 const areaColor=area=>AREA_COLORS[area]||'#9aa5ab';
 function areaList(rows){return [...new Set(rows.map(areaOf))].filter(area=>area&&area!=='—').sort((a,b)=>((AREA_ORDER.indexOf(a)+1)||99)-((AREA_ORDER.indexOf(b)+1)||99)||a.localeCompare(b));}
 function areaOptions(){const select=$('#area'),value=select.value,areas=areaList(D.collar);if(value&&!areas.includes(value))areas.push(value);if(select.dataset.areas===areas.join('|'))return;select.dataset.areas=areas.join('|');select.innerHTML='<option value="">Бүх участик</option>'+areas.map(area=>`<option${area===value?' selected':''}>${esc(area)}</option>`).join('');}

@@ -43,8 +43,8 @@ XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 FOLDER_MIME = "application/vnd.google-apps.folder"
 # Areas by hole id prefix. Holes of a new prefix take the name of their Drive area folder
 # (01. Field Data Acquisition / 2026 / <n. area> / <hole>), Mongolian where it is known.
-AREAS = {"DTDH": "Дорнын Төмөр", "ZHDH": "Замт Хөндий", "UGDH": "Уртын гол", "STDH": "Сант"}
-AREA_FOLDERS = {"dorniin tumur": "Дорнын Төмөр", "zamt hundii": "Замт Хөндий", "urtiin gol": "Уртын гол", "sant": "Сант"}
+AREAS = {"DTDH": "Дорнын Төмөр", "ZHDH": "Замт Хөндий", "UGDH": "Уртын гол", "STDH": "Сант", "KHDH": "Харгант"}
+AREA_FOLDERS = {"dorniin tumur": "Дорнын Төмөр", "zamt hundii": "Замт Хөндий", "urtiin gol": "Уртын гол", "sant": "Сант", "kh": "Харгант", "khargant": "Харгант"}
 UNKNOWN_AREA = "Тодорхойгүй"
 # Hole sub-folders listed on the Drilling Data page (folder number -> data kind), as used by the
 # NGM geological log system: box photos, geological / geotechnical workbooks, pXRF, downhole surveys.

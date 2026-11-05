@@ -275,7 +275,7 @@ class PipelineTests(unittest.TestCase):
                              ['14','KHDH2601','677 348.0','5 442 878.5','','270','60','300','','46330',''],
                              ['15','DTDH2609','','','','','','','','','']])
         self.assertEqual([(h['id'],h['e'],h['n'],h['targetArea']) for h in rows],
-                         [('STDH2601',671289.0,5445920.0,'Сант'),('KHDH2601',677348.0,5442878.5,''),('DTDH2609',None,None,'Дорнын Төмөр')])
+                         [('STDH2601',671289.0,5445920.0,'Сант'),('KHDH2601',677348.0,5442878.5,'Харгант'),('DTDH2609',None,None,'Дорнын Төмөр')])
         self.assertEqual(rows[0]['start'],'2026-11-04')
         register = parse_collar([[*header,'Core Recovery','Count of Core Boxes','Geology log','Geotechnical log','XRF Combined log','Core photo','Sampling'],
                                  ['1','DTDH2601','1','2','3','88','60','200','221.4','46305','46309','99.41','61',' Completed','Completed','Bruker complete','Completed','in progress'],
@@ -300,7 +300,7 @@ class PipelineTests(unittest.TestCase):
                            ['14','KHDH2601','677348','5442878.5','','270','60','300','','46330','']]).encode('utf-8')}
         data=assemble(self.records+[collar_source],self.seed,folders,inventory=inventory)
         by={h['id']:h for h in data['collar']}
-        self.assertEqual((by['STDH2601']['targetArea'],by['KHDH2601']['targetArea']),('Сант','Khar tolgoi'))
+        self.assertEqual((by['STDH2601']['targetArea'],by['KHDH2601']['targetArea']),('Сант','Харгант'))
         self.assertEqual(by['UGDH2602']['registered'],'drive')
         self.assertEqual(by['UGDH2602']['targetArea'],'Уртын гол')
         self.assertNotIn('registered',by['STDH2601'])
