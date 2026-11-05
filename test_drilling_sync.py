@@ -95,15 +95,18 @@ class PipelineTests(unittest.TestCase):
         from validate_data import validate
         validate(data)
 
-    def test_third_rig_shifts_are_published_but_kept_out_of_finance(self):
+    def test_misread_rig_is_c1800_and_included_in_finance(self):
         from drilling_sync import finance_shifts
         headers=['Rig','Source','Date','Shift','Driller','Hole ID','From','To','Drilled','DT','Total']
         row=['C-1600','20261103_n_STDH2601_C-1600.jpg','2026-11-03','Шөнө','','STDH2601','0','18','18','12','12']
         parsed=parse_shifts([headers,row,['X-9','photo','2026-11-03','Шөнө','','STDH2601','0','1','1','1','12']])
-        self.assertEqual([(r['rig'],r['hole'],r['meters']) for r in parsed],[('C-1600','STDH2601',18)])
-        self.assertEqual(finance_shifts({'shifts':[*parsed,{**parsed[0],'rig':'C-1800'}]}),[{**parsed[0],'rig':'C-1800'}])
+        self.assertEqual([(r['rig'],r['hole'],r['meters']) for r in parsed],[('C-1800','STDH2601',18)])
+        self.assertEqual(finance_shifts({'shifts':parsed}),parsed)
         data=self.seed.copy();data['shifts']=parsed
         validate(data)
+        data['shifts']=[{**parsed[0],'rig':'C-1600'}]
+        with self.assertRaisesRegex(ValueError, 'Unknown drilling rig'):
+            validate(data)
 
     def test_total_code_hours_header_keeps_reported_value(self):
         headers=['Rig','Source','Date','Shift','Hole ID','From','To','Drilled','ST','RT','DT','Total code hrs']

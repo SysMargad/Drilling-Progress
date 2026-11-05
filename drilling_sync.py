@@ -32,7 +32,7 @@ ROOT = Path(__file__).resolve().parent
 TZ = timezone(timedelta(hours=8))
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 SCOPE = "https://www.googleapis.com/auth/drive.readonly"
-RIGS = {"C-1800", "CSD-1300", "C-1600"}
+RIGS = {"C-1800", "CSD-1300"}
 # Attendance codes, fuel and mud ledgers cover the two contracted rigs only.
 FINANCE_RIGS = {"C-1800", "CSD-1300"}
 FINANCE_FOLDER_ID = "1j8QjgqCHBh50pJwl68hBpTCvTu1tUYgj"
@@ -218,6 +218,12 @@ def parse_collar(rows):
     return output
 
 
+def canonical_rig(value):
+    # Owner correction 2026-11-05: C-1600 was a transcription error, not a third rig.
+    value = value.strip()
+    return "C-1800" if value == "C-1600" else value
+
+
 def parse_shifts(rows):
     output = []
     headers = None
@@ -231,7 +237,7 @@ def parse_shifts(rows):
         def get(match):
             i = next((i for i, h in enumerate(headers) if match(h)), -1)
             return row[i] if 0 <= i < len(row) else ""
-        rig = get(lambda x: x == "rig" or x.endswith(" rig")).strip()
+        rig = canonical_rig(get(lambda x: x == "rig" or x.endswith(" rig")))
         h = hole_id(get(lambda x: "hole id" in x))
         if rig not in RIGS or not h:
             continue
@@ -621,6 +627,7 @@ def local_sources(directory):
 
 
 def report_metadata(file, hole, rig, folder_url):
+    rig = canonical_rig(rig or "")
     name = file.get("name", "")
     match = re.search(r"(20\d{2})(\d{2})(\d{2})[_\s-]([dn])(?:[.\s_-]|$)", name, re.I)
     if not hole or rig not in RIGS or not match or not file.get("mimeType", "").startswith("image/"):
@@ -714,7 +721,7 @@ def drive_sources(folder, credentials_path):
                         entry = inventory.setdefault(hole, {}).setdefault(child_section, {"url": "", "files": []})
                         entry["url"] = entry["url"] or f"https://drive.google.com/drive/folders/{f['id']}"
                 pending.append((f["id"], hole_id(f["name"]) or hole,
-                                f["name"] if f["name"] in RIGS else rig,
+                                canonical_rig(f["name"]) if canonical_rig(f["name"]) in RIGS else rig,
                                 daily or f["name"].startswith("02."), child_section, path + (f["name"],)))
             elif "collar" in f["name"].lower() or "shift report" in f["name"].lower():
                 if f["mimeType"] in {"application/vnd.google-apps.spreadsheet",

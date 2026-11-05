@@ -4,7 +4,7 @@ import re
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
-from drilling_sync import load_json
+from drilling_sync import load_json, RIGS
 
 def validate(data):
     if not data.get('collar') or not data.get('shifts'):
@@ -26,6 +26,8 @@ def validate(data):
                 raise ValueError('Invalid collar number')
     seen = set()
     for s in data['shifts']:
+        if s['rig'] not in RIGS:
+            raise ValueError('Unknown drilling rig')
         key = (s['rig'], s['date'], s['shift'], s['hole'])
         if key in seen or s['hole'] not in ids:
             raise ValueError('Duplicate shift or unknown hole')

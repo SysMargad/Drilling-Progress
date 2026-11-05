@@ -4,8 +4,8 @@ const $=selector=>document.querySelector(selector);
 const fmt=(n,d=1)=>n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sum=(rows,key)=>rows.reduce((total,row)=>total+row[key],0),SITE='Нэргүй Өндөр';
-// Finance sources (attendance, fuel, mud) cover the two contracted rigs; C-1600 shows drilling progress only.
-const RIGS=['C-1800','CSD-1300','C-1600'],FINANCE_RIGS=['C-1800','CSD-1300'],RIG_COLORS={'C-1800':'#dc8a3b','CSD-1300':'#128875','C-1600':'#5b6fd6'};
+// The two drilling rigs share the same identities across progress and finance.
+const RIGS=['C-1800','CSD-1300'],FINANCE_RIGS=['C-1800','CSD-1300'],RIG_COLORS={'C-1800':'#dc8a3b','CSD-1300':'#128875'};
 const selectedRigs=(list=RIGS)=>list.filter(rig=>!$('#rig').value||rig===$('#rig').value);
 function knownHours(rows,key){const known=rows.filter(row=>Number.isFinite(row[key]));return known.length?(known.length<rows.length?'≥ ':'')+fmt(sum(known,key)):'—';}
 function areaOf(h){const area=(h.targetArea||'').toLocaleLowerCase();if(area==='дорнын төмөр'||(!area&&h.id.startsWith('DTDH')))return 'Дорнын Төмөр';if(area==='замт хөндий'||(!area&&h.id.startsWith('ZHDH')))return 'Замт Хөндий';return h.targetArea||'—';}
