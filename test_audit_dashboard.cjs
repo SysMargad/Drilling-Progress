@@ -6,12 +6,14 @@ const slot=(rig,date,shift,status,meters,extra={})=>({rig,date,shift,status,mete
 const slots=[];
 for(const date of ['2026-10-14','2026-10-15'])for(const shift of ['Өдөр','Шөнө'])for(const rig of ['C-1800','CSD-1300'])slots.push(slot(rig,date,shift,'VERIFIED_DRILLING',45));
 const replace=(rig,date,shift,value)=>{slots[slots.findIndex(s=>s.rig===rig&&s.date===date&&s.shift===shift)]=value;};
-replace('C-1800','2026-10-14','Шөнө',slot('C-1800','2026-10-14','Шөнө','MISSING_REPORT',null,{issues:[{kind:'gap',text:'DTDH2603: 248–257 м (9 м) тайлангүй'}]}));
+replace('C-1800','2026-10-14','Шөнө',slot('C-1800','2026-10-14','Шөнө','MISSING_REPORT',null,{issues:[{kind:'gap',text:'DTDH2603: 248–257 м (9 м) тайлангүй'}],
+  inferred:[{hole:'DTDH2603',from:248,to:257,meters:9,exact:true,shifts:1,note:''}]}));
 replace('C-1800','2026-10-15','Шөнө',slot('C-1800','2026-10-15','Шөнө','SOURCE_CONFLICT',9,{issues:[{kind:'overlap',text:'DTDH2603: 248–257 м нь өмнөх ...'}]}));
 replace('CSD-1300','2026-10-14','Өдөр',slot('CSD-1300','2026-10-14','Өдөр','UNVERIFIED',null,{issues:[{kind:'noReport',text:'нүүлт байж болзошгүй'}]}));
 replace('CSD-1300','2026-10-15','Өдөр',slot('CSD-1300','2026-10-15','Өдөр','VERIFIED_NON_DRILLING',0));
 const foremanRow=(rig,hole,holeText,foreman,reported,reached,status,notes)=>({rig,hole,holeText,start:'2026-10-14',finish:'2026-10-16',foreman,reported,reached,collarDepth:200.4,status,notes,row:7,raw:'2026/10/14с 2026/10/16нд | DTDH-2603 | 200м'});
-const audit={through:'2026-10-15',rigs:['C-1800','CSD-1300'],months:[{month:'2026-10',expected:8,counts:{},meters:{},missingMeters:9}],slots,
+const audit={through:'2026-10-15',rigs:['C-1800','CSD-1300'],months:[{month:'2026-10',expected:8,counts:{},meters:{},missingMeters:9,inferredMeters:9,
+  unallocated:[{rig:'CSD-1300',hole:'UGDH2601',from:0,to:65.4,meters:65.4,shifts:3,inMonth:2},{rig:'C-1800',hole:'X',from:0,to:20,meters:20,shifts:2,inMonth:2}]}],slots,
   foreman:[{month:'2026-10',title:'10 сарын метрийн мэдээ',from:'Өрмийн ахлах',file:'ммм1_1.xlsx / Sheet1',received:'2026-11-05',rigs:[{rig:'C-1800',foreman:1552.7,reported:1424.7},{rig:'CSD-1300',foreman:1477.4,reported:1517.6}],
     rows:[foremanRow('CSD-1300','DTDH2603','DTDH2603',200,null,null,'differs',['CSD-1300-ийн энэ хугацааны тайланд DTDH2603 алга; тайланд: DTDH2605 128 м (collar 200.4 м)']),
       foremanRow('C-1800','ZHDH2604','',428,458,461,'differs',['Цооногийн дугаар бичээгүй'])]}]};
@@ -21,6 +23,9 @@ assert.deepEqual([all.expected,all.days,all.counts.VERIFIED_DRILLING,all.counts.
 assert.equal(all.missingMeters,9);
 assert.deepEqual([c1800.expected,c1800.counts.MISSING_REPORT,c1800.missingMeters],[4,1,null]);
 assert.equal(Object.values(all.counts).reduce((n,v)=>n+v,0),all.expected);
+// Reported metres, metres inferred from depth for unreported shifts, and totals known only across shifts or months.
+assert.deepEqual([all.reported,all.inferred,all.unallocated,all.crossMonth,all.depthTotal],[189,9,20,65.4,218]);
+assert.deepEqual([c1800.inferred,c1800.unallocated,c1800.crossMonth],[9,20,0]);
 assert.deepEqual(AuditModel.freshness([{rig:'C-1800',date:'2026-10-15',shift:'Өдөр'},{rig:'C-1800',date:'2026-10-15',shift:'Шөнө'},{rig:'C-1800',date:'2026-10-14',shift:'Шөнө'}],['C-1800','CSD-1300']),
   [{rig:'C-1800',date:'2026-10-15',shift:'Шөнө'},{rig:'CSD-1300',date:'',shift:''}]);
 const log=[{status:'updated',completedAt:'2026-11-05T13:50:09+08:00'},{status:'failed',startedAt:'2026-11-05T15:00:00+08:00',completedAt:'2026-11-05T15:01:00+08:00',error:'ValueError',validation:'Missing/invalid dt for ZHDH2604 on 2026-10-30'}];
@@ -41,8 +46,11 @@ assert.ok(page.includes('<div class="label">Тайлан дутуу</div><div cl
 assert.ok(page.includes('Сүүлийн оролдлого алдаатай: Missing/invalid dt for ZHDH2604 on 2026-10-30'));
 assert.ok(page.includes('C-1800: 10-15 Шөнө'));
 assert.equal((page.match(/class="audit-cell /g)||[]).length,8);
-assert.ok(page.includes('class="audit-cell audit-missing-report" data-audit-slot="C-1800|2026-10-14|Шөнө"'));
-assert.match(page,/data-audit-slot="C-1800\|2026-10-14\|Шөнө"[^>]*>!<\/button>/,'a missing report shows !, not 0');
+assert.ok(page.includes('class="audit-cell audit-missing-report audit-inferred" data-audit-slot="C-1800|2026-10-14|Шөнө"'));
+assert.match(page,/class="audit-cell audit-missing-report audit-inferred" data-audit-slot="C-1800\|2026-10-14\|Шөнө"[^>]*>~9<\/button>/,'inferred metres show ~, never as a report');
+assert.ok(page.includes('<div class="label">Гүнээр тооцсон нийт метр</div><div class="value">218</div><div class="note">Тайлангүй ээлжид гүнээр ~9 м, ээлжинд хуваагдаагүй 20 м · сар дамнасан 65.4 м-ийн хэсэг нэмэгдэж болно</div>'));
+assert.ok(page.includes('<div class="label">Ээлжийн тайлангийн метр</div><div class="value">189</div>'));
+assert.ok(page.includes('гүнээр ~9 м</small>'));
 assert.match(page,/data-audit-slot="CSD-1300\|2026-10-14\|Өдөр"[^>]*>\?<\/button>/);
 assert.match(page,/data-audit-slot="CSD-1300\|2026-10-15\|Өдөр"[^>]*>0<\/button>/,'a verified non-drilling shift is 0 m');
 assert.match(page,/data-audit-slot="C-1800\|2026-10-15\|Шөнө"[^>]*>9\*<\/button>/);
@@ -66,6 +74,7 @@ assert.ok(opened.includes('Drilling Shift Report Table / 2_Ээлжийн_бүр
 assert.ok(opened.includes('href="https://drive.google.com/file/d/r1/view"'));
 vm.runInContext("openAuditSlot('C-1800|2026-10-14|Шөнө')",context);
 assert.ok(opened.includes('Тайлангүй (0 м гэж тооцохгүй)'));
+assert.ok(opened.includes('Гүнээр тооцсон</h3><ul><li>DTDH2603 248–257 м · 9 м — энэ ээлжинд оноосон'));
 assert.ok(opened.includes('href="https://drive.google.com/drive/folders/f"'));
 vm.runInContext("D={...D,shiftAudit:undefined}",context);
 assert.ok(vm.runInContext('auditView()',context).includes('дараагийн sync-ээр тооцоологдоно'));

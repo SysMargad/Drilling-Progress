@@ -56,6 +56,39 @@ class ShiftAuditTests(unittest.TestCase):
         self.assertEqual(result['months'][0]['missingMeters'], 30)
         self.assertTrue(all(s['meters'] is None for s in result['slots'] if not s['records']))
 
+    def test_metres_of_an_unreported_shift_are_inferred_from_the_depths_around_it(self):
+        shifts = [shift('C-1800', '2026-10-01', 'Өдөр', 'A', 0, 30), shift('C-1800', '2026-10-02', 'Өдөр', 'A', 72, 100),
+                  shift('C-1800', '2026-10-02', 'Шөнө', 'A', 100, 150),
+                  shift('CSD-1300', '2026-10-01', 'Өдөр', 'B', 0, 10, hours=6), shift('CSD-1300', '2026-10-01', 'Шөнө', 'B', 25, 40)]
+        result = audit(shifts, [hole('A'), hole('B')])
+        night = slot(result, 'C-1800', '2026-10-01', 'Шөнө')
+        self.assertEqual((night['status'], night['meters']), ('MISSING_REPORT', None), 'inferred metres are never a report')
+        self.assertEqual([(i['from'], i['to'], i['meters'], i['exact']) for i in night['inferred']], [(30, 72, 42, True)])
+        partial = slot(result, 'CSD-1300', '2026-10-01', 'Өдөр')
+        self.assertEqual((partial['status'], partial['meters']), ('MISSING_REPORT', 10))
+        self.assertEqual([(i['from'], i['to'], i['exact']) for i in partial['inferred']], [(10, 25, True)], 'the rest of a part-shift report')
+        self.assertEqual(result['months'][0]['inferredMeters'], 42 + 15)
+        self.assertTrue(all(s['status'] == 'MISSING_REPORT' for s in result['slots'] if s['inferred']))
+
+    def test_inferred_metres_are_not_pinned_when_they_cannot_be(self):
+        shifts = [shift('C-1800', '2026-10-01', 'Өдөр', 'A', 0, 30), shift('C-1800', '2026-10-03', 'Өдөр', 'A', 90, 120),
+                  shift('C-1800', '2026-10-04', 'Өдөр', 'A', 120, 150), shift('C-1800', '2026-10-05', 'Өдөр', 'A', 260, 270),
+                  shift('C-1800', '2026-10-31', 'Өдөр', 'A', 270, 280), shift('C-1800', '2026-11-01', 'Шөнө', 'A', 300, 310),
+                  shift('CSD-1300', '2026-10-14', 'Өдөр', 'B', 203, 248), shift('CSD-1300', '2026-10-15', 'Өдөр', 'B', 257, 258.4, hours=6),
+                  shift('CSD-1300', '2026-10-15', 'Шөнө', 'B', 248, 257)]
+        result = audit(shifts, [hole('A'), hole('B')], through='2026-11-02')
+        across = slot(result, 'C-1800', '2026-10-01', 'Шөнө')['inferred'][0]
+        self.assertEqual((across['meters'], across['exact'], across['shifts']), (60, False, 3), 'a gap over three shifts is known in total only')
+        too_much = slot(result, 'C-1800', '2026-10-04', 'Шөнө')['inferred'][0]
+        self.assertEqual((too_much['meters'], too_much['exact']), (110, False))
+        self.assertIn('нэг ээлжид багтахгүй', too_much['note'])
+        october, november = result['months']
+        self.assertEqual(october['inferredMeters'], 0)
+        self.assertIn({'rig': 'C-1800', 'hole': 'A', 'from': 280, 'to': 300, 'meters': 20, 'shifts': 2, 'inMonth': 1}, october['unallocated'])
+        self.assertIn({'rig': 'C-1800', 'hole': 'A', 'from': 280, 'to': 300, 'meters': 20, 'shifts': 2, 'inMonth': 1}, november['unallocated'])
+        late = slot(result, 'CSD-1300', '2026-10-14', 'Шөнө')
+        self.assertEqual((late['status'], late['inferred']), ('MISSING_REPORT', []), 'a report dated a shift late fills the gap; not inferred twice')
+
     def test_open_hole_without_report_is_missing_but_a_rig_move_is_only_unverified(self):
         shifts = [shift('C-1800', '2026-10-01', 'Өдөр', 'A', 0, 30), shift('C-1800', '2026-10-02', 'Өдөр', 'A', 30, 60),
                   shift('C-1800', '2026-10-03', 'Өдөр', 'B', 0, 20)]

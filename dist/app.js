@@ -373,7 +373,9 @@ function chart(){
   let html=`<div class="panel-head"><h2>Гүйцэтгэл · ${overviewPeriodLabel()}</h2>${controls}</div>`;
   if(!groups.length)return html+'<div class="empty">Ээлжийн өгөгдөл байхгүй.</div>';
   const W=Math.max(600,groups.length*(grain==='shift'?44:48)+90),H=280,left=45,right=18,top=30,bottom=grain==='shift'?58:40,plotH=H-top-bottom,step=(W-left-right)/groups.length;
-  const high=Math.max(...groups.map(g=>Math.max(g.target,...Object.values(g.amounts)))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
+  // Metres inferred for unreported shifts (from the depths before and after) draw as a dashed outline, not a bar.
+  const inferredFor=(group,rig)=>markShifts?(grain==='shift'?[group.secondary==='Ө'?'Өдөр':'Шөнө']:['Өдөр','Шөнө']).reduce((n,shift)=>n+(auditIndex.get(rig+'|'+group.start+'|'+shift)?.inferred||[]).filter(i=>i.exact).reduce((k,i)=>k+i.meters,0),0):0;
+  const high=Math.max(...groups.map(g=>Math.max(g.target,...rigs.map(rig=>(g.amounts[rig]||0)+inferredFor(g,rig))))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
   const y=value=>top+plotH-value/max*plotH;
   let svg=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px" role="group" aria-label="Гүйцэтгэл, ${targetLabels[grain]}"><text x="6" y="14">м</text>`;
   const tick=Math.max(unit,Math.ceil(max/5/unit)*unit);
@@ -384,7 +386,9 @@ function chart(){
     rigs.forEach((rig,j)=>{const value=group.amounts[rig]||0,recorded=group.counts[rig]||0,bx=x+(j-rigs.length/2)*barWidth;
       const audited=markShifts?(grain==='shift'?[group.secondary==='Ө'?'Өдөр':'Шөнө']:['Өдөр','Шөнө']).map(shift=>auditIndex.get(rig+'|'+group.start+'|'+shift)).filter(Boolean):[];
       const gap=audited.find(slot=>slot.status==='MISSING_REPORT')||(!recorded&&audited.find(slot=>slot.status==='UNVERIFIED'));
-      if(gap)svg+=`<text class="audit-mark ${auditClass(gap.status)}" x="${bx+barWidth/2-1}" y="${recorded?y(value)-6:y(0)-4}" text-anchor="middle"><title>${esc(auditTitle(gap))}</title>${gap.status==='MISSING_REPORT'?'!':'?'}</text>`;
+      const inferred=inferredFor(group,rig),top=value+inferred;
+      if(inferred)svg+=`<rect class="inferred-bar" x="${bx}" y="${y(top)}" width="${barWidth-2}" height="${Math.max(y(value)-y(top),2)}" rx="2" fill="none" stroke="${colors[rig]}" stroke-width="1.5" stroke-dasharray="3 2"><title>${esc(rig+' · '+group.start+(grain==='shift'?' '+(group.secondary==='Ө'?'Өдөр':'Шөнө'):'')+' · гүнээр тооцсон ~'+fmt(inferred)+' м (тайлангүй)')}</title></rect>`;
+      if(gap)svg+=`<text class="audit-mark ${auditClass(gap.status)}" x="${bx+barWidth/2-1}" y="${recorded||inferred?y(top)-6:y(0)-4}" text-anchor="middle"><title>${esc(auditTitle(gap))}</title>${gap.status==='MISSING_REPORT'?'!':'?'}</text>`;
       if(!recorded)return;
       const records=group.rows.filter(row=>row.rig===rig).sort((a,b)=>a.date.localeCompare(b.date)||(a.shift==='Өдөр'?0:1)-(b.shift==='Өдөр'?0:1)),reports=[...new Map(records.flatMap(row=>row.reports||[]).map(report=>[report.url,report])).values()];
       const bar={rig,group,rows:records,reports,meters:value,target:group.target},index=chartBars.push(bar)-1;
@@ -483,12 +487,15 @@ function logTable(){
 }
 let auditMonth='';
 const auditClass=status=>'audit-'+status.toLowerCase().replace(/_/g,'-');
-const auditTitle=slot=>`${slot.date} ${slot.shift} · ${slot.rig} · ${AuditModel.LABELS[slot.status]}${slot.meters==null?' · тайлангүй':' · '+fmt(slot.meters)+' м'}${slot.issues.length?' — '+slot.issues.map(i=>i.text).join('; '):''}`;
+const inferredText=slot=>(slot.inferred||[]).map(i=>i.exact?`гүнээр тооцсон ~${fmt(i.meters)} м (${i.hole} ${fmt(i.from)}–${fmt(i.to)} м, тайлангүй)`:`${i.hole} ${fmt(i.from)}–${fmt(i.to)} м (${fmt(i.meters)} м): ${i.note}`).join('; ');
+const auditTitle=slot=>`${slot.date} ${slot.shift} · ${slot.rig} · ${AuditModel.LABELS[slot.status]}${slot.meters==null?' · тайлангүй':' · '+fmt(slot.meters)+' м'}${slot.inferred?.length?' · '+inferredText(slot):''}${slot.issues.length?' — '+slot.issues.map(i=>i.text).join('; '):''}`;
 function auditCell(slot){
   if(!slot)return '<td></td>';
   // A slot without a report shows ! (missing) or ? (unverified), never 0; * marks metres in conflict.
-  const value=slot.meters==null?({MISSING_REPORT:'!',UNVERIFIED:'?'}[slot.status]||'·'):fmt(slot.meters,1)+(slot.status==='SOURCE_CONFLICT'?'*':'');
-  return `<td><button class="audit-cell ${auditClass(slot.status)}" data-audit-slot="${esc(AuditModel.key(slot))}" title="${esc(auditTitle(slot))}" aria-label="${esc(auditTitle(slot))}">${esc(value)}</button></td>`;
+  // ~ marks metres inferred from the depths before and after an unreported shift (not a report).
+  const inferred=(slot.inferred||[]).filter(i=>i.exact).reduce((n,i)=>n+i.meters,0);
+  const value=slot.meters==null?(inferred?'~'+fmt(inferred,1):{MISSING_REPORT:'!',UNVERIFIED:'?'}[slot.status]||'·'):fmt(slot.meters,1)+(slot.status==='SOURCE_CONFLICT'?'*':inferred?'+':'');
+  return `<td><button class="audit-cell ${auditClass(slot.status)}${inferred?' audit-inferred':''}" data-audit-slot="${esc(AuditModel.key(slot))}" title="${esc(auditTitle(slot))}" aria-label="${esc(auditTitle(slot))}">${esc(value)}</button></td>`;
 }
 function auditLinks(slot){
   const reports=[...slot.records.flatMap(r=>r.reports),...(slot.driveReports||[])];
@@ -505,14 +512,16 @@ function auditView(){
   const cards=[['Нийт хүлээгдэж буй ээлж',fmt(summary.expected,0),`${summary.days} өдөр × 2 ээлж × ${rigs.length} өрөм`,''],
     ...AuditModel.STATUSES.map(status=>[AuditModel.LABELS[status],fmt(summary.counts[status],0),
       status==='MISSING_REPORT'&&summary.missingMeters?fmt(summary.missingMeters)+' м тайлангүй':summary.meters[status]?fmt(summary.meters[status])+' м':'',auditClass(status)]),
+    ['Ээлжийн тайлангийн метр',fmt(summary.reported),'Ээлжийн мөрүүдийн нийлбэр',''],
+    ['Гүнээр тооцсон нийт метр',fmt(summary.depthTotal),`Тайлангүй ээлжид гүнээр ~${fmt(summary.inferred)} м`+(summary.unallocated?`, ээлжинд хуваагдаагүй ${fmt(summary.unallocated)} м`:'')+(summary.crossMonth?` · сар дамнасан ${fmt(summary.crossMonth)} м-ийн хэсэг нэмэгдэж болно`:''),'audit-inferred-card'],
     ['Сүүлийн амжилттай sync',sync.success?logTime(sync.success):'—',failed?'Сүүлийн оролдлого алдаатай'+(sync.validation?': '+sync.validation:''):'Аудит '+A.through+' хүртэл',failed?'audit-source-conflict':''],
     ['Эх өгөгдлийн шинэлэг байдал',fresh||'—','Өрөм тус бүрийн сүүлийн тайлан','']];
   const grid=`<div class="table-scroll audit-scroll"><table class="audit-grid"><thead><tr><th>Өрөм · ээлж</th>${dates.map(d=>`<th>${d.slice(8)}</th>`).join('')}</tr></thead><tbody>`
     +rigs.flatMap(r=>['Өдөр','Шөнө'].map(shift=>`<tr><th>${esc(r)} · ${shift}</th>${dates.map(d=>auditCell(index.get(r+'|'+d+'|'+shift))).join('')}</tr>`)).join('')+'</tbody></table></div>';
-  const legend='<div class="audit-legend">'+AuditModel.STATUSES.map(status=>`<span><i class="${auditClass(status)}"></i>${AuditModel.LABELS[status]}</span>`).join('')+'<span>! тайлан дутуу · ? баталгаажаагүй · * зөрчилтэй метр</span></div>';
+  const legend='<div class="audit-legend">'+AuditModel.STATUSES.map(status=>`<span><i class="${auditClass(status)}"></i>${AuditModel.LABELS[status]}</span>`).join('')+'<span>! тайлан дутуу · ~ гүнээр тооцсон метр (тайлангүй) · ? баталгаажаагүй · * зөрчилтэй метр</span></div>';
   const order=s=>s.date+(s.shift==='Өдөр'?0:1)+s.rig;
   const rows=list.filter(slot=>slot.status!=='VERIFIED_DRILLING').sort((a,b)=>order(a).localeCompare(order(b)));
-  const issues=`<div class="table-scroll"><table class="audit-issues"><thead><tr><th>Огноо · ээлж</th><th>Өрөм</th><th>Төлөв</th><th>Метр</th><th>Тайлбар</th><th>Эх сурвалж</th></tr></thead><tbody>${rows.map(slot=>`<tr><td><button class="hole-link" data-audit-slot="${esc(AuditModel.key(slot))}">${slot.date} ${slot.shift}</button></td><td>${esc(slot.rig)}</td><td><span class="badge ${auditClass(slot.status)}">${AuditModel.LABELS[slot.status]}</span></td><td>${slot.meters==null?'Тайлангүй':fmt(slot.meters)+' м'}</td><td>${slot.issues.map(i=>esc(i.text)).join('<br>')||'—'}</td><td>${auditLinks(slot)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">Энэ сард бүх ээлж баталгаажсан.</td></tr>'}</tbody></table></div>`;
+  const issues=`<div class="table-scroll"><table class="audit-issues"><thead><tr><th>Огноо · ээлж</th><th>Өрөм</th><th>Төлөв</th><th>Метр</th><th>Тайлбар</th><th>Эх сурвалж</th></tr></thead><tbody>${rows.map(slot=>`<tr><td><button class="hole-link" data-audit-slot="${esc(AuditModel.key(slot))}">${slot.date} ${slot.shift}</button></td><td>${esc(slot.rig)}</td><td><span class="badge ${auditClass(slot.status)}">${AuditModel.LABELS[slot.status]}</span></td><td>${slot.meters==null?'Тайлангүй':fmt(slot.meters)+' м'}${(slot.inferred||[]).map(i=>`<small class="audit-inferred-note">${i.exact?'гүнээр ~'+fmt(i.meters)+' м':fmt(i.meters)+' м, '+i.shifts+' ээлжид'}</small>`).join('')}</td><td>${[...slot.issues.map(i=>esc(i.text)),...(slot.inferred||[]).filter(i=>!i.exact).map(i=>esc(i.note))].join('<br>')||'—'}</td><td>${auditLinks(slot)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">Энэ сард бүх ээлж баталгаажсан.</td></tr>'}</tbody></table></div>`;
   const inMonth=row=>String(row.date||'').startsWith(auditMonth+'-');
   const extra=[
     ['Өрөм нь тодорхойгүй мөр',(D.unassignedShifts||[]).filter(inMonth),r=>`${r.date} ${r.shift} · «${esc(r.rigText||'хоосон')}» · ${esc(r.hole)} ${fmt(r.from)}–${fmt(r.to)} м · ${esc(r.source)} · ${dataLink(r.url,esc(r.sheet)+' / '+esc(r.tab)+' мөр '+r.row+' ↗')}`],
@@ -539,6 +548,7 @@ function openAuditSlot(key){
   const records=slot.records.map(r=>`<li><strong>${esc(r.hole)}</strong> ${fmt(r.from)}–${fmt(r.to)} м (${fmt(r.meters)} м)${r.source?' · эх файл: '+esc(r.source):''}${r.sheet?' · '+dataLink(r.sheet.url,esc(r.sheet.name)+' / '+esc(r.sheet.tab)+' мөр '+r.sheet.row+' ↗'):''}${r.reports.length?' · '+r.reports.map(x=>dataLink(x.url,esc(x.name||'тайлан')+' ↗')).join(', '):' · <em>Drive тайлан холбогдоогүй</em>'}</li>`).join('');
   $('#detail-body').innerHTML=`<h2 style="font-size:23px">${esc(slot.rig)} · ${slot.date} ${slot.shift}</h2><p><span class="badge ${auditClass(slot.status)}">${AuditModel.LABELS[slot.status]}</span> · ${slot.meters==null?'Тайлангүй (0 м гэж тооцохгүй)':fmt(slot.meters)+' м'}</p>`
     +`<section class="data-files"><h3>Ээлжийн мөр</h3>${records?'<ul>'+records+'</ul>':'<p class="sub">Энэ ээлжийн мөр хүснэгтэд алга.</p>'}</section>`
+    +(slot.inferred?.length?`<section class="data-files"><h3>Гүнээр тооцсон</h3><ul>${slot.inferred.map(i=>`<li>${esc(i.hole)} ${fmt(i.from)}–${fmt(i.to)} м · ${fmt(i.meters)} м${i.exact?' — энэ ээлжинд оноосон (өмнөх, дараах тайлангийн гүнээс). Тайлан биш; цаг, өрөмдөгч, DT тодорхойгүй':' — '+esc(i.note)}</li>`).join('')}</ul></section>`:'')
     +`<section class="data-files"><h3>Шалгалт</h3>${slot.issues.length?'<ul>'+slot.issues.map(i=>'<li>'+esc(i.text)+'</li>').join('')+'</ul>':'<p class="sub">Зөрчилгүй.</p>'}</section>`
     +`<section class="data-files"><h3>Эх сурвалж</h3><p>${auditLinks(slot)}</p></section>`;
   $('#detail').showModal();

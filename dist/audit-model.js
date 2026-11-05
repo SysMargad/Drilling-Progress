@@ -12,7 +12,14 @@
     for(const slot of list){counts[slot.status]++;meters[slot.status]+=slot.meters||0;}
     // Unreported metres are counted per hole gap, which can span both rigs' slots; shown for all rigs only.
     const published=(audit?.months||[]).find(m=>m.month===month);
-    return {expected:list.length,days:new Set(list.map(s=>s.date)).size,counts,meters,missingMeters:rig?null:published?.missingMeters??null};
+    // Metres from the depths around a gap: pinned to one shift (inferred), or known only in total. A total whose
+    // shifts all fall in this month belongs to it; one spread over two months is a range for each.
+    const shares=(published?.unallocated||[]).filter(u=>!rig||u.rig===rig);
+    const inferred=list.reduce((n,s)=>n+(s.inferred||[]).filter(i=>i.exact).reduce((k,i)=>k+i.meters,0),0);
+    const unallocated=shares.filter(u=>u.inMonth===u.shifts).reduce((n,u)=>n+u.meters,0),crossMonth=shares.filter(u=>u.inMonth<u.shifts).reduce((n,u)=>n+u.meters,0);
+    const reported=list.reduce((n,s)=>n+(s.meters||0),0);
+    return {expected:list.length,days:new Set(list.map(s=>s.date)).size,counts,meters,missingMeters:rig?null:published?.missingMeters??null,
+      reported,inferred,unallocated,crossMonth,depthTotal:reported+inferred+unallocated};
   }
   const order=shift=>shift==='Өдөр'?0:1;
   // Freshness is the latest reported shift of each rig, not the time the sync last ran.

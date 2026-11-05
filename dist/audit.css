@@ -40,3 +40,6 @@
 .audit-foreman td:nth-child(-n+8){white-space:nowrap}
 .audit-foreman td:last-child{min-width:300px}
 .audit-foreman td small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.audit-cell.audit-inferred{font-style:italic;background:transparent;border-style:dashed}
+.audit-inferred-note{display:block;color:var(--audit-missing);font-size:11px}
+.audit-kpis .kpi.audit-inferred-card{box-shadow:inset 4px 0 0 var(--muted)}

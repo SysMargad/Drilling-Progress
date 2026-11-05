@@ -85,6 +85,9 @@ def validate_audit(audit, data):
         date.fromisoformat(slot['date'])
         if (slot['meters'] is None) != (not slot['records']):
             raise ValueError('An unreported shift cannot carry metres')
+        # Metres inferred from depth belong to a shift without its report, never to a verified one.
+        if slot.get('inferred') and (slot['status'] != 'MISSING_REPORT' or any(i['meters'] <= 0 or i['to'] - i['from'] - i['meters'] > 0.05 for i in slot['inferred'])):
+            raise ValueError('Inferred metres only fill a missing report')
         for report in [x for r in slot['records'] for x in r['reports']] + slot.get('driveReports', []):
             drive_file(report['url'])
         if slot['folderUrl'] and urlparse(slot['folderUrl']).hostname != 'drive.google.com':

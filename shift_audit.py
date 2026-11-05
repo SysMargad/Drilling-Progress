@@ -127,13 +127,14 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
                       and (lower is None or not h.get('start') or s['date'] >= h['start'])
                       and (lower is not None or not h.get('finish') or s['date'] <= h['finish'])]
         text = f'{hole}: {m(top)}–{m(bottom)} м ({m(round(bottom - top, 2))} м) тайлангүй'
-        gap = {'hole': hole, 'from': top, 'to': bottom, 'slots': candidates}
+        gap = {'hole': hole, 'rig': rig, 'from': top, 'to': bottom, 'slots': candidates}
         gaps.append(gap)
         if candidates:
             for slot in candidates:
                 slot['holes'].add(hole)
                 issue(slot, 'gap', text + (f' — {len(candidates)} ээлжид' if len(candidates) > 1 else ''), 'MISSING_REPORT')
         elif upper and upper['rig'] == rig and lower and upper['hours'] < 11.99:
+            gap['partial'] = upper['slot']
             issue(upper['slot'], 'gap', f'Хэсэгчилсэн тайлан ({m(upper["hours"])} ц); дараагийн тайлан '
                   f'{m(bottom)} м-ээс эхэлсэн — {text}', 'MISSING_REPORT')
         elif lower is None:
@@ -179,8 +180,27 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
             if gap['hole'] == record['hole'] and abs(gap['from'] - record['from']) <= TOLERANCE and abs(gap['to'] - record['to']) <= TOLERANCE:
                 hint = (f'{record["date"]} {record["shift"]}-ийн тайлан ({m(record["from"])}–{m(record["to"])} м) энэ завсрыг яг нөхөж байна — '
                         'тайлангийн огноо/ээлж нэг ээлжээр зөрсөн байж болзошгүй')
+                gap['filled'] = record
                 for slot in gap['slots'] + [record['slot']]:
                     issue(slot, 'hint', hint)
+
+    # The metres a gap must hold, from the depths before and after it. A gap is pinned to a shift only when
+    # one shift is without a report and the metres fit one shift (no more than the most any reported shift
+    # drilled); otherwise only its total is known. Inferred metres are never a report and never verified;
+    # a gap another report fills exactly (a report dated a shift late) is not inferred, which would count it twice.
+    most = max((r['meters'] for r in records), default=0)
+    for gap in gaps:
+        metres = round(gap['to'] - gap['from'], 2)
+        targets = [gap['partial']] if gap.get('partial') else gap['slots']
+        if gap.get('filled') or metres <= TOLERANCE or not targets:
+            continue
+        exact = len(targets) == 1 and metres <= most
+        note = ('' if exact else f'{len(targets)} ээлжид хуваагдана; ээлж бүрийн метр тодорхойгүй' if len(targets) > 1
+                else f'{m(metres)} м нэг ээлжид багтахгүй (тайлангаар нэг ээлжид хамгийн ихдээ {m(most)} м) — өөр тайлангүй ээлжтэй хуваагдана')
+        gap['inferred'] = {'meters': metres, 'exact': exact, 'slots': targets}
+        for slot in targets:
+            slot.setdefault('inferred', []).append({'hole': gap['hole'], 'from': gap['from'], 'to': gap['to'], 'meters': metres,
+                                                   'exact': exact, 'shifts': len(targets), 'note': note})
 
     for record in records:
         h = collar.get(record['hole'])
@@ -314,16 +334,27 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
                             'source': str(r.get('source', '')), 'evidence': evidence(r), 'sheet': r.get('sheet'),
                             'reports': [{'name': x.get('name', ''), 'url': x['url']} for x in r.get('reports', [])]}
                            for r in sorted(slot['records'], key=lambda r: r['from'])],
-               'issues': slot['issues'], 'driveReports': slot.get('driveReports', []),
+               'issues': slot['issues'], 'driveReports': slot.get('driveReports', []), 'inferred': slot.get('inferred', []),
                'folderUrl': daily_folder(data, holes[0]) if holes else ''}
         output.append(row)
         summary = months.setdefault(slot['date'][:7], {'month': slot['date'][:7], 'expected': 0,
                                                         'counts': {status: 0 for status in STATUSES},
-                                                        'meters': {status: 0.0 for status in STATUSES}, 'missingMeters': 0.0})
+                                                        'meters': {status: 0.0 for status in STATUSES}, 'missingMeters': 0.0,
+                                                        'inferredMeters': 0.0, 'unallocated': []})
         summary['expected'] += 1
         summary['counts'][row['status']] += 1
         summary['meters'][row['status']] = round(summary['meters'][row['status']] + (row['meters'] or 0), 2)
+        summary['inferredMeters'] = round(summary['inferredMeters'] + sum(i['meters'] for i in row['inferred'] if i['exact']), 2)
     for gap in gaps:
+        if gap.get('inferred') and not gap['inferred']['exact']:
+            # Known in total only: each month its shifts fall in lists it, with how many of them are its own.
+            shares = {}
+            for slot in gap['inferred']['slots']:
+                shares[slot['date'][:7]] = shares.get(slot['date'][:7], 0) + 1
+            for key, count in shares.items():
+                if key in months:
+                    months[key]['unallocated'].append({'rig': gap['rig'], 'hole': gap['hole'], 'from': gap['from'], 'to': gap['to'],
+                                                       'meters': gap['inferred']['meters'], 'shifts': len(gap['inferred']['slots']), 'inMonth': count})
         month = (gap['slots'][0]['date'] if gap['slots'] else None)
         if month and month[:7] in months:
             months[month[:7]]['missingMeters'] = round(months[month[:7]]['missingMeters'] + gap['to'] - gap['from'], 2)

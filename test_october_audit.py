@@ -97,6 +97,18 @@ class OctoberAuditTests(unittest.TestCase):
         for name in ('Өдөр', 'Шөнө'):
             self.assertIn('UGDH2601: 0–65.4 м', texts(slot('CSD-1300', 31, name)))
 
+    def test_metres_inferred_from_depth_for_unreported_shifts(self):
+        exact = [(s['rig'], s['date'][5:], s['shift'], i['hole'], i['from'], i['to']) for s in AUDIT['slots']
+                 if s['date'].startswith('2026-10') for i in s['inferred'] if i['exact']]
+        self.assertEqual(exact, [('CSD-1300', '10-15', 'Өдөр', 'DTDH2605', 77.4, 107.4), ('CSD-1300', '10-16', 'Өдөр', 'DTDH2605', 158, 200.4),
+                                 ('CSD-1300', '10-18', 'Өдөр', 'DTDH2606', 107.4, 134.4), ('CSD-1300', '10-24', 'Шөнө', 'ZHDH2605', 0, 26.4),
+                                 ('C-1800', '10-30', 'Өдөр', 'ZHDH2604', 428, 431)])
+        october = AUDIT['months'][0]
+        self.assertEqual(october['inferredMeters'], 128.8)
+        self.assertEqual(slot('C-1800', 14, 'Шөнө')['inferred'], [], 'the 15 Oct night report fills it')
+        self.assertEqual([(u['hole'], u['meters'], u['shifts'], u['inMonth']) for u in october['unallocated']],
+                         [('UGDH2601', 65.4, 3, 2), ('ZHDH2604', 39, 2, 1), ('ZHDH2612', 110, 1, 1)])
+
     def test_zhdh2603_reports_overlap_by_one_metre(self):
         for day, name in ((19, 'Шөнө'), (20, 'Өдөр')):
             self.assertIn('59.4–60.4 м давхардсан', texts(slot('CSD-1300', day, name)))
