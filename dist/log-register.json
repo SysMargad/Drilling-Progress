@@ -10,6 +10,10 @@
       "geological": {"name": "ZHDH2603_Geological_Log_with_photos.pdf", "url": "https://drive.google.com/file/d/1KI7gBgpRih_vW-s5RARS9l-VGttYb5Ar/view", "date": "2026-11-05", "by": "NGM Geological Log System"},
       "geotechnical": {"name": "ZHDH2603_Geotechnical_Log.pdf", "url": "https://drive.google.com/file/d/1RFeyV91sVXZG5gzfmMzdSXXLL4m8dyjb/view", "date": "2026-11-05", "by": "NGM Geological Log System"}
     },
+    "ZHDH2604": {
+      "geological": {"name": "ZHDH2604_Geological_Log.pdf", "url": "https://drive.google.com/file/d/11R8cHTJcDLR1UWp-DTAednfHTz0zUcJO/view", "date": "2026-11-06", "by": "NGM Geological Log System"},
+      "geotechnical": {"name": "ZHDH2604_Geotechnical_Log.pdf", "url": "https://drive.google.com/file/d/1XJiSaN046MFk9XreP7vgSw82TuSHOwzR/view", "date": "2026-11-06", "by": "NGM Geological Log System"}
+    },
     "ZHDH2605": {
       "geological": {"name": "ZHDH2605_Geological_Log.pdf", "url": "https://drive.google.com/file/d/1GkuxsaTRCkjGl3__P9xYEW6QQJIG8qgF/view", "date": "2026-11-05", "by": "NGM Geological Log System"},
       "geotechnical": {"name": "ZHDH2605_Geotechnical_Log.pdf", "url": "https://drive.google.com/file/d/1S94USkrnzcIVmiI7GSr4dp0XOLz5MnKE/view", "date": "2026-11-05", "by": "NGM Geological Log System"}
