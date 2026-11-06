@@ -129,14 +129,13 @@ vm.runInContext("D=fixture;chartMonth='2026-10';grain='shift'",overviewContext);
 let marked=vm.runInContext('chart()',overviewContext);
 assert.ok(!marked.includes('audit-mark'),'no ! or ? marks on the chart');
 assert.equal(vm.runInContext('chartBars.length',overviewContext),2,'unreported shifts get no bar');
-assert.equal((marked.match(/class="inferred-bar"[^>]*fill-opacity="0.35"/g)||[]).length,1,'an unreported shift is filled with a pale bar of the metres its depths imply');
-assert.ok(marked.includes('C-1800 · 2026-10-01 Шөнө · тайлангүй, өмнөх ба дараах тайлангийн гүнээс тооцсон ~30 м'));
-assert.ok(marked.includes('class="sub chart-note">Цайвар багана'));
-assert.equal(vm.runInContext('chartBars.reduce((n,b)=>n+b.meters,0)',overviewContext),45,'inferred metres stay out of the reported totals');
-vm.runInContext("grain='day'",overviewContext);
-assert.equal((vm.runInContext('chart()',overviewContext).match(/class="inferred-bar"/g)||[]).length,1);
+// Bars are reported metres only: an unreported shift with a depth estimate draws nothing (owner 2026-11-06).
+for(const g of ['shift','day']){
+ vm.runInContext(`grain='${g}'`,overviewContext);
+ const html=vm.runInContext('chart()',overviewContext);
+ assert.ok(!html.includes('inferred-bar')&&!html.includes('fill-opacity')&&!html.includes('chart-note'),g);
+ assert.equal((html.match(/class="bar-fill"/g)||[]).length,2,g);
+}
 vm.runInContext("grain='shift'",overviewContext);
-overviewArea='Замт Хөндий';
-assert.ok(!vm.runInContext('chart()',overviewContext).includes('inferred-bar'),'an area filter hides other areas, so nothing is filled');
-overviewArea='';
-console.log('Month axes keep unreported shifts in place, marked from the shift audit.');
+assert.equal(vm.runInContext('chartBars.reduce((n,b)=>n+b.meters,0)',overviewContext),45,'estimates stay out of the bars');
+console.log('Month axes keep unreported shifts in place as empty places; bars show reported metres only.');

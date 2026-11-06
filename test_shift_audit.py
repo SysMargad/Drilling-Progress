@@ -302,6 +302,78 @@ class SourceReconciliationTests(unittest.TestCase):
         self.assertEqual([(r['hole'], r['date'], r['row']) for r in data['rejectedShifts']], [('DTDH9001', '2026-10-02', 4)])
         self.assertIn('Depth/meters mismatch', data['rejectedShifts'][0]['reason'])
 
+    def test_a_shift_reported_in_parts_is_one_record(self):
+        # 2026-11-05: DTDH2605 10-15 Өдөр came on two forms, 08-14 (59.4-77.4 m, 7 h coded) and 14-20 (77.4-107.4 m,
+        # times blank), entered in different sheets. One record: 48 m over the 12 h shift, the blank part the rest.
+        collar = csv_source('collar', [COLLAR_HEADER, ['DTDH9001', 300, '', '2026-10-01', '']], '1')
+        first = ['CSD-1300', 'a_08-14.jpg', '2026-10-15', 'Өдөр', 'M', 'DTDH9001', 59.4, 77.4, 18, '', '', 6.5, 7, '']
+        second = ['CSD-1300', 'b_14-20.jpg', '2026-10-15', 'Өдөр', 'E', 'DTDH9001', 77.4, 107.4, 30, '', '', '', '', '']
+        night = ['CSD-1300', 'c.jpg', '2026-10-15', 'Шөнө', '', 'DTDH9001', 107.4, 158, 50.6, '', '', 11.5, 12, '']
+        hole_sheet = csv_source('hole', [SHIFT_HEADER, first, night], '2')
+        other = csv_source('other', [SHIFT_HEADER, first, second], '3')
+        for order in ([hole_sheet, other, collar], [other, hole_sheet, collar]):
+            data = assemble(order, {**self.seed, 'collar': []})
+            self.assertEqual(data['sourceConflicts'], [], 'parts and an identical copy are not conflicts')
+            day = next(s for s in data['shifts'] if s['shift'] == 'Өдөр')
+            self.assertEqual((day['from'], day['to'], day['meters'], day['hours'], day['dt']), (59.4, 107.4, 48, 12, 11.5))
+            self.assertEqual((day['source'], day['driller']), ('a_08-14.jpg', 'M / E'))
+            self.assertIn('Хэсэгчилсэн тайлан нэгтгэсэн: 59.4–77.4 м (a_08-14.jpg) + 77.4–107.4 м (b_14-20.jpg)', day['notes'])
+            self.assertIn('User default 2026-10-27: DT, TOTAL=12 h shift', day['notes'])
+            validate({**data, 'collar': data['collar']})
+            result = build_audit(data, RIGS, '2026-10-31')
+            self.assertEqual(slot(result, 'CSD-1300', '2026-10-15', 'Өдөр')['inferred'], [], 'no gap left inside the shift')
+        # Two full shifts' worth of stated hours under one key are not parts of one shift: that is a conflict.
+        full = csv_source('full', [SHIFT_HEADER, first[:12] + [12, ''], second[:11] + [10, 12, '']], '4')
+        data = assemble([full, collar], {**self.seed, 'collar': []})
+        self.assertEqual((data['shifts'][0]['to'], data['sourceConflicts'][0]['fields']['to']), (77.4, [77.4, 107.4]))
+
+    def test_a_copy_with_blank_times_takes_them_from_the_copy_that_states_them(self):
+        # 2026-11-05: ZHDH2604 10-31 Өдөр is in two tabs, one with ST 3, DT 6.5, Total 12 and one with the times blank.
+        collar = csv_source('collar', [COLLAR_HEADER, ['DTDH9001', 300, '', '2026-10-01', '']], '1')
+        stated = ['C-1800', 'f6.jpg', '2026-10-31', 'Өдөр', '', 'DTDH9001', 446, 461, 15, 3, '', 6.5, 12, '']
+        blank = ['C-1800', 'd_446-461.jpg', '2026-10-31', 'Өдөр', '', 'DTDH9001', 446, 461, 15, '', '', '', '', '']
+        for rows in ([stated, blank], [blank, stated]):
+            data = assemble([csv_source('s', [SHIFT_HEADER, *rows], '2'), collar], {**self.seed, 'collar': []})
+            record = data['shifts'][0]
+            self.assertEqual(data['sourceConflicts'], [])
+            self.assertEqual((record['st'], record['dt'], record['hours']), (3, 6.5, 12))
+            self.assertNotIn('User default', record['notes'])
+        self.assertIn('Цаг (dt, hours, st): s / 1 мөр 3-ийн хувиас', record['notes'])
+        # Two stated values that differ remain a conflict.
+        data = assemble([csv_source('s', [SHIFT_HEADER, stated, stated[:11] + [8, 12, '']], '2'), collar], {**self.seed, 'collar': []})
+        self.assertEqual(data['sourceConflicts'][0]['fields'], {'dt': [6.5, 8]})
+
+    def test_owner_confirmed_rig_correction_reads_the_row_under_its_rig(self):
+        # 2026-11-06: UGDH2601 10-31 Өдөр says "C-1600" (otherwise read as C-1800) but CSD-1300 drilled it; the
+        # 0-74 m row of ZHDH2602 with rig "Баталгаажаагүй" was C-1800 (its hole number is corrected too).
+        fix = lambda text, day, hole, start, end, rig: {'rig': text, 'date': day, 'shift': 'Өдөр', 'hole': hole, 'from': start, 'to': end,
+                                                        'correctRig': rig, 'reason': 'Эзэмшигч баталсан', 'evidence': 'дараагийн тайлан',
+                                                        'confirmedBy': 'Owner', 'confirmedAt': '2026-11-06'}
+        collar = csv_source('collar', [COLLAR_HEADER, ['UGDH9601', 300, '', '2026-10-31', ''], ['DTDH9001', 300, '', '2026-10-01', ''],
+                                       ['ZHDH9612', '', '', '', '']], '1')
+        rows = csv_source('s', [SHIFT_HEADER, ['C-1600', 'u.jpg', '2026-10-31', 'Өдөр', '', 'UGDH9601', 0, 8.4, 8.4, '', '', 3, 12, ''],
+                                ['Баталгаажаагүй', 'z.jpg', '2026-10-15', 'Өдөр', '', 'ZHDH9612', 0, 74, 74, '', '', '', '', '']], '2')
+        rigs = [fix('C-1600', '2026-10-31', 'UGDH9601', 0, 8.4, 'CSD-1300'), fix('Баталгаажаагүй', '2026-10-15', 'ZHDH9612', 0, 74, 'C-1800')]
+        holes = [{'rig': 'C-1800', 'date': '2026-10-15', 'shift': 'Өдөр', 'hole': 'ZHDH9612', 'from': 0, 'to': 74, 'correctHole': 'DTDH9001',
+                  'reason': 'r', 'evidence': 'e', 'confirmedBy': 'Owner', 'confirmedAt': '2026-11-05'}]
+        self.assertEqual([s['rig'] for s in assemble([rows, collar], {**self.seed, 'collar': []})['shifts']], ['C-1800'], 'without the fix')
+        data = assemble([rows, collar], {**self.seed, 'collar': []}, corrections=holes, rig_fixes=rigs)
+        self.assertEqual(data['unassignedShifts'], [])
+        by_hole = {s['hole']: s for s in data['shifts']}
+        self.assertEqual((by_hole['UGDH9601']['rig'], by_hole['UGDH9601']['rigCorrection']['rig']), ('CSD-1300', 'C-1600'))
+        self.assertEqual((by_hole['DTDH9001']['rig'], by_hole['DTDH9001']['meters'], by_hole['DTDH9001']['correction']['hole']), ('C-1800', 74, 'ZHDH9612'))
+        result = build_audit(data, RIGS, '2026-10-31')
+        self.assertIn('Өрөм засагдсан: эх хүснэгтэд «C-1600» → CSD-1300 — Эзэмшигч баталсан',
+                      ' '.join(i['text'] for i in slot(result, 'CSD-1300', '2026-10-31', 'Өдөр')['issues']))
+        from chat_report import shift_keys
+        self.assertIn(('C-1800', '2026-10-31', 'Өдөр', 'UGDH9601'), shift_keys(by_hole['UGDH9601']), 'not posted again under its new rig')
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'shift-audit.json'
+            for bad, message in (({**rigs[0], 'correctRig': 'C-1600'}, 'correctRig'), ({**rigs[0], 'rig': 'CSD-1300'}, 'must change the rig')):
+                path.write_text(json.dumps({'rigs': [bad]}), encoding='utf-8')
+                with self.assertRaisesRegex(ValueError, message):
+                    load_confirmations(path)
+
     def test_owner_confirmed_hole_correction_refiles_a_row_without_changing_its_values(self):
         correction = lambda rig, day, name, wrong, start, end: {'rig': rig, 'date': day, 'shift': name, 'hole': wrong, 'from': start, 'to': end,
                                                                'correctHole': 'DTDH9001', 'reason': 'Ахлахын мэдээ', 'evidence': 'мөр 7',

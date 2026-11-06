@@ -55,6 +55,12 @@ def shift_keys(row):
     keys = {shift_key(row)}
     if row.get("correction"):
         keys.add((row["rig"], row["date"], row["shift"], row["correction"]["hole"]))
+    if row.get("rigCorrection"):
+        # Likewise a corrected rig: the shift may have been posted under the rig its sheet gave.
+        from drilling_sync import canonical_rig
+        old = canonical_rig(row["rigCorrection"]["rig"])
+        keys.update({(old, row["date"], row["shift"], hole) for hole in
+                     {row["hole"], *([row["correction"]["hole"]] if row.get("correction") else [])}})
     return keys
 
 

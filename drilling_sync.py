@@ -239,14 +239,15 @@ def canonical_rig(value):
     return "C-1800" if value == "C-1600" else value
 
 
-def parse_shifts(rows, unassigned=None, rejected=None):
+def parse_shifts(rows, unassigned=None, rejected=None, rig_fixes=()):
     """Shift records of a sheet. Rows whose rig is not C-1800/CSD-1300 go to `unassigned`; with a
-    `rejected` list an invalid row is reported there (with its reason) instead of failing the sheet."""
+    `rejected` list an invalid row is reported there (with its reason) instead of failing the sheet.
+    `rig_fixes`: owner-confirmed rigs for rows whose rig text is wrong or missing (shift-audit.json 'rigs')."""
     output = []
     headers = None
     for row_number, row in enumerate(rows, start=1):
         try:
-            item = _parse_shift_row(row, headers, unassigned, row_number)
+            item = _parse_shift_row(row, headers, unassigned, row_number, rig_fixes)
         except ValueError as error:
             if rejected is None:
                 raise
@@ -277,7 +278,20 @@ def _row_identity(row, headers):
     return identity
 
 
-def _parse_shift_row(row, headers, unassigned, row_number):
+def _rig_fix(fixes, rig_text, hole, get):
+    """The owner-confirmed rig of a sheet row, found by the rig text the row gives, its date, shift, hole and depths."""
+    try:
+        day = date(get(lambda x: x == "date" or x.endswith(" date")))
+        top, bottom = number(get(lambda x: x.endswith("from"))), number(get(lambda x: x.endswith("to")))
+    except ValueError:
+        return None
+    shift = str(get(lambda x: x == "shift" or x.endswith(" shift"))).strip()
+    return next((c for c in fixes if (c["rig"], c["date"], c["shift"], c["hole"]) == (rig_text, day, shift, hole)
+                 and top is not None and bottom is not None
+                 and abs(c["from"] - top) <= 0.05 and abs(c["to"] - bottom) <= 0.05), None)
+
+
+def _parse_shift_row(row, headers, unassigned, row_number, rig_fixes=()):
     """"header" for the header row, None for rows that are not a shift, else the shift record."""
     names = [norm(v) for v in row]
     if "dt" in names and any("source" in h for h in names) and any("hole id" in h for h in names):
@@ -287,8 +301,12 @@ def _parse_shift_row(row, headers, unassigned, row_number):
     def get(match):
         i = next((i for i, h in enumerate(headers) if match(h)), -1)
         return row[i] if 0 <= i < len(row) else ""
-    rig = canonical_rig(get(lambda x: x == "rig" or x.endswith(" rig")))
+    rig_text = str(get(lambda x: x == "rig" or x.endswith(" rig"))).strip()
+    rig = canonical_rig(rig_text)
     h = hole_id(get(lambda x: "hole id" in x))
+    fix = _rig_fix(rig_fixes, rig_text, h, get) if rig_fixes and h else None
+    if fix:
+        rig = fix["correctRig"]
     if h and rig not in RIGS and unassigned is not None and any(str(v).strip() for v in row):
         # A row whose rig is blank or "Баталгаажаагүй" is kept aside for the audit, never guessed.
         try:
@@ -316,6 +334,8 @@ def _parse_shift_row(row, headers, unassigned, row_number):
             "dt": number(get(lambda x: x == "dt")),
             "hours": number(get(lambda x: x == "shift hours (source)")),
             "notes": get(lambda x: "work notes" in x), "sheetRow": row_number}
+    if fix:
+        item["rigCorrection"] = {"rig": rig_text, **{k: fix[k] for k in ("reason", "evidence", "confirmedBy", "confirmedAt")}}
     # The source shift duration is distinct from the subtotal of filled codes.
     # Partially coded shifts may have a 6 h code subtotal but a 12 h duration.
     if item['hours'] is None:
@@ -1077,18 +1097,113 @@ def correct_holes(rows, corrections):
 
 # A shift's measured values; two sources that differ only in notes or file names do not conflict.
 SHIFT_VALUES = ("from", "to", "meters", "st", "rt", "dt", "hours")
+# The note _parse_shift_row leaves when the owner's 12 h default (2026-10-27) filled a blank DT or total.
+ASSUMED_NOTE = "User default 2026-10-27:"
+TIME_LABELS = {"DT": "dt", "TOTAL": "hours"}
 
 
-def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None, corrections=()):
+def _assumed(row):
+    """The time fields (dt, hours) the owner's default filled because the source left them blank."""
+    match = re.search(re.escape(ASSUMED_NOTE) + r" ([A-Z, ]+)=", str(row.get("notes", "")))
+    return {TIME_LABELS[label.strip()] for label in match[1].split(",") if label.strip() in TIME_LABELS} if match else set()
+
+
+def _unreported(row, key):
+    return row[key] is None if key in ("st", "rt") else key in _assumed(row)
+
+
+def _without_assumed_note(notes):
+    return [part for part in str(notes).split(" | ") if not part.startswith(ASSUMED_NOTE)]
+
+
+def _labels(keys):
+    return ", ".join(label for label, key in TIME_LABELS.items() if key in keys)
+
+
+def _sheet_label(row):
+    sheet = row.get("sheet") or {}
+    return f"{sheet.get('name', '')} / {sheet.get('tab', '')} мөр {sheet.get('row', '')}"
+
+
+def _reconcile(kept, item):
+    """Two copies of one shift report (same depths): a time one copy left blank is taken from the other, so a
+    blank is never a conflict. Returns the fields both copies state differently, a real source conflict."""
+    merged, differing, filled = dict(kept), {}, set()
+    for key in SHIFT_VALUES:
+        if _unreported(kept, key) and not _unreported(item, key):
+            merged[key] = item[key]  # even when equal: the value is now stated, no longer the default
+            filled.add(key)
+        elif kept[key] != item[key] and not (_unreported(item, key) and not _unreported(kept, key)):
+            differing[key] = [kept[key], item[key]]
+    if not filled:
+        return differing
+    still = _assumed(kept) - filled
+    if "dt" in still:  # a DT still blank takes the rest of the shift, as the owner's default does
+        merged["dt"] = max(0.0, merged["hours"] - (merged["st"] or 0) - (merged["rt"] or 0))
+    if merged["dt"] + (merged["st"] or 0) + (merged["rt"] or 0) > merged["hours"] + 0.01:
+        return {**differing, **{key: [kept[key], item[key]] for key in filled}}
+    notes = _without_assumed_note(merged["notes"])
+    if still:
+        notes.append(f"{ASSUMED_NOTE} {_labels(still)}=12 h (source blank; estimated).")
+    notes.append(f"Цаг ({', '.join(sorted(filled))}): {_sheet_label(item)}-ийн хувиас (энэ хувьд хоосон)")
+    merged["notes"] = " | ".join(notes)
+    kept.update(merged)
+    return differing
+
+
+def _adjoins(parts, item):
+    """A shift reported in parts on separate forms (e.g. 08-14 and 14-20): same rig, date, shift and hole, the
+    next part starting where the last one ended. Parts whose stated hours add up to more than a shift are not."""
+    low, high = min(p["from"] for p in parts), max(p["to"] for p in parts)
+    if item["meters"] <= 0 or any(p["meters"] <= 0 for p in parts):
+        return False
+    if abs(high - item["from"]) > 0.05 and abs(item["to"] - low) > 0.05:
+        return False
+    stated = [p["hours"] for p in parts + [item] if "hours" not in _assumed(p)]
+    return len(stated) < len(parts) + 1 or sum(stated) <= 12.5
+
+
+def _merge_parts(parts):
+    """One record for a shift reported in parts, joined by depth. Stated times add up; under the owner's 12 h
+    default a part without a stated total takes what the stated parts leave of the shift, all of it drilling
+    time as a blank DT counts, and the record says it is estimated."""
+    parts = sorted(parts, key=lambda p: p["from"])
+    stated = sum(p["hours"] for p in parts if "hours" not in _assumed(p))
+    blank = [p for p in parts if "hours" in _assumed(p)]
+    hours = dt = 0.0
+    for p in parts:
+        busy = (p["st"] or 0) + (p["rt"] or 0)
+        part_dt = p["dt"] if "dt" not in _assumed(p) else None
+        part_hours = p["hours"] if p not in blank else max(max(0.0, 12.0 - stated) / len(blank), (part_dt or 0) + busy)
+        hours += part_hours
+        dt += part_dt if part_dt is not None else max(0.0, part_hours - busy)
+    record = {**parts[0], "to": parts[-1]["to"], "meters": round(sum(p["meters"] for p in parts), 2),
+              "hours": round(hours, 2), "dt": round(dt, 2),
+              "driller": " / ".join(dict.fromkeys(str(p["driller"]).strip() for p in parts if str(p["driller"]).strip()))}
+    for key in ("st", "rt", "waterUsageM3"):
+        values = [p.get(key) for p in parts if p.get(key) is not None]
+        record[key] = round(sum(values), 3) if values else None
+    notes = [n for p in parts for n in _without_assumed_note(p["notes"]) if n.strip()]
+    notes.append("Хэсэгчилсэн тайлан нэгтгэсэн: " + " + ".join(
+        f"{p['from']:g}–{p['to']:g} м ({str(p['source']).strip() or _sheet_label(p)})" for p in parts))
+    assumed = set().union(*(_assumed(p) for p in parts))
+    if assumed:
+        notes.append(f"{ASSUMED_NOTE} {_labels(assumed)}=12 h shift; the part without a stated time takes the rest (estimated).")
+    record["notes"] = " | ".join(notes)
+    return record
+
+
+def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None, corrections=(), rig_fixes=()):
     collar, shifts, warnings, provenance = {}, {}, [], []
     conflicts, unassigned, rejected = {}, {}, {}
+    parts = {}  # (rig, date, shift, hole) -> the sheet rows read for it: copies and parts of one shift report
     collar_url, shift_url = seed.get("collarUrl", ""), seed.get("shiftUrl", "")
     for source in records:
         c, s = [], []
         for tab, rows in workbook_rows(source["content"], source["suffix"]):
             c.extend(parse_collar(rows))
             aside, invalid = [], []
-            parsed = parse_shifts(rows, aside, invalid)
+            parsed = parse_shifts(rows, aside, invalid, rig_fixes)
             correct_holes(parsed + aside, corrections)
             for item in parsed:
                 # The structured record keeps the sheet row it came from; its raw report is linked below.
@@ -1117,8 +1232,18 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
                     warnings.append(f"Collar conflict: {h['id']} / {k}; newer file/first row retained")
         for item in s:
             key = (item["rig"], item["date"], item["shift"], item["hole"])
-            kept = shifts.get(key)
-            differing = {k: [kept[k], item[k]] for k in SHIFT_VALUES if kept and kept[k] != item[k]}
+            kept, group = shifts.get(key), parts.setdefault(key, [])
+            same = next((p for p in group if all(abs(p[k] - item[k]) <= 0.005 for k in ("from", "to", "meters"))), None)
+            if same is not None:  # another copy of a report already read: blanks filled from it, real differences kept apart
+                differing = _reconcile(same, item)
+            elif group and _adjoins(group, item):  # the next part of a shift reported in parts
+                group.append(item)
+                differing = {}
+            else:
+                differing = {k: [kept[k], item[k]] for k in SHIFT_VALUES if kept and kept[k] != item[k]}
+            if not group:
+                group.append(item)
+            shifts[key] = group[0] if len(group) == 1 else _merge_parts(group)
             if differing:
                 warnings.append(f"Shift conflict: {' / '.join(key)}; newer file retained")
                 conflict = conflicts.setdefault(key, {"rig": key[0], "date": key[1], "shift": key[2], "hole": key[3],
@@ -1129,7 +1254,6 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
                     if values[1] not in conflict["fields"][k]:
                         conflict["fields"][k].append(values[1])
                 conflict["others"].append(f"{item['sheet']['name']} / {item['sheet']['tab']} мөр {item['sheet']['row']}")
-            shifts.setdefault(key, item)
     if not collar or not shifts:
         raise ValueError("No recognized collar and shift records; previous dashboard data preserved")
     folder_map = folders if folders is not None else seed.get("folderMap", {})
@@ -1299,10 +1423,11 @@ def main():
                 finance = seed.get("finance")
                 finance_note = ""
                 from shift_audit import load_confirmations
-                corrections = load_confirmations()["holes"]
+                confirmations = load_confirmations()
+                corrections, rig_fixes = confirmations["holes"], confirmations["rigs"]
                 if args.source == "drive":
                     records, folders, report_index, inventory = drive_sources(args.folder_id, args.credentials)
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory, corrections)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory, corrections, rig_fixes)
                     from photo_import import apply_photos
                     data = apply_photos(data)
                     try:
@@ -1319,7 +1444,7 @@ def main():
                     records, folders = local_sources(args.input), None
                     report_file = args.input / "report-index.json"
                     report_index = load_json(report_file) if report_file.exists() else None
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"), corrections=corrections)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), corrections=corrections, rig_fixes=rig_fixes)
                 from photo_import import apply_photos, apply_daily_water
                 data = apply_photos(data)
                 if data.get('finance') is not None:

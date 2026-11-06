@@ -42,5 +42,4 @@
 .audit-cell.audit-inferred{font-style:italic;background:transparent;border-style:dashed}
 .audit-inferred-note{display:block;color:var(--audit-missing);font-size:11px}
 .audit-kpis .kpi.audit-inferred-card{box-shadow:inset 4px 0 0 var(--muted)}
-.chart-note{margin:8px 0 0}
 .kpis .kpi .note{display:block;margin-top:4px;line-height:1.35}

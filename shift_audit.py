@@ -38,9 +38,10 @@ def load_confirmations(path=CONFIG):
     """Owner confirmations, each with its evidence: `confirmed` slots without a report (rig move, standby)
     and `reports` that reached the owner but not the hole's Drive folder, with the depths they state."""
     if not Path(path).exists():
-        return {'confirmed': [], 'reports': [], 'holes': []}
+        return {'confirmed': [], 'reports': [], 'holes': [], 'rigs': []}
     config = json.loads(Path(path).read_text(encoding='utf-8'))
     confirmed, reports, holes = config.get('confirmed', []), config.get('reports', []), config.get('holes', [])
+    rigs = config.get('rigs', [])
     for row in confirmed:
         if row.get('status') != 'VERIFIED_NON_DRILLING' or row.get('shift') not in SHIFTS:
             raise ValueError('Shift audit confirmations may only record verified non-drilling shifts')
@@ -65,7 +66,18 @@ def load_confirmations(path=CONFIG):
         if row['hole'] == row['correctHole']:
             raise ValueError('A hole correction must change the hole')
         Date.fromisoformat(row['date'])
-    return {'confirmed': confirmed, 'reports': reports, 'holes': holes}
+    for row in rigs:
+        # A sheet row whose rig text is wrong or missing: identified by that text, date, shift, hole (as the
+        # sheet gives it) and depths; only its rig changes.
+        if row.get('shift') not in SHIFTS or row.get('correctRig') not in ('C-1800', 'CSD-1300') or not all(
+                str(row.get(key, '')).strip() for key in ('date', 'hole', 'reason', 'evidence', 'confirmedBy', 'confirmedAt')):
+            raise ValueError('A rig correction needs date, shift, hole, correctRig (C-1800/CSD-1300), reason, evidence, confirmedBy and confirmedAt')
+        if not isinstance(row.get('rig'), str) or not all(isinstance(row.get(key), (int, float)) for key in ('from', 'to')):
+            raise ValueError('A rig correction names the rig text of the row ("" for none) and its depths')
+        if row['rig'] == row['correctRig']:
+            raise ValueError('A rig correction must change the rig')
+        Date.fromisoformat(row['date'])
+    return {'confirmed': confirmed, 'reports': reports, 'holes': holes, 'rigs': rigs}
 
 
 def daily_folder(data, hole):
@@ -251,6 +263,9 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
         if record.get('correction'):
             c = record['correction']
             issue(record['slot'], 'correction', f'Цооногийн дугаар засагдсан: эх хүснэгтэд {c["hole"]} → {record["hole"]} — {c["reason"]} ({c["confirmedBy"]}, {c["confirmedAt"]})')
+        if record.get('rigCorrection'):
+            c = record['rigCorrection']
+            issue(record['slot'], 'correction', f'Өрөм засагдсан: эх хүснэгтэд «{c["rig"] or "хоосон"}» → {record["rig"]} — {c["reason"]} ({c["confirmedBy"]}, {c["confirmedAt"]})')
         names = [str(record.get('source', ''))] + [x.get('name', '') for x in record.get('reports', [])]
         if any(re.search(r'date[_\s-]?(check|review)', name, re.I) for name in names):
             record['dateCheck'] = True

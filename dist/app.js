@@ -383,19 +383,14 @@ function chart(){
   hideBarTooltip();chartBars=[];
   const rows=overviewRows(),months=overviewMonths(),rigs=selectedRigs();
   const groups=DrillingChart.fill(DrillingChart.aggregate(rows,grain,chartMonth),grain,chartMonth,D.shiftAudit?.through||D.asOf);
-  // Unreported shifts are filled from the shift audit with the metres their depths imply; an area filter hides
-  // other areas' shifts, so nothing is filled then.
-  const auditIndex=AuditModel.index(D.shiftAudit),fillShifts=!$('#area').value&&['shift','day'].includes(grain);
   const controls=`<div class="chart-controls"><label class="chart-month">Сар <select id="chart-month" aria-label="Гүйцэтгэлийн сар"><option value=""${chartMonth===''?' selected':''}>Нийт хугацаа</option>${months.map(month=>`<option value="${month}"${month===chartMonth?' selected':''}>${month.slice(0,4)} оны ${Number(month.slice(5))}-р сар</option>`).join('')}</select></label><div class="chart-periods" role="group" aria-label="Графикийн хугацаа">${[['shift','Ээлж'],['day','Өдөр'],['week','7 хоног'],['month','Сар']].map(([value,label])=>`<button data-grain="${value}" aria-pressed="${grain===value}">${label}</button>`).join('')}</div></div>`;
   const targetLabels={shift:'30 м / ээлж / өрөм',day:'60 м / өдөр / өрөм',week:'420 м / 7 хоног / өрөм',month:'60 м × сарын хоног / өрөм'};
   let html=`<div class="panel-head"><h2>Гүйцэтгэл · ${overviewPeriodLabel()}</h2>${controls}</div>`;
   if(!groups.length)return html+'<div class="empty">Ээлжийн өгөгдөл байхгүй.</div>';
   const W=Math.max(600,groups.length*(grain==='shift'?44:48)+90),H=280,left=45,right=18,top=30,bottom=grain==='shift'?58:40,plotH=H-top-bottom,step=(W-left-right)/groups.length;
-  // Metres estimated for unreported shifts (from the depths before and after) draw as a pale bar, kept out of the reported totals.
-  const slotsOf=(group,rig)=>fillShifts?(grain==='shift'?[group.secondary==='Ө'?'Өдөр':'Шөнө']:['Өдөр','Шөнө']).map(shift=>auditIndex.get(rig+'|'+group.start+'|'+shift)).filter(Boolean):[];
-  const inferredFor=(group,rig)=>slotsOf(group,rig).reduce((n,slot)=>n+AuditModel.estimate(slot),0);
-  let estimated=false;
-  const high=Math.max(...groups.map(g=>Math.max(g.target,...rigs.map(rig=>(g.amounts[rig]||0)+inferredFor(g,rig))))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
+  // Bars are reported metres only (owner 2026-11-06). The depth estimates of unreported shifts stay in the
+  // drilled-metres KPI and the QA/QC audit; an unreported shift is an empty place on the axis.
+  const high=Math.max(...groups.map(g=>Math.max(g.target,...rigs.map(rig=>g.amounts[rig]||0)))),unit=high>600?300:high>180?60:30,max=Math.ceil(high*1.12/unit)*unit;
   const y=value=>top+plotH-value/max*plotH;
   let svg=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px" role="group" aria-label="Гүйцэтгэл, ${targetLabels[grain]}"><text x="6" y="14">м</text>`;
   const tick=Math.max(unit,Math.ceil(max/5/unit)*unit);
@@ -404,13 +399,6 @@ function chart(){
   groups.forEach((group,i)=>{
     const x=left+(i+0.5)*step;
     rigs.forEach((rig,j)=>{const value=group.amounts[rig]||0,recorded=group.counts[rig]||0,bx=x+(j-rigs.length/2)*barWidth;
-      const inferred=inferredFor(group,rig),top=value+inferred;
-      if(inferred){
-        estimated=true;
-        const split=slotsOf(group,rig).some(AuditModel.shared),label=rig+' · '+group.start+(grain==='shift'?' '+(group.secondary==='Ө'?'Өдөр':'Шөнө'):'')
-          +' · тайлангүй, өмнөх ба дараах тайлангийн гүнээс тооцсон ~'+fmt(inferred)+' м'+(split?' (хэд хэдэн тайлангүй ээлжид тэнцүү хуваасан)':'');
-        svg+=`<rect class="inferred-bar" x="${bx}" y="${y(top)}" width="${barWidth-2}" height="${Math.max(y(value)-y(top),2)}" rx="2" fill="${colors[rig]}" fill-opacity="0.35"><title>${esc(label)}</title></rect>`;
-      }
       if(!recorded)return;
       const records=group.rows.filter(row=>row.rig===rig).sort((a,b)=>a.date.localeCompare(b.date)||(a.shift==='Өдөр'?0:1)-(b.shift==='Өдөр'?0:1)),reports=[...new Map(records.flatMap(row=>row.reports||[]).map(report=>[report.url,report])).values()];
       const bar={rig,group,rows:records,reports,meters:value,target:group.target},index=chartBars.push(bar)-1;
@@ -427,8 +415,7 @@ function chart(){
   const points=[];groups.forEach((g,i)=>{const x1=left+i*step;points.push(x1+','+y(g.target),(x1+step)+','+y(g.target));});
   svg+=`<polyline data-target-line="${grain}" points="${points.join(' ')}" fill="none" stroke="#ba5264" stroke-width="1.8" stroke-dasharray="6 4"/>`;
   const last=groups.at(-1);svg+=`<text class="target-label" x="${W-right-3}" y="${y(last.target)-7}" text-anchor="end">Норм ${fmt(last.target)} м</text></svg>`;
-  return html+`<div class="chart-canvas" tabindex="0" aria-label="Графикийг хэвтээ гүйлгэж үзэх">${svg}</div>`
-    +(estimated?'<p class="sub chart-note">Цайвар багана — тайлангүй ээлжийн метрийг өмнөх ба дараах тайлангийн гүнээс тооцсон (тайлан биш; «Тайлант хугацаанд өрөмдсөн»-д орсон, ROP ба ашиглалтад ороогүй).</p>':'');
+  return html+`<div class="chart-canvas" tabindex="0" aria-label="Графикийг хэвтээ гүйлгэж үзэх">${svg}</div>`;
 }
 function rigs(){return selectedRigs().map(rig=>{const rows=overviewRows().filter(x=>x.rig===rig),dt=sum(rows,'dt'),hours=sum(rows,'hours');return `<div class="rig-card"><div class="rig-title"><span>${rig}</span><span>${fmt(sum(rows,'meters'))} м</span></div><div class="rig-stats"><span>${rows.length} ээлж</span><span>ROP ${dt?fmt(sum(rows,'meters')/dt,2):'—'} м/ц</span></div><div class="track"><span style="width:${hours?dt/hours*100:0}%;background:${RIG_COLORS[rig]}"></span></div><div class="rig-stats"><span>Ашиглалт ${hours?fmt(dt/hours*100):'—'}%</span><span>ST ${knownHours(rows,'st')} цаг</span></div></div>`;}).join('');}
 function holeTable(){
