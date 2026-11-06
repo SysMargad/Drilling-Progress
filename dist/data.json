@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-06",
-  "updatedAt": "2026-11-06T10:33:52+08:00",
+  "updatedAt": "2026-11-06T15:26:53+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -7621,12 +7621,30 @@
       "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
     },
     {
+      "hole": "UGDH2601",
+      "rig": "CSD-1300",
+      "date": "2026-11-01",
+      "shift": "Шөнө",
+      "name": "20261101_n_UGDH2601_CSD-1300_65.4-98.4.jpg",
+      "url": "https://drive.google.com/file/d/1WxdZXKTNwFN9VMEC-TA7wK3r_TLeRVpk/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1mwH3TEapRnIjZkT8EJnOfsFH5IZ2KKkg"
+    },
+    {
       "hole": "ZHDH2604",
       "rig": "C-1800",
       "date": "",
       "shift": "Өдөр",
       "name": "DATE_REVIEW_ZHDH2604_d_95-128_alt.jpg",
       "url": "https://drive.google.com/file/d/1qfUFOGNZ2XzN2uiMUxO7Gjl8vVa15uR7/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1tS0ITcWUdp1PEL4VK7_PtpqnKxq8YPKu"
+    },
+    {
+      "hole": "ZHDH2604",
+      "rig": "C-1800",
+      "date": "2026-11-01",
+      "shift": "Шөнө",
+      "name": "20261101_n_ZHDH2604_C-1800_500-503.jpg",
+      "url": "https://drive.google.com/file/d/191b0mQNkTtkTdRDFyoMFPx12l1ATpF3-/view?usp=drivesdk",
       "folderUrl": "https://drive.google.com/drive/folders/1tS0ITcWUdp1PEL4VK7_PtpqnKxq8YPKu"
     },
     {
