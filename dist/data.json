@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-06",
-  "updatedAt": "2026-11-06T09:41:16+08:00",
+  "updatedAt": "2026-11-06T10:33:52+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -2078,6 +2078,44 @@
       ]
     },
     {
+      "rig": "C-1800",
+      "source": "2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg",
+      "date": "2026-10-15",
+      "shift": "Өдөр",
+      "driller": "Баталгаажаагүй",
+      "hole": "ZHDH2602",
+      "from": 0.0,
+      "to": 74.0,
+      "meters": 74.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "ZHDH2612 0–74м = 74м. Нэг тайланд DTDH2603 257–257м (0м) хамт бий. Маягтын нийт цаг 6ц, цооногт ногдох цаг баталгаажаагүй тул цагийн код болон нийт цаг хоосон. Rig, ажилтны нэр, PQ casing 0–6м баталгаажуулах; эх холбоос хадгалсан. | User default 2026-10-27: DT, TOTAL=12 h (source blank; estimated).",
+      "rigCorrection": {
+        "rig": "Баталгаажаагүй",
+        "reason": "ZHDH2602-ийн эхний 0–74 м-ийг C-1800 өрөмдсөн (эзэмшигч баталсан)",
+        "evidence": "Өрмийн ахлахын 10 сарын метрийн мэдээ (ммм1_1.xlsx, Sheet1 мөр 7: ZHDH-2602, C-1800, 2026/10/15с 2026/10/23нд, 489.3м); ZHDH2602-ийн дараагийн тайлангууд (74–110 м 10-16 Өдөр ба цааш) бүгд C-1800",
+        "confirmedBy": "SysMargad",
+        "confirmedAt": "2026-11-06"
+      },
+      "waterUsageM3": null,
+      "correction": {
+        "hole": "ZHDH2612",
+        "reason": "ZHDH2602-ийн үргэлжлэл: C-1800 10-15 – 10-23-нд ZHDH2602-ийг 489.3 м өрөмдсөн",
+        "evidence": "Өрмийн ахлахын 10 сарын метрийн мэдээ (ммм1_1.xlsx, Sheet1 мөр 7: ZHDH-2602, 2026/10/15с 2026/10/23нд, 489.3м); гүний дараалал 110 → 221 → 266 → 489.3 м; 10-18 Шөнийн эх зурагт ZHDH-2602; ZHDH2602-ийн collar 10-15 – 10-23, 489.3 м",
+        "confirmedBy": "SysMargad",
+        "confirmedAt": "2026-11-05"
+      },
+      "sheet": {
+        "name": "Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 56,
+        "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk"
+      },
+      "reports": []
+    },
+    {
       "rig": "CSD-1300",
       "source": "2026-10-15_DTDH2605_Daily_Drilling_Report.jpg",
       "date": "2026-10-15",
@@ -2105,11 +2143,10 @@
           "rig": "CSD-1300",
           "date": "2026-10-15",
           "shift": "Шөнө",
-          "name": "2026-10-15_DTDH2605_Daily_Drilling_Report.jpg",
+          "name": "DTDH2605_Daily_report_20261015_n.jpg",
           "url": "https://drive.google.com/file/d/1jMcFTmFTyZGPhOhHW4DdRbQVBVymfoJ3/view?usp=drivesdk",
           "fileId": "1jMcFTmFTyZGPhOhHW4DdRbQVBVymfoJ3",
-          "folderUrl": "https://drive.google.com/drive/folders/1NkLVf2nSM4scCOaijRznoGzjAGFzcLGM",
-          "match": "source"
+          "folderUrl": "https://drive.google.com/drive/folders/1Ez1DoDdnLPsQ0nnzFAAfTy3FwkJmUPOL"
         }
       ]
     },
@@ -2118,16 +2155,16 @@
       "source": "DTDH2605_Daily_report_20261015_d_part_08-14.JPG",
       "date": "2026-10-15",
       "shift": "Өдөр",
-      "driller": "Мөнхтөр",
+      "driller": "Мөнхтөр / Д. Энхбаяр",
       "hole": "DTDH2605",
       "from": 59.4,
-      "to": 77.4,
-      "meters": 18.0,
+      "to": 107.4,
+      "meters": 48.0,
       "st": null,
       "rt": null,
-      "dt": 6.5,
-      "hours": 7.0,
-      "notes": "10/15 08:00–14:00 (6 цагийн ХЭСЭГ). Эх зурагт PT=1/2, DT=6:30 (=6.5), кодын нийлбэр 7.0 цаг боловч ээлжийн хугацаа 6.0 цаг; цагийн зөрүү QA/QC-д. Маягтын Total 0.0 талбар бөглөгдөөгүй (хэвлэмэл). Rig хоосон, CSD-1300 эх фолдероор ангилсан; Бит 1. 14–20 цагийн тайлан ирээгүй.",
+      "dt": 11.5,
+      "hours": 12.0,
+      "notes": "10/15 08:00–14:00 (6 цагийн ХЭСЭГ). Эх зурагт PT=1/2, DT=6:30 (=6.5), кодын нийлбэр 7.0 цаг боловч ээлжийн хугацаа 6.0 цаг; цагийн зөрүү QA/QC-д. Маягтын Total 0.0 талбар бөглөгдөөгүй (хэвлэмэл). Rig хоосон, CSD-1300 эх фолдероор ангилсан; Бит 1. 14–20 цагийн тайлан ирээгүй. | Хэсэгчилсэн тайлан нэгтгэсэн: 59.4–77.4 м (DTDH2605_Daily_report_20261015_d_part_08-14.JPG) + 77.4–107.4 м (2026-10-15_DTDH2605_CSD-1300_d_part_14-20_77.4-107.4.jpg) | User default 2026-10-27: DT, TOTAL=12 h shift; the part without a stated time takes the rest (estimated).",
       "waterUsageM3": null,
       "sheet": {
         "name": "Drilling Shift Report Table",
@@ -4229,41 +4266,6 @@
       "waterUsageEstimated": true
     },
     {
-      "rig": "C-1800",
-      "source": "20261031_d_UGDH2601_C-1600.jpg",
-      "date": "2026-10-31",
-      "shift": "Өдөр",
-      "driller": "",
-      "hole": "UGDH2601",
-      "from": 0.0,
-      "to": 8.4,
-      "meters": 8.4,
-      "st": null,
-      "rt": null,
-      "dt": 3.0,
-      "hours": 12.0,
-      "notes": "Эх баримтад DT=3 цаг, нийт 12 цаг; бусад 9 цагийн задаргаа бөглөгдөөгүй. PQ casing эхэлсэн гүн 6 м, дууссан гүн бөглөөгүй. Материал: бит 1, полимер 1 (нэгж тодорхойгүй). Тайлбарт ус хүлээсэн тухай дурдсан. Өрмийн нэр зурагт C-1600; дараагийн ээлжийн CSD-1300-тай тулгах шаардлагатай.",
-      "waterUsageM3": null,
-      "sheet": {
-        "name": "UGDH2601 - Drilling Shift Report Table",
-        "tab": "2_Ээлжийн_бүртгэл",
-        "row": 4,
-        "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk"
-      },
-      "reports": [
-        {
-          "hole": "UGDH2601",
-          "rig": "C-1800",
-          "date": "2026-10-31",
-          "shift": "Өдөр",
-          "name": "20261031_d_UGDH2601_C-1600.jpg",
-          "url": "https://drive.google.com/file/d/17pj3yOuKcpe2hZWIJZ5rMaclgMhTIi5P/view?usp=drivesdk",
-          "fileId": "17pj3yOuKcpe2hZWIJZ5rMaclgMhTIi5P",
-          "folderUrl": "https://drive.google.com/drive/folders/1qKmarYYc7c56yyjNDC7Ymk4npZ07gdhu"
-        }
-      ]
-    },
-    {
       "rig": "CSD-1300",
       "source": "20261031_n_UGDH2601_CSD-1300.jpg",
       "date": "2026-10-31",
@@ -4298,6 +4300,49 @@
         }
       ],
       "waterUsageEstimated": true
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261031_d_UGDH2601_C-1600.jpg",
+      "date": "2026-10-31",
+      "shift": "Өдөр",
+      "driller": "",
+      "hole": "UGDH2601",
+      "from": 0.0,
+      "to": 8.4,
+      "meters": 8.4,
+      "st": null,
+      "rt": null,
+      "dt": 3.0,
+      "hours": 12.0,
+      "notes": "Эх баримтад DT=3 цаг, нийт 12 цаг; бусад 9 цагийн задаргаа бөглөгдөөгүй. PQ casing эхэлсэн гүн 6 м, дууссан гүн бөглөөгүй. Материал: бит 1, полимер 1 (нэгж тодорхойгүй). Тайлбарт ус хүлээсэн тухай дурдсан. Өрмийн нэр зурагт C-1600; дараагийн ээлжийн CSD-1300-тай тулгах шаардлагатай.",
+      "rigCorrection": {
+        "rig": "C-1600",
+        "reason": "UGDH2601-ийг CSD-1300 өрөмдсөн; зурагт «C-1600» гэж бичсэн (эзэмшигч баталсан)",
+        "evidence": "Дараагийн 10-31 Шөнийн тайлан (20261031_n_UGDH2601_CSD-1300.jpg) CSD-1300, 8.4 м-ээс үргэлжилсэн; C-1800 тэр ээлжид ZHDH2604 446–461 м өрөмдсөн",
+        "confirmedBy": "SysMargad",
+        "confirmedAt": "2026-11-06"
+      },
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "UGDH2601 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 4,
+        "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "UGDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-10-31",
+          "shift": "Өдөр",
+          "name": "20261031_d_UGDH2601_C-1600.jpg",
+          "url": "https://drive.google.com/file/d/17pj3yOuKcpe2hZWIJZ5rMaclgMhTIi5P/view?usp=drivesdk",
+          "fileId": "17pj3yOuKcpe2hZWIJZ5rMaclgMhTIi5P",
+          "folderUrl": "https://drive.google.com/drive/folders/1qKmarYYc7c56yyjNDC7Ymk4npZ07gdhu",
+          "match": "source"
+        }
+      ]
     },
     {
       "date": "2026-11-01",
@@ -4446,6 +4491,41 @@
           "name": "20261103_n_STDH2601_C-1800.jpg",
           "url": "https://drive.google.com/file/d/1BZMf2nl2xLgcYf0ncyO7oDSLCklZzeHe/view?usp=drivesdk",
           "fileId": "1BZMf2nl2xLgcYf0ncyO7oDSLCklZzeHe",
+          "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+        }
+      ]
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261104_n_STDH2601_C-1800.jpg",
+      "date": "2026-11-04",
+      "shift": "Шөнө",
+      "driller": "Анхболд (зурагт бичигдсэн; овог тодорхойгүй)",
+      "hole": "STDH2601",
+      "from": 27.0,
+      "to": 30.0,
+      "meters": 3.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "Өрөмдлөг 27–30 м (3 м). Casing PQ 24–27 м (3 м). Ажлын цагийн задаргаа бөглөгдөөгүй; нийт 12 цаг тул өмнөх бүртгэлийн зарчмаар DT=12 цаг гэж бүртгэв. Хэрэглэсэн зүйл: polymer 1. Гар бичмэл тайлбарын зарим хэсэг тодорхой бус.",
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "STDH2601 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 6,
+        "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "STDH2601",
+          "rig": "C-1800",
+          "date": "2026-11-04",
+          "shift": "Шөнө",
+          "name": "20261104_n_STDH2601_C-1800.jpg",
+          "url": "https://drive.google.com/file/d/1XZtIA6IRv4_4y3KkPN2xnt_OoArHKHM6/view?usp=drivesdk",
+          "fileId": "1XZtIA6IRv4_4y3KkPN2xnt_OoArHKHM6",
           "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
         }
       ]
@@ -6026,9 +6106,15 @@
       },
       "geotechnical": {
         "url": "https://drive.google.com/drive/folders/1tB5SZYM1So2p7XQIjxHXeDVflzSUJf8d",
-        "count": 0,
-        "latest": "",
-        "files": []
+        "count": 1,
+        "latest": "2026-11-06T01:59:31.642Z",
+        "files": [
+          {
+            "name": "20261022_STDH2601_Core_Boring_Box_Depths.jpg",
+            "modified": "2026-11-06T01:59:31.642Z",
+            "url": "https://drive.google.com/file/d/1C5k8WR5Bv2wUx2UfqBSF63U-uhM7ixJJ/view?usp=drivesdk"
+          }
+        ]
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/1eTvoKLhUWBkz9jn601fntiNWJPqkvsyy",
@@ -6973,8 +7059,10 @@
   "syncWarnings": [
     "Collar conflict: DTDH2602 / collarDepth; newer file/first row retained",
     "Collar missing: UGDH2602; registered from its Drive folder",
+    "Estimated time: DTDH2605 / 2026-10-15 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: DTDH2605 / 2026-10-16 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: DTDH2606 / 2026-10-18 / Өдөр; blank DT/total uses owner-approved 12 h",
+    "Estimated time: ZHDH2602 / 2026-10-15 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2602 / 2026-10-16 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2602 / 2026-10-18 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2604 / 2026-10-23 / Шөнө; blank DT/total uses owner-approved 12 h",
@@ -6987,8 +7075,6 @@
     "Estimated time: ZHDH2604 / 2026-10-30 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2605 / 2026-10-25 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2606 / 2026-10-26 / Шөнө; blank DT/total uses owner-approved 12 h",
-    "Shift conflict: C-1800 / 2026-10-31 / Өдөр / ZHDH2604; newer file retained",
-    "Shift conflict: CSD-1300 / 2026-10-15 / Өдөр / DTDH2605; newer file retained",
     "Unreported time codes: DTDH2603 / 2026-10-14 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: DTDH2603 / 2026-10-15 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2603 / 2026-10-15 / Өдөр / ST, RT; preserved as null",
@@ -7003,11 +7089,13 @@
     "Unreported time codes: DTDH2606 / 2026-10-18 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: DTDH2606 / 2026-10-18 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-03 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: STDH2601 / 2026-11-04 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-04 / Өдөр / RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-10-31 / Шөнө / RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-10-31 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-11-02 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-11-02 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: ZHDH2602 / 2026-10-15 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-16 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-16 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: ZHDH2602 / 2026-10-17 / Шөнө / ST, RT; preserved as null",
@@ -7062,6 +7150,12 @@
   ],
   "sources": [
     {
+      "name": "STDH2601 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 3
+    },
+    {
       "name": "ZHDH2604 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/18IpbUv-W6flYZ7uEAfy8eRnZatXuxvn2ZcqX2Ki_6OE/edit?usp=drivesdk",
       "collarRows": 0,
@@ -7083,19 +7177,13 @@
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 64
+      "shiftRows": 65
     },
     {
       "name": "UGDH2601 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 4
-    },
-    {
-      "name": "STDH2601 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 2
     },
     {
       "name": "NUDH_COLLAR.xlsx",
@@ -7113,19 +7201,25 @@
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1zKwVkfUrOkTY-W9B4IZlqO4R83RChDk6r-vXIP4-PR0/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 59
+      "shiftRows": 60
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1zH6Elepb6_mv2yoluM0rJ64MOCRGYyOw0zsM6HyNvEU/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 59
+      "shiftRows": 60
+    },
+    {
+      "name": "Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1oKrOhTtSEFN8b_M1pAKxqMW-kLV2kncs5N8vd-rYIUk/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 1
     },
     {
       "name": "Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1jVCDlWGsx9EYqLmuA9ciIx0L21935DFy1JCkzNUG5Iw/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 59
+      "shiftRows": 60
     },
     {
       "name": "ZHDH2605 - Drilling Shift Report Table",
@@ -7146,83 +7240,8 @@
       "shiftRows": 0
     }
   ],
-  "sourceConflicts": [
-    {
-      "rig": "C-1800",
-      "date": "2026-10-31",
-      "shift": "Өдөр",
-      "hole": "ZHDH2604",
-      "kept": "ZHDH2604 - Drilling Shift Report Table / 10_Нэмэлт_тайлан мөр 4",
-      "fields": {
-        "st": [
-          3.0,
-          null
-        ],
-        "dt": [
-          6.5,
-          12.0
-        ]
-      },
-      "others": [
-        "ZHDH2604 - Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 21"
-      ]
-    },
-    {
-      "rig": "CSD-1300",
-      "date": "2026-10-15",
-      "shift": "Өдөр",
-      "hole": "DTDH2605",
-      "kept": "Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 8",
-      "fields": {
-        "from": [
-          59.4,
-          77.4
-        ],
-        "to": [
-          77.4,
-          107.4
-        ],
-        "meters": [
-          18.0,
-          30.0
-        ],
-        "dt": [
-          6.5,
-          12.0
-        ],
-        "hours": [
-          7.0,
-          12.0
-        ]
-      },
-      "others": [
-        "Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 66"
-      ]
-    }
-  ],
-  "unassignedShifts": [
-    {
-      "rigText": "Баталгаажаагүй",
-      "date": "2026-10-15",
-      "shift": "Өдөр",
-      "hole": "ZHDH2602",
-      "from": 0.0,
-      "to": 74.0,
-      "meters": 74.0,
-      "source": "2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg",
-      "row": 56,
-      "correction": {
-        "hole": "ZHDH2612",
-        "reason": "ZHDH2602-ийн үргэлжлэл: C-1800 10-15 – 10-23-нд ZHDH2602-ийг 489.3 м өрөмдсөн",
-        "evidence": "Өрмийн ахлахын 10 сарын метрийн мэдээ (ммм1_1.xlsx, Sheet1 мөр 7: ZHDH-2602, 2026/10/15с 2026/10/23нд, 489.3м); гүний дараалал 110 → 221 → 266 → 489.3 м; 10-18 Шөнийн эх зурагт ZHDH-2602; ZHDH2602-ийн collar 10-15 – 10-23, 489.3 м",
-        "confirmedBy": "SysMargad",
-        "confirmedAt": "2026-11-05"
-      },
-      "sheet": "Drilling Shift Report Table",
-      "tab": "2_Ээлжийн_бүртгэл",
-      "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk"
-    }
-  ],
+  "sourceConflicts": [],
+  "unassignedShifts": [],
   "rejectedShifts": [
     {
       "rig": "CSD-1300",
@@ -7245,6 +7264,17 @@
       "sheet": "Drilling Shift Report Table",
       "tab": "2_Ээлжийн_бүртгэл",
       "url": "https://docs.google.com/spreadsheets/d/1-tKJINEsUU-zKylzE-hqPzK1CKO5cnVb-HMhhjqZujc/edit?usp=drivesdk"
+    },
+    {
+      "rig": "C-1800",
+      "date": "2026-11-05",
+      "shift": "Өдөр",
+      "hole": "STDH2601",
+      "row": 7,
+      "reason": "Missing/invalid from for STDH2601 on 2026-11-05",
+      "sheet": "STDH2601 - Drilling Shift Report Table",
+      "tab": "2_Ээлжийн_бүртгэл",
+      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
     }
   ],
   "unlinkedReports": [
@@ -7582,6 +7612,15 @@
       "folderUrl": "https://drive.google.com/drive/folders/14oXvjcAR5GX1wS75_w-tT8vbAXm_2OLF"
     },
     {
+      "hole": "STDH2601",
+      "rig": "C-1800",
+      "date": "2026-11-05",
+      "shift": "Өдөр",
+      "name": "20261105_d_STDH2601_C-1800.jpg",
+      "url": "https://drive.google.com/file/d/1whCZrLAa75EOQywCqrjrySeuVd1BNM4D/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+    },
+    {
       "hole": "ZHDH2604",
       "rig": "C-1800",
       "date": "",
@@ -7607,14 +7646,14 @@
         "date": "2026-10-01",
         "laborCost": 1731451.62,
         "foodCost": 735000.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 94166.67
       },
       {
         "date": "2026-10-02",
         "laborCost": 3098387.1,
         "foodCost": 735000.0,
-        "bonusCost": 568173.96,
+        "bonusCost": 549923.33,
         "incentiveCost": 94166.67
       },
       {
@@ -7628,196 +7667,196 @@
         "date": "2026-10-04",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 65558.53,
+        "bonusCost": 63452.69,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-05",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 2084761.4,
+        "bonusCost": 2017795.6,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-06",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 3343485.27,
+        "bonusCost": 3236087.28,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-07",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 3015692.6,
+        "bonusCost": 2918823.82,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-08",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 3212368.2,
+        "bonusCost": 3109181.89,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-09",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 1311170.69,
+        "bonusCost": 1269053.83,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-10",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 817296.4,
+        "bonusCost": 791043.56,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-11",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 2556782.85,
+        "bonusCost": 2474654.98,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-12",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 3015692.59,
+        "bonusCost": 2918823.82,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-13",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 3146809.66,
+        "bonusCost": 3045729.2,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-14",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 2281437.01,
+        "bonusCost": 2208153.68,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-15",
         "laborCost": 3262419.36,
         "foodCost": 735000.0,
-        "bonusCost": 1726374.74,
+        "bonusCost": 3870614.2,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-16",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 3264815.02,
+        "bonusCost": 3159944.05,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-17",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 3212368.19,
+        "bonusCost": 3109181.89,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-18",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 2163431.64,
+        "bonusCost": 2093938.84,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-19",
         "laborCost": 4538833.32,
         "foodCost": 735000.0,
-        "bonusCost": 2631082.52,
+        "bonusCost": 2546568.02,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-20",
         "laborCost": 4538833.32,
         "foodCost": 735000.0,
-        "bonusCost": 3146809.65,
+        "bonusCost": 3045729.2,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-21",
         "laborCost": 4369333.32,
         "foodCost": 735000.0,
-        "bonusCost": 2709752.76,
+        "bonusCost": 2622711.26,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-22",
         "laborCost": 4538833.32,
         "foodCost": 735000.0,
-        "bonusCost": 2010461.73,
+        "bonusCost": 1945882.55,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-23",
         "laborCost": 4538833.32,
         "foodCost": 735000.0,
-        "bonusCost": 1907753.36,
+        "bonusCost": 1846473.34,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-24",
         "laborCost": 4538833.32,
         "foodCost": 735000.0,
-        "bonusCost": 2228990.18,
+        "bonusCost": 2157391.52,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-25",
         "laborCost": 4369333.32,
         "foodCost": 735000.0,
-        "bonusCost": 3867953.54,
+        "bonusCost": 3743708.81,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-26",
         "laborCost": 4369333.32,
         "foodCost": 735000.0,
-        "bonusCost": 2731605.62,
+        "bonusCost": 2643862.16,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-27",
         "laborCost": 4369333.32,
         "foodCost": 735000.0,
-        "bonusCost": 3802395.01,
+        "bonusCost": 3680256.12,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-28",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 3015692.59,
+        "bonusCost": 2918823.83,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-29",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 2097873.11,
+        "bonusCost": 2030486.14,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-30",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 393351.2,
+        "bonusCost": 380716.15,
         "incentiveCost": 208215.96
       },
       {
         "date": "2026-10-31",
         "laborCost": 4708333.32,
         "foodCost": 735000.0,
-        "bonusCost": 1166941.92,
+        "bonusCost": 1129457.92,
         "incentiveCost": 208215.96
       }
     ],
@@ -7825,7 +7864,7 @@
       {
         "laborCost": 647016.13,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 0.0,
         "date": "2026-10-01",
         "rig": "C-1800",
@@ -7834,7 +7873,7 @@
       {
         "laborCost": 136693.55,
         "foodCost": 183750.0,
-        "bonusCost": 327792.67,
+        "bonusCost": 317263.46,
         "incentiveCost": 0.0,
         "date": "2026-10-01",
         "rig": "C-1800",
@@ -7861,7 +7900,7 @@
       {
         "laborCost": 988750.0,
         "foodCost": 183750.0,
-        "bonusCost": 371498.36,
+        "bonusCost": 359565.25,
         "incentiveCost": 0.0,
         "date": "2026-10-02",
         "rig": "C-1800",
@@ -7870,7 +7909,7 @@
       {
         "laborCost": 478427.42,
         "foodCost": 183750.0,
-        "bonusCost": 196675.6,
+        "bonusCost": 190358.08,
         "incentiveCost": 0.0,
         "date": "2026-10-02",
         "rig": "C-1800",
@@ -7933,7 +7972,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 65558.53,
+        "bonusCost": 63452.69,
         "incentiveCost": 0.0,
         "date": "2026-10-04",
         "rig": "C-1800",
@@ -7969,7 +8008,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 0.0,
         "date": "2026-10-05",
         "rig": "C-1800",
@@ -7978,7 +8017,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 0.0,
         "date": "2026-10-05",
         "rig": "C-1800",
@@ -7987,7 +8026,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 546321.12,
+        "bonusCost": 528772.43,
         "incentiveCost": 0.0,
         "date": "2026-10-05",
         "rig": "CSD-1300",
@@ -7996,7 +8035,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 30593.98,
+        "bonusCost": 29611.26,
         "incentiveCost": 0.0,
         "date": "2026-10-05",
         "rig": "CSD-1300",
@@ -8005,7 +8044,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 0.0,
         "date": "2026-10-06",
         "rig": "C-1800",
@@ -8014,7 +8053,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 0.0,
         "date": "2026-10-06",
         "rig": "C-1800",
@@ -8023,7 +8062,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 0.0,
         "date": "2026-10-06",
         "rig": "CSD-1300",
@@ -8032,7 +8071,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 1114495.09,
+        "bonusCost": 1078695.76,
         "incentiveCost": 0.0,
         "date": "2026-10-06",
         "rig": "CSD-1300",
@@ -8041,7 +8080,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 0.0,
         "date": "2026-10-07",
         "rig": "C-1800",
@@ -8050,7 +8089,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 0.0,
         "date": "2026-10-07",
         "rig": "C-1800",
@@ -8059,7 +8098,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 0.0,
         "date": "2026-10-07",
         "rig": "CSD-1300",
@@ -8068,7 +8107,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 0.0,
         "date": "2026-10-07",
         "rig": "CSD-1300",
@@ -8077,7 +8116,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 0.0,
         "date": "2026-10-08",
         "rig": "C-1800",
@@ -8086,7 +8125,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 0.0,
         "date": "2026-10-08",
         "rig": "C-1800",
@@ -8095,7 +8134,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 0.0,
         "date": "2026-10-08",
         "rig": "CSD-1300",
@@ -8104,7 +8143,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 0.0,
         "date": "2026-10-08",
         "rig": "CSD-1300",
@@ -8122,7 +8161,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 327792.67,
+        "bonusCost": 317263.46,
         "incentiveCost": 0.0,
         "date": "2026-10-09",
         "rig": "C-1800",
@@ -8131,7 +8170,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 524468.28,
+        "bonusCost": 507621.53,
         "incentiveCost": 0.0,
         "date": "2026-10-09",
         "rig": "CSD-1300",
@@ -8140,7 +8179,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 458909.74,
+        "bonusCost": 444168.84,
         "incentiveCost": 0.0,
         "date": "2026-10-09",
         "rig": "CSD-1300",
@@ -8149,7 +8188,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 240381.29,
+        "bonusCost": 232659.87,
         "incentiveCost": 0.0,
         "date": "2026-10-10",
         "rig": "C-1800",
@@ -8167,7 +8206,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 314680.97,
+        "bonusCost": 304572.92,
         "incentiveCost": 0.0,
         "date": "2026-10-10",
         "rig": "CSD-1300",
@@ -8176,7 +8215,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 262234.14,
+        "bonusCost": 253810.77,
         "incentiveCost": 0.0,
         "date": "2026-10-10",
         "rig": "CSD-1300",
@@ -8185,7 +8224,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 480762.59,
+        "bonusCost": 465319.74,
         "incentiveCost": 0.0,
         "date": "2026-10-11",
         "rig": "C-1800",
@@ -8194,7 +8233,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 502615.43,
+        "bonusCost": 486470.64,
         "incentiveCost": 0.0,
         "date": "2026-10-11",
         "rig": "C-1800",
@@ -8203,7 +8242,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 0.0,
         "date": "2026-10-11",
         "rig": "CSD-1300",
@@ -8212,7 +8251,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 0.0,
         "date": "2026-10-11",
         "rig": "CSD-1300",
@@ -8221,7 +8260,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 0.0,
         "date": "2026-10-12",
         "rig": "C-1800",
@@ -8230,7 +8269,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 0.0,
         "date": "2026-10-12",
         "rig": "C-1800",
@@ -8239,7 +8278,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 0.0,
         "date": "2026-10-12",
         "rig": "CSD-1300",
@@ -8248,7 +8287,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 590026.81,
+        "bonusCost": 571074.23,
         "incentiveCost": 0.0,
         "date": "2026-10-12",
         "rig": "CSD-1300",
@@ -8257,7 +8296,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 0.0,
         "date": "2026-10-13",
         "rig": "C-1800",
@@ -8266,7 +8305,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 0.0,
         "date": "2026-10-13",
         "rig": "C-1800",
@@ -8275,7 +8314,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 0.0,
         "date": "2026-10-13",
         "rig": "CSD-1300",
@@ -8284,7 +8323,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 0.0,
         "date": "2026-10-13",
         "rig": "CSD-1300",
@@ -8302,7 +8341,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 0.0,
         "date": "2026-10-14",
         "rig": "C-1800",
@@ -8311,7 +8350,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 1114495.09,
+        "bonusCost": 1078695.76,
         "incentiveCost": 0.0,
         "date": "2026-10-14",
         "rig": "CSD-1300",
@@ -8320,7 +8359,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 183563.9,
+        "bonusCost": 177667.54,
         "incentiveCost": 0.0,
         "date": "2026-10-14",
         "rig": "CSD-1300",
@@ -8329,7 +8368,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 196675.6,
+        "bonusCost": 190358.08,
         "incentiveCost": 0.0,
         "date": "2026-10-15",
         "rig": "C-1800",
@@ -8338,7 +8377,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 30593.98,
+        "bonusCost": 1594777.65,
         "incentiveCost": 0.0,
         "date": "2026-10-15",
         "rig": "C-1800",
@@ -8347,7 +8386,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 1105753.95,
+        "bonusCost": 1070235.4,
         "incentiveCost": 0.0,
         "date": "2026-10-15",
         "rig": "CSD-1300",
@@ -8356,7 +8395,7 @@
       {
         "laborCost": 815604.84,
         "foodCost": 183750.0,
-        "bonusCost": 393351.21,
+        "bonusCost": 1015243.07,
         "incentiveCost": 0.0,
         "date": "2026-10-15",
         "rig": "CSD-1300",
@@ -8365,7 +8404,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 52053.99,
         "date": "2026-10-16",
         "rig": "C-1800",
@@ -8374,7 +8413,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 52053.99,
         "date": "2026-10-16",
         "rig": "C-1800",
@@ -8383,7 +8422,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 576915.1,
+        "bonusCost": 558383.69,
         "incentiveCost": 52053.99,
         "date": "2026-10-16",
         "rig": "CSD-1300",
@@ -8392,7 +8431,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 52053.99,
         "date": "2026-10-16",
         "rig": "CSD-1300",
@@ -8401,7 +8440,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 458909.74,
+        "bonusCost": 444168.84,
         "incentiveCost": 52053.99,
         "date": "2026-10-17",
         "rig": "C-1800",
@@ -8410,7 +8449,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 52053.99,
         "date": "2026-10-17",
         "rig": "C-1800",
@@ -8419,7 +8458,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 52053.99,
         "date": "2026-10-17",
         "rig": "CSD-1300",
@@ -8428,7 +8467,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 52053.99,
         "date": "2026-10-17",
         "rig": "CSD-1300",
@@ -8446,7 +8485,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 52053.99,
         "date": "2026-10-18",
         "rig": "C-1800",
@@ -8455,7 +8494,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 590026.81,
+        "bonusCost": 571074.23,
         "incentiveCost": 52053.99,
         "date": "2026-10-18",
         "rig": "CSD-1300",
@@ -8464,7 +8503,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 590026.81,
+        "bonusCost": 571074.23,
         "incentiveCost": 52053.99,
         "date": "2026-10-18",
         "rig": "CSD-1300",
@@ -8473,7 +8512,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 52053.99,
         "date": "2026-10-19",
         "rig": "C-1800",
@@ -8482,7 +8521,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 458909.74,
+        "bonusCost": 444168.84,
         "incentiveCost": 52053.99,
         "date": "2026-10-19",
         "rig": "C-1800",
@@ -8491,7 +8530,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 1005230.86,
+        "bonusCost": 972941.27,
         "incentiveCost": 52053.99,
         "date": "2026-10-19",
         "rig": "CSD-1300",
@@ -8500,7 +8539,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 314680.97,
+        "bonusCost": 304572.92,
         "incentiveCost": 52053.99,
         "date": "2026-10-19",
         "rig": "CSD-1300",
@@ -8509,7 +8548,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 52053.99,
         "date": "2026-10-20",
         "rig": "C-1800",
@@ -8518,7 +8557,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 327792.67,
+        "bonusCost": 317263.46,
         "incentiveCost": 52053.99,
         "date": "2026-10-20",
         "rig": "C-1800",
@@ -8527,7 +8566,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 52053.99,
         "date": "2026-10-20",
         "rig": "CSD-1300",
@@ -8536,7 +8575,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 1048936.55,
+        "bonusCost": 1015243.07,
         "incentiveCost": 52053.99,
         "date": "2026-10-20",
         "rig": "CSD-1300",
@@ -8545,7 +8584,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 284086.98,
+        "bonusCost": 274961.66,
         "incentiveCost": 52053.99,
         "date": "2026-10-21",
         "rig": "C-1800",
@@ -8554,7 +8593,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 52053.99,
         "date": "2026-10-21",
         "rig": "C-1800",
@@ -8563,7 +8602,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 590026.81,
+        "bonusCost": 571074.23,
         "incentiveCost": 52053.99,
         "date": "2026-10-21",
         "rig": "CSD-1300",
@@ -8572,7 +8611,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 1048936.55,
+        "bonusCost": 1015243.07,
         "incentiveCost": 52053.99,
         "date": "2026-10-21",
         "rig": "CSD-1300",
@@ -8581,7 +8620,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 52053.99,
         "date": "2026-10-22",
         "rig": "C-1800",
@@ -8590,7 +8629,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 109264.22,
+        "bonusCost": 105754.49,
         "incentiveCost": 52053.99,
         "date": "2026-10-22",
         "rig": "C-1800",
@@ -8599,7 +8638,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 262234.14,
+        "bonusCost": 253810.77,
         "incentiveCost": 52053.99,
         "date": "2026-10-22",
         "rig": "CSD-1300",
@@ -8608,7 +8647,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 52053.99,
         "date": "2026-10-22",
         "rig": "CSD-1300",
@@ -8617,7 +8656,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 240381.29,
+        "bonusCost": 232659.87,
         "incentiveCost": 52053.99,
         "date": "2026-10-23",
         "rig": "C-1800",
@@ -8626,7 +8665,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 356201.37,
+        "bonusCost": 344759.63,
         "incentiveCost": 52053.99,
         "date": "2026-10-23",
         "rig": "C-1800",
@@ -8635,7 +8674,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 52053.99,
         "date": "2026-10-23",
         "rig": "CSD-1300",
@@ -8644,7 +8683,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 52053.99,
         "date": "2026-10-23",
         "rig": "CSD-1300",
@@ -8653,7 +8692,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 52053.99,
         "date": "2026-10-24",
         "rig": "C-1800",
@@ -8662,7 +8701,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 52053.99,
         "date": "2026-10-24",
         "rig": "C-1800",
@@ -8680,7 +8719,7 @@
       {
         "laborCost": 1134708.33,
         "foodCost": 183750.0,
-        "bonusCost": 393351.21,
+        "bonusCost": 380716.15,
         "incentiveCost": 52053.99,
         "date": "2026-10-24",
         "rig": "CSD-1300",
@@ -8689,7 +8728,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 917819.48,
+        "bonusCost": 888337.68,
         "incentiveCost": 52053.99,
         "date": "2026-10-25",
         "rig": "C-1800",
@@ -8698,7 +8737,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 52053.99,
         "date": "2026-10-25",
         "rig": "C-1800",
@@ -8707,7 +8746,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 1507846.3,
+        "bonusCost": 1459411.91,
         "incentiveCost": 52053.99,
         "date": "2026-10-25",
         "rig": "CSD-1300",
@@ -8716,7 +8755,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 52053.99,
         "date": "2026-10-25",
         "rig": "CSD-1300",
@@ -8725,7 +8764,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 524468.28,
+        "bonusCost": 507621.53,
         "incentiveCost": 52053.99,
         "date": "2026-10-26",
         "rig": "C-1800",
@@ -8734,7 +8773,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 786702.42,
+        "bonusCost": 761432.3,
         "incentiveCost": 52053.99,
         "date": "2026-10-26",
         "rig": "C-1800",
@@ -8743,7 +8782,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 511356.57,
+        "bonusCost": 494931.0,
         "incentiveCost": 52053.99,
         "date": "2026-10-26",
         "rig": "CSD-1300",
@@ -8752,7 +8791,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 909078.35,
+        "bonusCost": 879877.33,
         "incentiveCost": 52053.99,
         "date": "2026-10-26",
         "rig": "CSD-1300",
@@ -8761,7 +8800,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 262234.14,
+        "bonusCost": 253810.77,
         "incentiveCost": 52053.99,
         "date": "2026-10-27",
         "rig": "C-1800",
@@ -8770,7 +8809,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 1114495.09,
+        "bonusCost": 1078695.76,
         "incentiveCost": 52053.99,
         "date": "2026-10-27",
         "rig": "C-1800",
@@ -8779,7 +8818,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 1311170.69,
+        "bonusCost": 1269053.83,
         "incentiveCost": 52053.99,
         "date": "2026-10-27",
         "rig": "CSD-1300",
@@ -8788,7 +8827,7 @@
       {
         "laborCost": 1092333.33,
         "foodCost": 183750.0,
-        "bonusCost": 1114495.09,
+        "bonusCost": 1078695.76,
         "incentiveCost": 52053.99,
         "date": "2026-10-27",
         "rig": "CSD-1300",
@@ -8797,7 +8836,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 590026.81,
+        "bonusCost": 571074.23,
         "incentiveCost": 52053.99,
         "date": "2026-10-28",
         "rig": "C-1800",
@@ -8806,7 +8845,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 983378.02,
+        "bonusCost": 951790.38,
         "incentiveCost": 52053.99,
         "date": "2026-10-28",
         "rig": "C-1800",
@@ -8815,7 +8854,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 852260.95,
+        "bonusCost": 824884.99,
         "incentiveCost": 52053.99,
         "date": "2026-10-28",
         "rig": "CSD-1300",
@@ -8824,7 +8863,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 590026.81,
+        "bonusCost": 571074.23,
         "incentiveCost": 52053.99,
         "date": "2026-10-28",
         "rig": "CSD-1300",
@@ -8833,7 +8872,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 52053.99,
         "date": "2026-10-29",
         "rig": "C-1800",
@@ -8842,7 +8881,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 52053.99,
         "date": "2026-10-29",
         "rig": "C-1800",
@@ -8860,7 +8899,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 721143.88,
+        "bonusCost": 697979.61,
         "incentiveCost": 52053.99,
         "date": "2026-10-29",
         "rig": "CSD-1300",
@@ -8869,7 +8908,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 327792.67,
+        "bonusCost": 317263.46,
         "incentiveCost": 52053.99,
         "date": "2026-10-30",
         "rig": "C-1800",
@@ -8878,7 +8917,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 65558.53,
+        "bonusCost": 63452.69,
         "incentiveCost": 52053.99,
         "date": "2026-10-30",
         "rig": "C-1800",
@@ -8914,7 +8953,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 511356.57,
+        "bonusCost": 317263.46,
         "incentiveCost": 52053.99,
         "date": "2026-10-31",
         "rig": "C-1800",
@@ -8923,7 +8962,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 655585.35,
+        "bonusCost": 634526.92,
         "incentiveCost": 52053.99,
         "date": "2026-10-31",
         "rig": "CSD-1300",
@@ -8932,7 +8971,7 @@
       {
         "laborCost": 1177083.33,
         "foodCost": 183750.0,
-        "bonusCost": 0.0,
+        "bonusCost": 177667.54,
         "incentiveCost": 52053.99,
         "date": "2026-10-31",
         "rig": "CSD-1300",
@@ -10540,21 +10579,21 @@
         "month": "2026-10",
         "expected": 124,
         "counts": {
-          "VERIFIED_DRILLING": 92,
+          "VERIFIED_DRILLING": 96,
           "VERIFIED_NON_DRILLING": 5,
           "MISSING_REPORT": 3,
-          "SOURCE_CONFLICT": 11,
-          "UNVERIFIED": 13
+          "SOURCE_CONFLICT": 8,
+          "UNVERIFIED": 12
         },
         "meters": {
-          "VERIFIED_DRILLING": 2823.3,
+          "VERIFIED_DRILLING": 2930.7,
           "VERIFIED_NON_DRILLING": 0.0,
           "MISSING_REPORT": 0.0,
-          "SOURCE_CONFLICT": 277.4,
+          "SOURCE_CONFLICT": 274.0,
           "UNVERIFIED": 33.0
         },
         "missingMeters": 74.4,
-        "inferredMeters": 56.4,
+        "inferredMeters": 26.4,
         "unallocated": [
           {
             "rig": "C-1800",
@@ -10571,14 +10610,14 @@
         "month": "2026-11",
         "expected": 24,
         "counts": {
-          "VERIFIED_DRILLING": 6,
+          "VERIFIED_DRILLING": 7,
           "VERIFIED_NON_DRILLING": 0,
-          "MISSING_REPORT": 5,
-          "SOURCE_CONFLICT": 0,
-          "UNVERIFIED": 13
+          "MISSING_REPORT": 4,
+          "SOURCE_CONFLICT": 1,
+          "UNVERIFIED": 12
         },
         "meters": {
-          "VERIFIED_DRILLING": 150.0,
+          "VERIFIED_DRILLING": 153.0,
           "VERIFIED_NON_DRILLING": 0.0,
           "MISSING_REPORT": 0.0,
           "SOURCE_CONFLICT": 0.0,
@@ -12356,8 +12395,23 @@
         "date": "2026-10-15",
         "shift": "Өдөр",
         "status": "SOURCE_CONFLICT",
-        "meters": 1.4,
+        "meters": 75.4,
         "records": [
+          {
+            "hole": "ZHDH2602",
+            "from": 0.0,
+            "to": 74.0,
+            "meters": 74.0,
+            "source": "2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg",
+            "evidence": "sheet",
+            "sheet": {
+              "name": "Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 56,
+              "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk"
+            },
+            "reports": []
+          },
           {
             "hole": "DTDH2603",
             "from": 257.0,
@@ -12381,12 +12435,24 @@
         ],
         "issues": [
           {
-            "kind": "unassigned",
-            "text": "Өрөм нь «Баталгаажаагүй» мөр: ZHDH2602 0–74 м (2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg) — аль өрөмд хамаарахыг баталгаажуулах"
+            "kind": "correction",
+            "text": "Цооногийн дугаар засагдсан: эх хүснэгтэд ZHDH2612 → ZHDH2602 — ZHDH2602-ийн үргэлжлэл: C-1800 10-15 – 10-23-нд ZHDH2602-ийг 489.3 м өрөмдсөн (SysMargad, 2026-11-05)"
+          },
+          {
+            "kind": "correction",
+            "text": "Өрөм засагдсан: эх хүснэгтэд «Баталгаажаагүй» → C-1800 — ZHDH2602-ийн эхний 0–74 м-ийг C-1800 өрөмдсөн (эзэмшигч баталсан) (SysMargad, 2026-11-06)"
           },
           {
             "kind": "unlinked",
             "text": "Drive-д ZHDH2612-ийн тайлан бий, хүснэгтэд ороогүй: 2026-10-15_ZHDH2612_d.jpg"
+          },
+          {
+            "kind": "evidence",
+            "text": "ZHDH2602: эх тайлан Drive-д холбогдоогүй (2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg)"
+          },
+          {
+            "kind": "transition",
+            "text": "Ээлжийн дотор цооног солигдсон: DTDH2603 → ZHDH2602"
           }
         ],
         "driveReports": [
@@ -12402,14 +12468,14 @@
         "rig": "CSD-1300",
         "date": "2026-10-15",
         "shift": "Өдөр",
-        "status": "SOURCE_CONFLICT",
-        "meters": 18.0,
+        "status": "VERIFIED_DRILLING",
+        "meters": 48.0,
         "records": [
           {
             "hole": "DTDH2605",
             "from": 59.4,
-            "to": 77.4,
-            "meters": 18.0,
+            "to": 107.4,
+            "meters": 48.0,
             "source": "DTDH2605_Daily_report_20261015_d_part_08-14.JPG",
             "evidence": "report",
             "sheet": {
@@ -12432,34 +12498,12 @@
         ],
         "issues": [
           {
-            "kind": "gap",
-            "text": "Хэсэгчилсэн тайлан (7 ц); дараагийн тайлан 107.4 м-ээс эхэлсэн — DTDH2605: 77.4–107.4 м (30 м) тайлангүй"
-          },
-          {
-            "kind": "conflict",
-            "text": "DTDH2605: эх хүснэгтүүд зөрүүтэй (from: 59.4 / 77.4, to: 77.4 / 107.4, meters: 18 / 30, dt: 6.5 / 12, hours: 7 / 12); Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 8-ийн утгыг авсан"
-          },
-          {
-            "kind": "unassigned",
-            "text": "Өрөм нь «Баталгаажаагүй» мөр: ZHDH2602 0–74 м (2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg) — аль өрөмд хамаарахыг баталгаажуулах"
-          },
-          {
             "kind": "rejected",
             "text": "Хүснэгтийн мөр татгалзсан (Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 10): Work hours mismatch for DTDH2605 on 2026-10-15 — өөр хүснэгтийн хүчинтэй мөрийг ашигласан"
           }
         ],
         "driveReports": [],
-        "inferred": [
-          {
-            "hole": "DTDH2605",
-            "from": 77.4,
-            "to": 107.4,
-            "meters": 30.0,
-            "exact": true,
-            "shifts": 1,
-            "note": ""
-          }
-        ],
+        "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1NkLVf2nSM4scCOaijRznoGzjAGFzcLGM"
       },
       {
@@ -12526,7 +12570,7 @@
             },
             "reports": [
               {
-                "name": "2026-10-15_DTDH2605_Daily_Drilling_Report.jpg",
+                "name": "DTDH2605_Daily_report_20261015_n.jpg",
                 "url": "https://drive.google.com/file/d/1jMcFTmFTyZGPhOhHW4DdRbQVBVymfoJ3/view?usp=drivesdk"
               }
             ]
@@ -12541,7 +12585,7 @@
         "rig": "C-1800",
         "date": "2026-10-16",
         "shift": "Өдөр",
-        "status": "SOURCE_CONFLICT",
+        "status": "VERIFIED_DRILLING",
         "meters": 36.0,
         "records": [
           {
@@ -12565,12 +12609,7 @@
             ]
           }
         ],
-        "issues": [
-          {
-            "kind": "gap",
-            "text": "ZHDH2602: 0–74 м (74 м) тайлангүй — тайлан оногдох хоосон ээлж алга"
-          }
-        ],
+        "issues": [],
         "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/11QXQO-3Qi4Sw308hMGk_YyS_QXKKb7jd"
@@ -14546,29 +14585,9 @@
         "rig": "C-1800",
         "date": "2026-10-31",
         "shift": "Өдөр",
-        "status": "SOURCE_CONFLICT",
-        "meters": 23.4,
+        "status": "VERIFIED_DRILLING",
+        "meters": 15.0,
         "records": [
-          {
-            "hole": "UGDH2601",
-            "from": 0.0,
-            "to": 8.4,
-            "meters": 8.4,
-            "source": "20261031_d_UGDH2601_C-1600.jpg",
-            "evidence": "report",
-            "sheet": {
-              "name": "UGDH2601 - Drilling Shift Report Table",
-              "tab": "2_Ээлжийн_бүртгэл",
-              "row": 4,
-              "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk"
-            },
-            "reports": [
-              {
-                "name": "20261031_d_UGDH2601_C-1600.jpg",
-                "url": "https://drive.google.com/file/d/17pj3yOuKcpe2hZWIJZ5rMaclgMhTIi5P/view?usp=drivesdk"
-              }
-            ]
-          },
           {
             "hole": "ZHDH2604",
             "from": 446.0,
@@ -14592,33 +14611,46 @@
         ],
         "issues": [
           {
-            "kind": "conflict",
-            "text": "ZHDH2604: эх хүснэгтүүд зөрүүтэй (st: 3 / None, dt: 6.5 / 12); ZHDH2604 - Drilling Shift Report Table / 10_Нэмэлт_тайлан мөр 4-ийн утгыг авсан"
-          },
-          {
             "kind": "confirmation",
             "text": "Эзэмшигч баталгаажуулсан эх тайлан: ZHDH2604 446–461 м (ffff6.jpg) — Ээлжийн тайлангийн зураг эзэмшигчид ирсэн; ZHDH2604-ийн 02 фолдерт хараахан ороогүй. Гүн 431 → 446 → 461 м-ээр 10-30 Шөнийн тайлантай залгана (SysMargad, 2026-11-05)"
-          },
-          {
-            "kind": "transition",
-            "text": "Ээлжийн дотор цооног солигдсон: ZHDH2604 → UGDH2601"
           }
         ],
         "driveReports": [],
         "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1xhOCJjqo_bBNfB7z6KYKBEiiMwsFlxVi"
+        "folderUrl": "https://drive.google.com/drive/folders/1ip_95_FZP0Di8MHgdbJTi-hpi5JX3FYL"
       },
       {
         "rig": "CSD-1300",
         "date": "2026-10-31",
         "shift": "Өдөр",
-        "status": "UNVERIFIED",
-        "meters": null,
-        "records": [],
+        "status": "VERIFIED_DRILLING",
+        "meters": 8.4,
+        "records": [
+          {
+            "hole": "UGDH2601",
+            "from": 0.0,
+            "to": 8.4,
+            "meters": 8.4,
+            "source": "20261031_d_UGDH2601_C-1600.jpg",
+            "evidence": "report",
+            "sheet": {
+              "name": "UGDH2601 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 4,
+              "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261031_d_UGDH2601_C-1600.jpg",
+                "url": "https://drive.google.com/file/d/17pj3yOuKcpe2hZWIJZ5rMaclgMhTIi5P/view?usp=drivesdk"
+              }
+            ]
+          }
+        ],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "ZHDH2606 дууссан, UGDH2601 эхлэхээс өмнө — нүүлт байж болзошгүй, тайлангаар баталгаажаагүй"
+            "kind": "correction",
+            "text": "Өрөм засагдсан: эх хүснэгтэд «C-1600» → CSD-1300 — UGDH2601-ийг CSD-1300 өрөмдсөн; зурагт «C-1600» гэж бичсэн (эзэмшигч баталсан) (SysMargad, 2026-11-06)"
           }
         ],
         "driveReports": [],
@@ -15047,15 +15079,31 @@
         "rig": "C-1800",
         "date": "2026-11-04",
         "shift": "Шөнө",
-        "status": "MISSING_REPORT",
-        "meters": null,
-        "records": [],
-        "issues": [
+        "status": "VERIFIED_DRILLING",
+        "meters": 3.0,
+        "records": [
           {
-            "kind": "gap",
-            "text": "STDH2601 27 м-т дуусаагүй байхад тайлангүй ээлж"
+            "hole": "STDH2601",
+            "from": 27.0,
+            "to": 30.0,
+            "meters": 3.0,
+            "source": "20261104_n_STDH2601_C-1800.jpg",
+            "evidence": "report",
+            "sheet": {
+              "name": "STDH2601 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 6,
+              "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261104_n_STDH2601_C-1800.jpg",
+                "url": "https://drive.google.com/file/d/1XZtIA6IRv4_4y3KkPN2xnt_OoArHKHM6/view?usp=drivesdk"
+              }
+            ]
           }
         ],
+        "issues": [],
         "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
@@ -15081,16 +15129,25 @@
         "rig": "C-1800",
         "date": "2026-11-05",
         "shift": "Өдөр",
-        "status": "UNVERIFIED",
+        "status": "SOURCE_CONFLICT",
         "meters": null,
         "records": [],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+            "kind": "rejected",
+            "text": "Хүснэгтийн мөр татгалзсан (STDH2601 - Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 7): Missing/invalid from for STDH2601 on 2026-11-05"
+          },
+          {
+            "kind": "unlinked",
+            "text": "Drive-д STDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261105_d_STDH2601_C-1800.jpg"
           }
         ],
-        "driveReports": [],
+        "driveReports": [
+          {
+            "name": "20261105_d_STDH2601_C-1800.jpg",
+            "url": "https://drive.google.com/file/d/1whCZrLAa75EOQywCqrjrySeuVd1BNM4D/view?usp=drivesdk"
+          }
+        ],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
       },
@@ -15225,12 +15282,12 @@
           {
             "rig": "C-1800",
             "foreman": 1552.7,
-            "reported": 1517.1
+            "reported": 1582.7
           },
           {
             "rig": "CSD-1300",
             "foreman": 1477.4,
-            "reported": 1616.6
+            "reported": 1655.0
           }
         ],
         "rows": [
@@ -15281,7 +15338,7 @@
             "collarDepth": 258.4,
             "status": "differs",
             "notes": [
-              "CSD-1300-ийн энэ хугацааны тайланд DTDH2603 алга; тайланд: DTDH2605 170 м (collar 200.4 м)"
+              "CSD-1300-ийн энэ хугацааны тайланд DTDH2603 алга; тайланд: DTDH2605 200 м (collar 200.4 м)"
             ],
             "row": 7,
             "raw": "2026/10/14с 2026/10/16нд | DTDH-2603 | 200м"
@@ -15396,13 +15453,11 @@
             "start": "2026-10-15",
             "finish": "2026-10-23",
             "foreman": 489.3,
-            "reported": 415.3,
+            "reported": 489.3,
             "reached": 489.3,
             "collarDepth": 489.3,
             "status": "agree",
-            "notes": [
-              "Ээлжийн тайлангийн метрийн нийлбэр 415.3 м, гүн 489.3 м — тайлангүй интервал бий"
-            ],
+            "notes": [],
             "row": 7,
             "raw": "2026/10/15с 2026/10/23нд | ZHDH-2602 | 489.3м"
           },
