@@ -761,6 +761,28 @@
         "UNVERIFIED": 12
       },
       "note": "3 rows rejected by validation; Pay-period workbook refresh failed; verified snapshot used: Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx (HTTPError)"
+    },
+    {
+      "id": "a2cfe75f-25d7-44a6-bc9e-2fe5989cb824",
+      "source": "drive",
+      "startedAt": "2026-11-07T03:00:24+08:00",
+      "status": "updated",
+      "completedAt": "2026-11-07T03:02:26+08:00",
+      "files": 15,
+      "holes": 17,
+      "shifts": 118,
+      "meters": 3390.7,
+      "changes": {},
+      "audit": {
+        "month": "2026-11",
+        "expected": 28,
+        "VERIFIED_DRILLING": 7,
+        "VERIFIED_NON_DRILLING": 0,
+        "MISSING_REPORT": 5,
+        "SOURCE_CONFLICT": 1,
+        "UNVERIFIED": 15
+      },
+      "note": "3 rows rejected by validation; Pay-period workbook refresh failed; verified snapshot used: Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx (HTTPError)"
     }
   ]
 }
