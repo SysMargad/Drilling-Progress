@@ -651,6 +651,38 @@
         "UNVERIFIED": 10
       },
       "note": ""
+    },
+    {
+      "id": "5c9a7efe-d2dd-415f-b66d-e77d2fd5edf3",
+      "source": "drive",
+      "startedAt": "2026-11-06T09:39:31+08:00",
+      "status": "updated",
+      "completedAt": "2026-11-06T09:41:29+08:00",
+      "files": 15,
+      "holes": 17,
+      "shifts": 116,
+      "meters": 3283.7,
+      "changes": {
+        "added": [
+          "C-1800 / 2026-10-16 / Өдөр / ZHDH2602",
+          "C-1800 / 2026-10-18 / Өдөр / ZHDH2602",
+          "C-1800 / 2026-10-30 / Өдөр / ZHDH2604",
+          "C-1800 / 2026-10-31 / Өдөр / UGDH2601",
+          "CSD-1300 / 2026-10-16 / Өдөр / DTDH2605",
+          "CSD-1300 / 2026-10-18 / Өдөр / DTDH2606",
+          "CSD-1300 / 2026-10-31 / Шөнө / UGDH2601"
+        ]
+      },
+      "audit": {
+        "month": "2026-11",
+        "expected": 24,
+        "VERIFIED_DRILLING": 6,
+        "VERIFIED_NON_DRILLING": 0,
+        "MISSING_REPORT": 5,
+        "SOURCE_CONFLICT": 0,
+        "UNVERIFIED": 13
+      },
+      "note": "2 numeric source conflicts; 2 rows rejected by validation; Pay-period workbook refresh failed; verified snapshot used: Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx (HTTPError)"
     }
   ]
 }
