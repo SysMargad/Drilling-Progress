@@ -70,6 +70,24 @@ class ShiftAuditTests(unittest.TestCase):
         self.assertEqual(result['months'][0]['inferredMeters'], 42 + 15)
         self.assertTrue(all(s['status'] == 'MISSING_REPORT' for s in result['slots'] if s['inferred']))
 
+    def test_a_rejected_row_on_an_unreported_shift_keeps_its_depth_estimate(self):
+        # 2026-11-05: a sheet row for the shift failed validation ("-" for its hours). The shift is then a source
+        # conflict; the metres its depths imply stay on it as an estimate, never as a report, and the data validates.
+        from validate_data import validate_audit
+        data = {'shifts': [shift('CSD-1300', '2026-10-15', 'Шөнө', 'B', 0, 50), shift('CSD-1300', '2026-10-16', 'Шөнө', 'C', 0, 30)],
+                'collar': [hole('B', finish='2026-10-16', depth=92.4), hole('C')],
+                'rejectedShifts': [{'rig': 'CSD-1300', 'date': '2026-10-16', 'shift': 'Өдөр', 'hole': 'B', 'row': 11,
+                                    'reason': 'Missing/invalid hours for B on 2026-10-16', 'sheet': 'S', 'tab': 'T', 'url': ''}]}
+        result = build_audit(data, RIGS, '2026-10-31')
+        day = slot(result, 'CSD-1300', '2026-10-16', 'Өдөр')
+        self.assertEqual((day['status'], day['meters']), ('SOURCE_CONFLICT', None))
+        self.assertEqual([(i['from'], i['to'], i['meters'], i['exact']) for i in day['inferred']], [(50, 92.4, 42.4, True)])
+        validate_audit(result, data)
+        verified = slot(result, 'CSD-1300', '2026-10-15', 'Шөнө')
+        verified['inferred'] = day['inferred']
+        with self.assertRaisesRegex(ValueError, 'Inferred metres only fill'):
+            validate_audit(result, data)
+
     def test_inferred_metres_are_not_pinned_when_they_cannot_be(self):
         shifts = [shift('C-1800', '2026-10-01', 'Өдөр', 'A', 0, 30), shift('C-1800', '2026-10-03', 'Өдөр', 'A', 90, 120),
                   shift('C-1800', '2026-10-04', 'Өдөр', 'A', 120, 150), shift('C-1800', '2026-10-05', 'Өдөр', 'A', 260, 270),
