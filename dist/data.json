@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-11-07",
-  "updatedAt": "2026-11-07T08:42:25+08:00",
+  "asOf": "2026-11-08",
+  "updatedAt": "2026-11-08T01:34:10+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -10613,7 +10613,7 @@
     }
   },
   "shiftAudit": {
-    "through": "2026-11-07",
+    "through": "2026-11-08",
     "rigs": [
       "C-1800",
       "CSD-1300"
@@ -10652,13 +10652,13 @@
       },
       {
         "month": "2026-11",
-        "expected": 28,
+        "expected": 32,
         "counts": {
           "VERIFIED_DRILLING": 7,
           "VERIFIED_NON_DRILLING": 0,
-          "MISSING_REPORT": 5,
+          "MISSING_REPORT": 7,
           "SOURCE_CONFLICT": 1,
-          "UNVERIFIED": 15
+          "UNVERIFIED": 17
         },
         "meters": {
           "VERIFIED_DRILLING": 153.0,
@@ -15250,13 +15250,13 @@
         "rig": "C-1800",
         "date": "2026-11-06",
         "shift": "Өдөр",
-        "status": "UNVERIFIED",
+        "status": "MISSING_REPORT",
         "meters": null,
         "records": [],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+            "kind": "gap",
+            "text": "STDH2601 30 м-т дуусаагүй байхад тайлангүй ээлж"
           }
         ],
         "driveReports": [],
@@ -15284,13 +15284,13 @@
         "rig": "C-1800",
         "date": "2026-11-06",
         "shift": "Шөнө",
-        "status": "UNVERIFIED",
+        "status": "MISSING_REPORT",
         "meters": null,
         "records": [],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+            "kind": "gap",
+            "text": "STDH2601 30 м-т дуусаагүй байхад тайлангүй ээлж"
           }
         ],
         "driveReports": [],
@@ -15368,6 +15368,74 @@
       {
         "rig": "CSD-1300",
         "date": "2026-11-07",
+        "shift": "Шөнө",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1xhOCJjqo_bBNfB7z6KYKBEiiMwsFlxVi"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-08",
+        "shift": "Өдөр",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-08",
+        "shift": "Өдөр",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1xhOCJjqo_bBNfB7z6KYKBEiiMwsFlxVi"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-08",
+        "shift": "Шөнө",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-08",
         "shift": "Шөнө",
         "status": "UNVERIFIED",
         "meters": null,
