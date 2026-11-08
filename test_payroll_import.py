@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from drilling_sync import FINANCE_FOLDER_ID, FINANCE_SHEET_MIME, FOLDER_MIME, XLSX_MIME, drive_finance_aggregates
-from payroll_import import SNAPSHOT, apply_payroll, load_payrolls, parse_payroll, validate_snapshot
+from payroll_import import SNAPSHOT, apply_payroll, load_payrolls, parse_pay_workbook, parse_payroll, validate_snapshot
 from validate_data import validate_finance
 
 # A pay-period workbook in the source layout, with made-up people and amounts: a master (100,000/day, 50 m at
@@ -168,6 +168,65 @@ class LoadPayrollTests(unittest.TestCase):
         self.assertIs(aggregate.call_args.args[1], attendance)
 
 
+# A contract-fee workbook (Даалгаварын гэрээгээр ажиллагсадын хөлс) in the source layout, made-up people: a geology
+# section (not read), a factory section that also pays two crew people, and the drill-crew section.
+FEE_HEADER = ['№', 'Нэр', 'Регистрийн дугаар', 'Ажлын байр', 'Нөхцөл', 'Хөлс', 'Эхлэх огноо', '10-р сар', '', '',
+              'Ажилласан өдөр', ' Ажилласан өдөрт ногдох цалин ', 'Дансны мэдээлэл', 'Татвар 1%', 'Цалингийн зөрүү, суутгал']
+
+
+def fee_section(title, people, days, base):
+    return [[title], FEE_HEADER, ['', '', '', '', '', '', '', 'Пү', 'Ба', 'Бя'], ['', '', '', '', '', '', '', '1', '2', '3'],
+            *people, ['', 'Нийт дүн', '', '', '', '', '', '', '', '', str(days), f'  {base:,.2f} ']]
+
+
+def fee_rows(crew_total=500000):
+    return [['Гэрээгээр ажиллагсадын 2026.10.01 - 2026.10.03-г дуустал хугацааны хөлсний тооцоо'], [],
+            *fee_section('Ховд аймаг Геологи, Дроны багийн гэрээт ажилчид',
+                         [['1', 'PRIVATE_A', '', 'Геологийн туслах', '', '', '', '1', '1', '1', '3', '300000']], 3, 300000), [],
+            *fee_section(' NGM-Үйлдвэр, өрмийн багийн гэрээт ажилчид',
+                         [['1', 'PRIVATE_CARPENTER', '', 'Мужаан', '', '', '', '1', '1', '1', '3', '600000'],
+                          ['2', 'Д.Мастер', '', 'Өрмийн мастер', '', '', '', '1', '', '', '1', '100000'],
+                          ['3', 'Хабэа', '', 'ХАБЭА мэргэжилтэн', '', '', '', '1', '', '', '1', '100000']], 5, 800000), [],
+            *fee_section('Дорнод аймаг NGM- Нэргүй өндөр талбай-Өрмийн баг',
+                         [['1', 'Мастер', '', 'Өрмийн мастер', '', '', '', '', '1', '1', '2', '200000'],
+                          ['2', 'Х.Хабэа', '', 'ХАБЭА', '', '', '', '', '1', '1', '2', '200000'],
+                          ['3', 'PRIVATE_COOK', '', 'Туслах тогооч', '', '', '', '2', '', '', '2', '100000', '', '', '  (25,000.00)']],
+                         6, crew_total)]
+
+
+class ContractFeeTests(unittest.TestCase):
+    def test_the_crew_section_counts_whole_and_a_mixed_section_only_its_crew_people(self):
+        fees = parse_pay_workbook([('2026-10-03', fee_rows())], 'Хөлс-2026.10.03')
+        self.assertEqual((fees['start'], fees['end'], fees['people']), ('2026-10-01', '2026-10-03', 3))
+        # Day 1: the factory section's master and safety officer (also in the crew section by name) and the cook's
+        # double day; the carpenter and the geology section are not crew.
+        self.assertEqual(fees['daily'], [{'date': '2026-10-01', 'base': 300000.0}, {'date': '2026-10-02', 'base': 200000.0},
+                                         {'date': '2026-10-03', 'base': 200000.0}])
+        self.assertEqual(fees['totals'], {'days': 8.0, 'base': 700000.0, 'additions': 0.0, 'deductions': 25000.0})
+        self.assertEqual(fees['bonus']['amount'], 0.0)
+        self.assertNotIn('PRIVATE', json.dumps(fees, ensure_ascii=False))
+
+    def test_a_section_total_that_does_not_add_up_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'base do not add up'):
+            parse_pay_workbook([('2026-10-03', fee_rows(crew_total=600000))], 'Хөлс')
+
+    def test_a_fee_period_replaces_pay_and_keeps_the_modelled_incentive_and_bonus(self):
+        finance = model_finance()
+        for row in finance['rigShifts']:
+            row['incentiveCost'] = 70.0
+        fees = {'name': 'Хөлс', 'start': '2026-10-15', 'end': '2026-10-15', 'people': 1, 'source': 'snapshot',
+                'daily': [{'date': '2026-10-15', 'base': 400000.0}],
+                'bonus': {'month': '2026-10', 'amount': 0.0, 'meters': 0.0},
+                'totals': {'days': 1.0, 'base': 400000.0, 'additions': 0.0, 'deductions': 0.0}}
+        applied = apply_payroll(finance, [fees], SHIFTS)
+        rows = {(r['date'], r['rig'], r['shift']): r for r in applied['rigShifts']}
+        self.assertEqual(rows[('2026-10-15', 'C-1800', 'Шөнө')]['laborCost'], 113000.0)  # 400,000 × 1.13 / 4
+        self.assertEqual(rows[('2026-10-15', 'C-1800', 'Шөнө')]['incentiveCost'], 70.0)
+        self.assertEqual(rows[('2026-10-15', 'C-1800', 'Өдөр')]['bonusCost'], 300.0)
+        self.assertEqual(rows[('2026-10-16', 'C-1800', 'Шөнө')]['laborCost'], 1000.0)
+        validate_finance(applied)
+
+
 class PublishedSnapshotTests(unittest.TestCase):
     def test_the_snapshot_holds_verified_date_totals_only(self):
         snapshot = json.loads(SNAPSHOT.read_text(encoding='utf-8'))
@@ -177,7 +236,7 @@ class PublishedSnapshotTests(unittest.TestCase):
                 continue
             self.assertEqual(set(entry['totals']), {'days', 'base', 'additions', 'deductions'})
             self.assertAlmostEqual(sum(row['base'] for row in entry['daily']), entry['totals']['base'], delta=1)
-            self.assertLessEqual(entry['bonus']['amount'] + sum(row['incentive'] for row in entry['daily']),
+            self.assertLessEqual(entry['bonus']['amount'] + sum(row.get('incentive', 0) for row in entry['daily']),
                                  entry['totals']['additions'] + 1)
 
 

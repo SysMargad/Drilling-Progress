@@ -1,6 +1,88 @@
 {
-  "about": "Date totals of the drill-crew pay-period workbooks (Drive file id, name), read by payroll_import.py. Each date: base pay and the non-bonus additions of the people who worked it (before the 13% loading); bonus: the masters' metre bonus of the month. No names or per-person amounts. The sync reads each listed file from Drive and uses these verified totals when Drive cannot be read; a new file can be listed with its id and name alone.",
+  "about": "Date totals of the drill-crew pay workbooks (Drive file id, name), read by payroll_import.py: pay-period workbooks with the role summary and metre rates (2026.10.16-31) and contract-fee workbooks (Даалгаварын гэрээгээр ажиллагсадын хөлс, 2026.10.01-15: the drill-crew section, plus the crew's people in the factory and drill-crew section). Each date: base pay and, for pay-period workbooks, the non-bonus additions of the people who worked it (before the 13% loading); a contract-fee date has no incentive and leaves the modelled incentive as it was. bonus: the masters' metre bonus of the month (none in a contract-fee workbook). No names or per-person amounts. The sync reads each listed file from Drive and uses these verified totals when Drive cannot be read; a new file can be listed with its id and name alone.",
   "payrolls": [
+    {
+      "id": "1nzfcCVaCeNHGFSEkCXqRkXqdzBosYxZIQ7EQ7FD9-cU",
+      "mimeType": "application/vnd.google-apps.spreadsheet",
+      "name": "Даалгаварын гэрээгээр ажиллагсадын хөлс-2026.10.15",
+      "modifiedTime": "2026-11-06T08:20:54.887Z",
+      "start": "2026-10-01",
+      "end": "2026-10-15",
+      "people": 25,
+      "daily": [
+        {
+          "date": "2026-10-01",
+          "base": 2950000.0
+        },
+        {
+          "date": "2026-10-02",
+          "base": 3483333.33
+        },
+        {
+          "date": "2026-10-03",
+          "base": 4016666.67
+        },
+        {
+          "date": "2026-10-04",
+          "base": 3816666.67
+        },
+        {
+          "date": "2026-10-05",
+          "base": 3816666.67
+        },
+        {
+          "date": "2026-10-06",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-07",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-08",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-09",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-10",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-11",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-12",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-13",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-14",
+          "base": 3966666.67
+        },
+        {
+          "date": "2026-10-15",
+          "base": 3966666.67
+        }
+      ],
+      "bonus": {
+        "month": "2026-10",
+        "amount": 0.0,
+        "meters": 0.0
+      },
+      "totals": {
+        "days": 359.0,
+        "base": 57750000.0,
+        "additions": 0.0,
+        "deductions": 225000.0
+      }
+    },
     {
       "id": "1vywMyIJCejSge876iD1hycpBdhbUVfMe",
       "name": "Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx",

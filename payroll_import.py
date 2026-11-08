@@ -116,6 +116,107 @@ def parse_payroll(sheets, name=''):
             'totals': {key: round(value, 2) for key, value in totals.items()}}
 
 
+FEE_HEADERS = ('нэр', 'ажлын байр', 'ажилласан өдөр', 'ажилласан өдөрт ногдох цалин')
+CREW = 'өрмийн баг'
+
+
+def _person(name):
+    """The given name of a 'Д.Мөнхтөр'-style entry: the same person is written with or without the initial."""
+    return norm(name).split('.')[-1].strip()
+
+
+def parse_contract_fees(sheets, name=''):
+    """Date totals of the drill crew in a contract-fee workbook (Даалгаварын гэрээгээр ажиллагсадын хөлс): one
+    sheet with a section per site and team, each with its own header, day columns and total row. The crew
+    section (title naming the drill crew alone) counts whole; a section that mixes the crew with other work
+    (factory, carpentry) counts only the crew's people: a crew role or a person also listed in the crew section.
+    These workbooks pay the fee for the marked days; they carry no metre bonus and no additions."""
+    sections = []
+    for _, rows in sheets:
+        text = ' '.join(str(cell) for row in rows[:3] for cell in row)
+        for index, row in enumerate(rows):
+            headers = [norm(cell) for cell in row]
+            if not all(h in headers for h in FEE_HEADERS):
+                continue
+            title = next((norm(' '.join(str(c) for c in rows[i] if str(c).strip())) for i in range(index - 1, max(index - 4, -1), -1)
+                          if sum(1 for c in rows[i] if str(c).strip()) == 1), '')
+            sections.append((title, rows, index, headers, text))
+    if not sections:
+        raise ValueError('Contract-fee workbook has no section with a fee table')
+    match = PERIOD.search(' '.join([sections[0][4], name]))
+    if not match:
+        raise ValueError('Contract-fee workbook names no period (YYYY.MM.DD-YYYY.MM.DD)')
+    start, end = date(*map(int, match.groups()[:3])), date(*map(int, match.groups()[3:]))
+    if end < start or (start.year, start.month) != (end.year, end.month):
+        raise ValueError('Pay period must lie within one month')
+    days = [start + timedelta(n) for n in range((end - start).days + 1)]
+    read = []
+    for title, rows, index, headers, _ in sections:
+        if CREW not in title:
+            continue
+        col = {key: headers.index(key) for key in ('нэр', 'ажлын байр', 'ажилласан өдөр', 'ажилласан өдөрт ногдох цалин')}
+        deduction_col = next((i for i, h in enumerate(headers) if 'суутгал' in h), -1)
+        day_row, day_cols = _day_columns(rows, index, days)
+        people, check = [], None
+        for row in rows[day_row + 1:]:
+            if norm(_finance_cell(row, col['нэр'])).startswith('нийт дүн'):
+                check = row
+                break
+            person, role = _finance_cell(row, col['нэр']), _finance_cell(row, col['ажлын байр'])
+            base = _finance_number(_finance_cell(row, col['ажилласан өдөрт ногдох цалин']))
+            if not person or base is None:
+                continue
+            marks = [(day, _finance_number(_finance_cell(row, c)) or 0.0) for day, c in zip(days, day_cols)]
+            if any(mark < 0 or mark > 2 for _, mark in marks):
+                raise ValueError('Contract-fee day mark outside 0-2')
+            worked = sum(mark for _, mark in marks)
+            if not math.isclose(worked, _finance_number(_finance_cell(row, col['ажилласан өдөр'])) or 0.0, abs_tol=0.01):
+                raise ValueError('Contract-fee day marks do not add up to the worked days')
+            if base and not worked:
+                raise ValueError('Contract-fee pay without marked work days')
+            deduction = abs(_finance_number(_finance_cell(row, deduction_col).strip('()')) or 0.0) if deduction_col >= 0 else 0.0
+            people.append({'person': _person(person), 'role': norm(role), 'base': base, 'worked': worked,
+                           'marks': marks, 'deduction': deduction})
+        # The section's own total row is the check that every person in it was read.
+        if check is None:
+            raise ValueError('Contract-fee section has no total row')
+        for key, column in (('worked', 'ажилласан өдөр'), ('base', 'ажилласан өдөрт ногдох цалин')):
+            if not math.isclose(sum(p[key] for p in people), _finance_number(_finance_cell(check, col[column])) or 0.0, abs_tol=1.0):
+                raise ValueError(f'Contract-fee section {key} do not add up to its total')
+        read.append((title, people))
+    crew = [people for title, people in read if title.endswith(CREW)]
+    if not crew:
+        raise ValueError('Contract-fee workbook has no drill-crew section')
+    roles = {p['role'] for people in crew for p in people}
+    names = {p['person'] for people in crew for p in people}
+    daily = {day: 0.0 for day in days}
+    totals = {'days': 0.0, 'base': 0.0, 'additions': 0.0, 'deductions': 0.0}
+    count = set()
+    for title, people in read:
+        mixed = not title.endswith(CREW)
+        for p in people:
+            if mixed and p['role'] not in roles and p['person'] not in names:
+                continue
+            for day, mark in p['marks']:
+                if p['worked']:
+                    daily[day] += p['base'] * mark / p['worked']
+            totals['days'] += p['worked']
+            totals['base'] += p['base']
+            totals['deductions'] += p['deduction']
+            count.add(p['person'])
+    return {'name': name, 'start': start.isoformat(), 'end': end.isoformat(), 'people': len(count),
+            'daily': [{'date': day.isoformat(), 'base': round(value, 2)} for day, value in daily.items()],
+            'bonus': {'month': start.strftime('%Y-%m'), 'amount': 0.0, 'meters': 0.0},
+            'totals': {key: round(value, 2) for key, value in totals.items()}}
+
+
+def parse_pay_workbook(sheets, name=''):
+    """A pay-period workbook with the role summary and metre rates, or a contract-fee workbook."""
+    if any(_finance_has_headers([sheet], SUMMARY_HEADERS) for sheet in sheets):
+        return parse_payroll(sheets, name)
+    return parse_contract_fees(sheets, name)
+
+
 def validate_snapshot(snapshot):
     if set(snapshot) != {'about', 'payrolls'} or not isinstance(snapshot['payrolls'], list):
         raise ValueError('Unexpected pay-period snapshot fields')
@@ -124,14 +225,15 @@ def validate_snapshot(snapshot):
             raise ValueError('Pay-period snapshot entry needs a Drive id and a file name')
         if 'daily' not in entry:
             continue  # a file to read from Drive that has no verified totals yet
-        if set(entry) != {'id', 'name', 'modifiedTime', 'start', 'end', 'people', 'daily', 'bonus', 'totals'}:
+        if set(entry) - {'mimeType'} != {'id', 'name', 'modifiedTime', 'start', 'end', 'people', 'daily', 'bonus', 'totals'}:
             raise ValueError('Pay-period snapshot must hold date totals only')
         start, end = date.fromisoformat(entry['start']), date.fromisoformat(entry['end'])
         dates = [row['date'] for row in entry['daily']]
         if dates != [(start + timedelta(n)).isoformat() for n in range((end - start).days + 1)]:
             raise ValueError('Pay-period snapshot must list every date of its period')
         for row in entry['daily']:
-            if set(row) != {'date', 'base', 'incentive'} or min(row['base'], row['incentive']) < 0:
+            # A contract-fee period has no additions: it leaves the date's modelled incentive as it was.
+            if set(row) - {'incentive'} != {'date', 'base'} or min(row['base'], row.get('incentive', 0)) < 0:
                 raise ValueError('Invalid pay-period date total')
         if not math.isclose(sum(row['base'] for row in entry['daily']), entry['totals']['base'], abs_tol=1.0):
             raise ValueError('Pay-period snapshot base pay does not add up')
@@ -148,8 +250,8 @@ def load_payrolls(drive=None, workbook_reader=None, path=SNAPSHOT):
     for entry in snapshot['payrolls']:
         if drive is not None:
             try:
-                sheets = workbook_reader(drive.download({'id': entry['id'], 'mimeType': XLSX_MIME}), '.xlsx')
-                result.append({**parse_payroll(sheets, entry['name']), 'source': 'drive'})
+                sheets = workbook_reader(drive.download({'id': entry['id'], 'mimeType': entry.get('mimeType', XLSX_MIME)}), '.xlsx')
+                result.append({**parse_pay_workbook(sheets, entry['name']), 'source': 'drive'})
                 continue
             except Exception as error:  # Drive access or a changed layout: the verified totals stand in
                 failed.append(f"{entry['name']} ({type(error).__name__})")
@@ -177,7 +279,8 @@ def apply_payroll(finance, payrolls, shifts):
             for key in keys:
                 row = rows.setdefault(key, blank(key))
                 row['laborCost'] = round(day['base'] * LOADING / len(keys), 2)
-                row['incentiveCost'] = round(day['incentive'] * LOADING / len(keys), 2)
+                if 'incentive' in day:  # a contract-fee period keeps the modelled incentive
+                    row['incentiveCost'] = round(day['incentive'] * LOADING / len(keys), 2)
     bonus = sum(p['bonus']['amount'] for p in mine)
     if bonus > 0:
         meters = defaultdict(float)
