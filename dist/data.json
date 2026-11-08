@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-08",
-  "updatedAt": "2026-11-08T01:34:10+08:00",
+  "updatedAt": "2026-11-08T12:57:31+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -6086,9 +6086,15 @@
       },
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1-kuluzYW94DA89tI7bLoC_zyDHIoh7fB",
-        "count": 0,
-        "latest": "",
-        "files": []
+        "count": 1,
+        "latest": "2026-11-08T03:32:06.123Z",
+        "files": [
+          {
+            "name": "KHDH2601-(1.4m-50.4m).xlsx",
+            "modified": "2026-11-08T03:32:06.123Z",
+            "url": "https://docs.google.com/spreadsheets/d/1z5peMOAJdu6Owx17ApuRVXhgBk5ob0CW/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          }
+        ]
       },
       "surveys": {
         "url": "https://drive.google.com/drive/folders/1zm4GvsHWuv_dBVuBSF9N_QuNFPrxSIqV",
