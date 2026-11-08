@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-08",
-  "updatedAt": "2026-11-08T12:57:31+08:00",
+  "updatedAt": "2026-11-08T20:57:30+08:00",
   "period": "2026-10-01 – 2026-11-04",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -7694,105 +7694,105 @@
     "daily": [
       {
         "date": "2026-10-01",
-        "laborCost": 1731451.62,
+        "laborCost": 3333500.0,
         "foodCost": 735000.0,
         "bonusCost": 951790.38,
         "incentiveCost": 94166.67
       },
       {
         "date": "2026-10-02",
-        "laborCost": 3098387.1,
+        "laborCost": 3936166.68,
         "foodCost": 735000.0,
         "bonusCost": 549923.33,
         "incentiveCost": 94166.67
       },
       {
         "date": "2026-10-03",
-        "laborCost": 3426451.6,
+        "laborCost": 4538833.32,
         "foodCost": 735000.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-04",
-        "laborCost": 3262419.36,
+        "laborCost": 4312833.32,
         "foodCost": 735000.0,
         "bonusCost": 63452.69,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-05",
-        "laborCost": 3262419.36,
+        "laborCost": 4312833.32,
         "foodCost": 735000.0,
         "bonusCost": 2017795.6,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-06",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 3236087.28,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-07",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 2918823.82,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-08",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 3109181.89,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-09",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 1269053.83,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-10",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 791043.56,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-11",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 2474654.98,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-12",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 2918823.82,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-13",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 3045729.2,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-14",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 2208153.68,
         "incentiveCost": 0.0
       },
       {
         "date": "2026-10-15",
-        "laborCost": 3262419.36,
+        "laborCost": 4482333.32,
         "foodCost": 735000.0,
         "bonusCost": 3870614.2,
         "incentiveCost": 0.0
@@ -7912,7 +7912,7 @@
     ],
     "rigShifts": [
       {
-        "laborCost": 647016.13,
+        "laborCost": 833375.0,
         "foodCost": 183750.0,
         "bonusCost": 634526.92,
         "incentiveCost": 0.0,
@@ -7921,7 +7921,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 136693.55,
+        "laborCost": 833375.0,
         "foodCost": 183750.0,
         "bonusCost": 317263.46,
         "incentiveCost": 0.0,
@@ -7930,7 +7930,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 647016.13,
+        "laborCost": 833375.0,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -7939,7 +7939,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 300725.81,
+        "laborCost": 833375.0,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 94166.67,
@@ -7948,7 +7948,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 988750.0,
+        "laborCost": 984041.67,
         "foodCost": 183750.0,
         "bonusCost": 359565.25,
         "incentiveCost": 0.0,
@@ -7957,7 +7957,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 478427.42,
+        "laborCost": 984041.67,
         "foodCost": 183750.0,
         "bonusCost": 190358.08,
         "incentiveCost": 0.0,
@@ -7966,7 +7966,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 988750.0,
+        "laborCost": 984041.67,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -7975,7 +7975,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 642459.68,
+        "laborCost": 984041.67,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 94166.67,
@@ -7984,7 +7984,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 856612.9,
+        "laborCost": 1134708.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -7993,7 +7993,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 856612.9,
+        "laborCost": 1134708.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8002,7 +8002,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 856612.9,
+        "laborCost": 1134708.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8011,7 +8011,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 856612.9,
+        "laborCost": 1134708.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8020,7 +8020,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 63452.69,
         "incentiveCost": 0.0,
@@ -8029,7 +8029,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8038,7 +8038,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8047,7 +8047,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8056,7 +8056,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 761432.3,
         "incentiveCost": 0.0,
@@ -8065,7 +8065,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 697979.61,
         "incentiveCost": 0.0,
@@ -8074,7 +8074,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 528772.43,
         "incentiveCost": 0.0,
@@ -8083,7 +8083,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1078208.33,
         "foodCost": 183750.0,
         "bonusCost": 29611.26,
         "incentiveCost": 0.0,
@@ -8092,7 +8092,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 634526.92,
         "incentiveCost": 0.0,
@@ -8101,7 +8101,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 824884.99,
         "incentiveCost": 0.0,
@@ -8110,7 +8110,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 697979.61,
         "incentiveCost": 0.0,
@@ -8119,7 +8119,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 1078695.76,
         "incentiveCost": 0.0,
@@ -8128,7 +8128,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 634526.92,
         "incentiveCost": 0.0,
@@ -8137,7 +8137,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 824884.99,
         "incentiveCost": 0.0,
@@ -8146,7 +8146,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 824884.99,
         "incentiveCost": 0.0,
@@ -8155,7 +8155,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 634526.92,
         "incentiveCost": 0.0,
@@ -8164,7 +8164,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 761432.3,
         "incentiveCost": 0.0,
@@ -8173,7 +8173,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 888337.68,
         "incentiveCost": 0.0,
@@ -8182,7 +8182,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 697979.61,
         "incentiveCost": 0.0,
@@ -8191,7 +8191,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 761432.3,
         "incentiveCost": 0.0,
@@ -8200,7 +8200,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8209,7 +8209,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 317263.46,
         "incentiveCost": 0.0,
@@ -8218,7 +8218,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 507621.53,
         "incentiveCost": 0.0,
@@ -8227,7 +8227,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 444168.84,
         "incentiveCost": 0.0,
@@ -8236,7 +8236,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 232659.87,
         "incentiveCost": 0.0,
@@ -8245,7 +8245,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8254,7 +8254,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 304572.92,
         "incentiveCost": 0.0,
@@ -8263,7 +8263,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 253810.77,
         "incentiveCost": 0.0,
@@ -8272,7 +8272,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 465319.74,
         "incentiveCost": 0.0,
@@ -8281,7 +8281,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 486470.64,
         "incentiveCost": 0.0,
@@ -8290,7 +8290,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 888337.68,
         "incentiveCost": 0.0,
@@ -8299,7 +8299,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 634526.92,
         "incentiveCost": 0.0,
@@ -8308,7 +8308,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 888337.68,
         "incentiveCost": 0.0,
@@ -8317,7 +8317,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 697979.61,
         "incentiveCost": 0.0,
@@ -8326,7 +8326,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 761432.3,
         "incentiveCost": 0.0,
@@ -8335,7 +8335,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 571074.23,
         "incentiveCost": 0.0,
@@ -8344,7 +8344,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 697979.61,
         "incentiveCost": 0.0,
@@ -8353,7 +8353,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 824884.99,
         "incentiveCost": 0.0,
@@ -8362,7 +8362,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 888337.68,
         "incentiveCost": 0.0,
@@ -8371,7 +8371,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 634526.92,
         "incentiveCost": 0.0,
@@ -8380,7 +8380,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 0.0,
         "incentiveCost": 0.0,
@@ -8389,7 +8389,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 951790.38,
         "incentiveCost": 0.0,
@@ -8398,7 +8398,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 1078695.76,
         "incentiveCost": 0.0,
@@ -8407,7 +8407,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 177667.54,
         "incentiveCost": 0.0,
@@ -8416,7 +8416,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 190358.08,
         "incentiveCost": 0.0,
@@ -8425,7 +8425,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 1594777.65,
         "incentiveCost": 0.0,
@@ -8434,7 +8434,7 @@
         "shift": "Өдөр"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 1070235.4,
         "incentiveCost": 0.0,
@@ -8443,7 +8443,7 @@
         "shift": "Шөнө"
       },
       {
-        "laborCost": 815604.84,
+        "laborCost": 1120583.33,
         "foodCost": 183750.0,
         "bonusCost": 1015243.07,
         "incentiveCost": 0.0,
@@ -10398,6 +10398,13 @@
       "sourceUrl": "https://docs.google.com/spreadsheets/d/1BOrreNEAqlVQm6_D4OXc9wmXQUfMKk_Xmxp_cJ8tfe8/edit#gid=672180000"
     },
     "payPeriods": [
+      {
+        "file": "Даалгаварын гэрээгээр ажиллагсадын хөлс-2026.10.15",
+        "start": "2026-10-01",
+        "end": "2026-10-15",
+        "source": "snapshot",
+        "bonus": false
+      },
       {
         "file": "Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx",
         "start": "2026-10-16",
