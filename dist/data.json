@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-11-08",
-  "updatedAt": "2026-11-08T21:29:59+08:00",
+  "asOf": "2026-11-09",
+  "updatedAt": "2026-11-09T03:24:25+08:00",
   "period": "2026-10-01 – 2026-11-07",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
@@ -10835,7 +10835,7 @@
     }
   },
   "shiftAudit": {
-    "through": "2026-11-08",
+    "through": "2026-11-09",
     "rigs": [
       "C-1800",
       "CSD-1300"
@@ -10874,13 +10874,13 @@
       },
       {
         "month": "2026-11",
-        "expected": 32,
+        "expected": 36,
         "counts": {
           "VERIFIED_DRILLING": 12,
           "VERIFIED_NON_DRILLING": 0,
           "MISSING_REPORT": 11,
           "SOURCE_CONFLICT": 2,
-          "UNVERIFIED": 7
+          "UNVERIFIED": 11
         },
         "meters": {
           "VERIFIED_DRILLING": 255.0,
@@ -15863,6 +15863,74 @@
       {
         "rig": "CSD-1300",
         "date": "2026-11-08",
+        "shift": "Шөнө",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-09",
+        "shift": "Өдөр",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-09",
+        "shift": "Өдөр",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-09",
+        "shift": "Шөнө",
+        "status": "UNVERIFIED",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "noReport",
+            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-09",
         "shift": "Шөнө",
         "status": "UNVERIFIED",
         "meters": null,
