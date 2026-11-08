@@ -40,9 +40,15 @@ jobs:
         env:
           GOOGLE_CHAT_WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
           CHAT_DATE: ${{ inputs.chat_date }}
+          EVENING: ${{ inputs.evening }}
+          # Evening posts paused by the owner on these dates (UTC+8); the next post includes the skipped shifts.
+          PAUSED_DATES: '2026-11-08'
         shell: bash
         run: |
-          if [[ -z "$GOOGLE_CHAT_WEBHOOK_URL" ]]; then
+          today=$(TZ=Asia/Ulaanbaatar date +%F)
+          if [[ "$EVENING" == 'true' && " $PAUSED_DATES " == *" $today "* ]]; then
+            echo "::notice::Evening Chat post paused for $today by the owner."
+          elif [[ -z "$GOOGLE_CHAT_WEBHOOK_URL" ]]; then
             echo '::warning::Configure the GOOGLE_CHAT_WEBHOOK_URL secret to post drilling progress to Google Chat.'
           elif [[ -n "$CHAT_DATE" ]]; then
             python -B chat_report.py --date "$CHAT_DATE"
