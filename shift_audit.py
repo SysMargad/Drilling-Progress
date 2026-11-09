@@ -132,6 +132,15 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
         return (max(before, key=lambda r: (r['t'], r['to'])) if before else None,
                 min(after, key=lambda r: (r['t'], r['from'])) if after else None)
 
+    confirmed = {(c['rig'], c['date'], c['shift']): c for c in (confirmations or {}).get('confirmed', [])}
+    # A rejected row that still states a depth bounds the gaps of its hole: a row starting at or below a gap's
+    # bottom came after it, a row ending at or above its top came before it (owner decision 2026-11-09).
+    limits = []
+    for row in data.get('rejectedShifts', []):
+        slot = slots.get((row.get('rig'), row.get('date'), row.get('shift')))
+        if slot and (row.get('from') is not None or row.get('to') is not None):
+            limits.append({**row, 't': slot['t']})
+
     gaps = []
 
     def missing(hole, top, bottom, upper, lower):
@@ -145,10 +154,20 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
         else:
             _, following = rig_neighbours(rig, upper['t'])
             start, end = upper['t'], following['t'] if following else float('inf')
+        for row in sorted(limits, key=lambda r: r['t']):
+            if row['rig'] != rig or row['hole'] != hole or not start < row['t'] < end:
+                continue
+            if row.get('from') is not None and row['from'] >= bottom - TOLERANCE:
+                end = row['t']
+            elif row.get('to') is not None and row['to'] <= top + TOLERANCE:
+                start = row['t']
         h = collar.get(hole, {})
         candidates = [s for s in by_rig[rig] if start < s['t'] < end and not s['records']
                       and (lower is None or not h.get('start') or s['date'] >= h['start'])
                       and (lower is not None or not h.get('finish') or s['date'] <= h['finish'])]
+        # An owner-confirmed 0 m shift takes no gap metres while another shift without a report can hold them;
+        # when none can, the confirmation cannot hide the metres and stays in conflict with the depths.
+        candidates = [s for s in candidates if (rig, s['date'], s['shift']) not in confirmed] or candidates
         text = f'{hole}: {m(top)}–{m(bottom)} м ({m(round(bottom - top, 2))} м) тайлангүй'
         gap = {'hole': hole, 'rig': rig, 'from': top, 'to': bottom, 'slots': candidates}
         gaps.append(gap)
@@ -255,9 +274,20 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
             slot = slots.get((rig, row.get('date'), row.get('shift')))
             if slot:
                 held = any(r['hole'] == row.get('hole') for r in slot['records'])
+                owner = not slot['records'] and (rig, slot['date'], slot['shift']) in confirmed
+                # A row giving From but no To, followed in its hole by a report starting at that same depth, drilled
+                # nothing: its To is that depth (owner decision 2026-11-09). Found from the depths, not reported.
+                after = [] if held or owner or row.get('from') is None or row.get('to') is not None else                     [r for r in records if r['rig'] == rig and r['hole'] == row.get('hole') and r['t'] > slot['t']]
+                following = min(after, key=lambda r: (r['t'], r['from'])) if after else None
+                continued = following is not None and abs(following['from'] - row['from']) <= TOLERANCE
                 issue(slot, 'rejected', f'Хүснэгтийн мөр татгалзсан ({row["sheet"]} / {row["tab"]} мөр {row["row"]}): {row["reason"]}'
-                      + (' — өөр хүснэгтийн хүчинтэй мөрийг ашигласан' if held else ''),
-                      None if held else 'SOURCE_CONFLICT')
+                      + (' — өөр хүснэгтийн хүчинтэй мөрийг ашигласан' if held else
+                         ' — ээлжийг эзэмшигчийн баталгаагаар бүртгэсэн' if owner else
+                         f' — дараагийн {following["date"]} {following["shift"]}-ийн тайлан мөн {m(following["from"])} м-ээс эхэлсэн тул '
+                         f'To = {m(row["from"])} м, өрөмдсөн 0 м (гүнээр тодорхойлсон, тайлангаар баталгаажаагүй)' if continued else ''),
+                      None if held or owner or continued else 'SOURCE_CONFLICT')
+                if continued and not slot['records'] and slot['status'] is None:
+                    slot['status'] = 'UNVERIFIED'
 
     for record in records:
         if record.get('correction'):
@@ -302,7 +332,6 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
         else:
             issue(slot, 'confirmation', f'Эзэмшигчийн баталсан тайлан {stated}, хүснэгтэд {m(record["from"])}–{m(record["to"])} м', 'SOURCE_CONFLICT')
 
-    confirmed = {(c['rig'], c['date'], c['shift']): c for c in (confirmations or {}).get('confirmed', [])}
     for rig in rigs:
         for slot in by_rig[rig]:
             if slot['records']:

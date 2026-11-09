@@ -76,6 +76,7 @@ jobs:
           python -B -m unittest test_consumption_model -v
           python -B -m unittest test_photo_import -v
           python -B -m unittest test_shift_audit -v
+          python -B -m unittest test_logic_audit -v
           python -B -m unittest test_payroll_import -v
           node test_chart.cjs
           node test_financial_costs.cjs

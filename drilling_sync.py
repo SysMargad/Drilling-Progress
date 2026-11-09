@@ -275,6 +275,14 @@ def _row_identity(row, headers):
         identity["date"] = date(get(lambda x: x == "date" or x.endswith(" date")))
     except ValueError:
         pass
+    # A depth the row does state still bounds a depth gap (shift_audit.py); a blank or invalid one is left out.
+    for key, match in (("from", lambda x: x.endswith("from")), ("to", lambda x: x.endswith("to"))):
+        try:
+            value = number(get(match))
+        except ValueError:
+            value = None
+        if value is not None:
+            identity[key] = value
     return identity
 
 

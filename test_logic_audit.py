@@ -1,8 +1,9 @@
 """Independent logic audit (2026-11-09) of the shift chronology, depth continuity and metre attribution, run against
 the real parse_shifts / assemble / build_audit with the KHDH2601 and STDH2601 depths of 7-8 November 2026.
 
-Tests marked expectedFailure record a confirmed defect of the current logic, kept failing on purpose until the
-owner decides the fix (see the audit report); they do not run in CI.
+Owner decisions of 2026-11-09 on the findings: a blank DT stays 12 h when the total is 12 h (test 09); the overview
+keeps adding estimated metres and splitting multi-shift gaps evenly; a rejected row that states a depth bounds the
+gap, and an owner-confirmed 0 m shift takes no gap metres (test 16).
 """
 import unittest
 from datetime import datetime, timedelta
@@ -36,10 +37,11 @@ def collar(*ids):
     return [{'id': i, 'start': '2026-11-01', 'finish': '', 'collarDepth': None, 'plan': 300} for i in ids]
 
 
-def audit(shifts, holes, rejected=(), through='2026-11-08'):
+def audit(shifts, holes, rejected=(), through='2026-11-08', confirmed=()):
     for s in shifts:
         s.setdefault('reports', REPORT)
-    return build_audit({'shifts': shifts, 'collar': collar(*holes), 'rejectedShifts': list(rejected)}, RIGS, through)
+    confirmations = {'confirmed': list(confirmed), 'reports': [], 'holes': [], 'rigs': []}
+    return build_audit({'shifts': shifts, 'collar': collar(*holes), 'rejectedShifts': list(rejected)}, RIGS, through, confirmations)
 
 
 def slot(result, rig, day, shift):
@@ -112,12 +114,11 @@ class RecordIntegrityTests(unittest.TestCase):
         night = parse(*STDH)[0][-1]
         self.assertEqual((night['from'], night['to'], night['meters']), (65, 65, 0))
 
-    @unittest.expectedFailure
-    def test_09_total_12_hours_does_not_make_dt_12(self):
-        # DEFECT: owner default 2026-10-27 fills a blank DT with 12 h, so ROP and utilisation use assumed hours.
-        # Here PT 0.5 + OT 0.5 are written, so DT cannot exceed 11 h, yet it becomes 12 (sum 13 h > 12 h total).
+    def test_09_a_blank_dt_with_a_12_hour_total_is_12_hours(self):
+        # Owner decision (2026-10-27, kept 2026-11-09): a blank DT is 12 h when the total is 12 h, even beside
+        # written PT/OT (KHDH 11-07 day: PT 0.5 + OT 0.5). The audit report records this as an assumption.
         day = parse(*KHDH)[0][0]
-        self.assertIsNone(day['dt'])
+        self.assertEqual(day['dt'], 12)
 
     def test_10_blank_drilled_is_not_zero(self):
         shifts, rejected = parse(row('C-1800', '2026-11-08', 'Шөнө', 'STDH2601', 65, 65, ''))
@@ -155,19 +156,55 @@ class RecordIntegrityTests(unittest.TestCase):
 
 
 class FindingTests(unittest.TestCase):
-    @unittest.expectedFailure
+    # STDH2601 30 -> 48 m (11-04 night To 30, 11-07 day From 48). The 11-05 day row (From/To blank, owner-confirmed
+    # 0 m) and the 11-06 night row (From 48, To blank) are rejected by validation.
+    ROWS = (row('C-1800', '2026-11-04', 'Шөнө', 'STDH2601', 27, 30, 3),
+            row('C-1800', '2026-11-05', 'Өдөр', 'STDH2601', '', '', 0, pt='0.5', ot='2', rt='8'),
+            row('C-1800', '2026-11-06', 'Шөнө', 'STDH2601', 48, '', '', total='0'),
+            STDH[0])
+    ZERO = {'rig': 'C-1800', 'date': '2026-11-05', 'shift': 'Өдөр', 'status': 'VERIFIED_NON_DRILLING',
+            'reason': '0 м', 'evidence': 'мөр 7', 'confirmedBy': 'owner', 'confirmedAt': '2026-11-06'}
+
+    def run_audit(self, confirmed=()):
+        shifts, rejected = parse(*self.ROWS)
+        for r in rejected:
+            r.update(sheet='S', tab='T', url='')
+        return audit(shifts, ['STDH2601'], rejected, confirmed=confirmed)
+
     def test_16_a_rejected_row_that_states_its_depth_limits_the_gap(self):
-        # DEFECT: STDH2601 30 -> 48 m (11-04 night To 30, 11-07 day From 48). The 11-05 day row (owner-confirmed 0 m,
-        # From blank) and the 11-06 night row (From 48, To blank) are rejected, so the audit spreads 18 m over four
-        # shifts, although the 11-06 night started at 48 m: at most the 11-05 night and 11-06 day can hold it.
+        # The 11-06 night started at 48 m, so it and the shifts after it cannot hold 30-48 m.
+        result = self.run_audit()
+        gap = slot(result, 'C-1800', '2026-11-05', 'Шөнө')['inferred'][0]
+        self.assertEqual((gap['from'], gap['to'], gap['shifts']), (30, 48, 3))
+        self.assertEqual(slot(result, 'C-1800', '2026-11-06', 'Шөнө')['inferred'], [])
+        night = slot(result, 'C-1800', '2026-11-06', 'Шөнө')
+        self.assertEqual(night['status'], 'UNVERIFIED', 'the next report starts at 48 m too: 0 m from the depths, not a conflict')
+        self.assertTrue(any('To = 48 м, өрөмдсөн 0 м' in i['text'] for i in night['issues']))
+        self.assertIsNone(night['meters'], 'never turned into a reported 0 m')
+
+    def test_19_a_blank_to_stays_a_conflict_when_the_next_report_starts_elsewhere(self):
+        shifts, rejected = parse(row('C-1800', '2026-11-06', 'Шөнө', 'STDH2601', 45, '', '', total='0'), STDH[0])
+        for r in rejected:
+            r.update(sheet='S', tab='T', url='')
+        self.assertEqual(slot(audit(shifts, ['STDH2601'], rejected), 'C-1800', '2026-11-06', 'Шөнө')['status'], 'SOURCE_CONFLICT')
+
+    def test_17_an_owner_confirmed_zero_metre_shift_takes_no_gap_metres(self):
+        result = self.run_audit([self.ZERO])
+        zero = slot(result, 'C-1800', '2026-11-05', 'Өдөр')
+        self.assertEqual((zero['status'], zero['inferred']), ('VERIFIED_NON_DRILLING', []))
+        gap = slot(result, 'C-1800', '2026-11-05', 'Шөнө')['inferred'][0]
+        self.assertEqual((gap['shifts'], gap['exact']), (2, False))
+        self.assertEqual(slot(result, 'C-1800', '2026-11-06', 'Өдөр')['status'], 'MISSING_REPORT')
+
+    def test_18_a_rejected_row_ending_above_a_gap_comes_before_it(self):
         shifts, rejected = parse(row('C-1800', '2026-11-04', 'Шөнө', 'STDH2601', 27, 30, 3),
-                                 row('C-1800', '2026-11-05', 'Өдөр', 'STDH2601', '', '', 0, pt='0.5', ot='2', rt='8'),
-                                 row('C-1800', '2026-11-06', 'Шөнө', 'STDH2601', 48, '', '', total='0'),
+                                 row('C-1800', '2026-11-05', 'Өдөр', 'STDH2601', 30, 30, '', total='0'),
                                  STDH[0])
         for r in rejected:
-            r.update(rig='C-1800', sheet='S', tab='T', url='')
-        gap = slot(audit(shifts, ['STDH2601'], rejected), 'C-1800', '2026-11-05', 'Шөнө')['inferred'][0]
-        self.assertEqual(gap['shifts'], 2)
+            r.update(sheet='S', tab='T', url='')
+        result = audit(shifts, ['STDH2601'], rejected)
+        self.assertEqual(slot(result, 'C-1800', '2026-11-05', 'Өдөр')['inferred'], [])
+        self.assertEqual(slot(result, 'C-1800', '2026-11-05', 'Шөнө')['inferred'][0]['shifts'], 3)
 
 
 if __name__ == '__main__':
