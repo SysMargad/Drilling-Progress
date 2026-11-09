@@ -261,9 +261,11 @@ vm.runInContext("D=fixture;financialMonth='2026-10';financialGrain='shift'",cont
 let paid=vm.runInContext('renderFinancialTab()',context);
 assert.equal((paid.match(/10-16 – 10-31: цалингийн хүснэгт \(бодит, өдөр бүр 4 ээлжид тэнцүү\); бусад өдөр: ирц × тариф/g)||[]).length,2,'labour and incentive');
 assert.ok(paid.includes('Цалингийн хүснэгтийн бодит метрийн бонус (Pay 2026.10.16-2026.10.31.xlsx): сарын бүх ээлжид өрөмдсөн метрээр хуваарилсан'));
-context.fixture.finance.payPeriods.unshift({file:'Pay 2026.10.01-2026.10.15.xlsx',start:'2026-10-01',end:'2026-10-15',source:'drive',bonus:false});
+context.fixture.finance.payPeriods.unshift({file:'Pay 2026.10.01-2026.10.15.xlsx',start:'2026-10-01',end:'2026-10-15',source:'drive',bonus:false,incentive:false});
 paid=vm.runInContext('renderFinancialTab()',context);
-assert.ok(paid.includes('10-01 – 10-15: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү); 10-16 – 10-31: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү)</div>'),'whole month covered');
+assert.ok(paid.includes('10-01 – 10-15: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү); 10-16 – 10-31: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү)</div>'),'whole month of labour covered');
+// The contract-fee period has no additions: the incentive line names only the pay-period workbook's dates.
+assert.ok(paid.includes('>10-16 – 10-31: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү); бусад өдөр: ирц × тариф</div>'),'incentive keeps the model on 1-15');
 delete context.fixture.finance.payPeriods;
 assert.ok(!vm.runInContext('renderFinancialTab()',context).includes('цалингийн хүснэгт'));
 console.log('Pay-period sources named under the cost breakdown.');

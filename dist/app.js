@@ -288,9 +288,11 @@ function renderFinancialTab(){
   // Pay periods read from the crew pay workbooks (actual pay) replace the attendance × rate model on their dates.
   const payPeriods=finance?.attendance?(finance.payPeriods||[]):[],payMonth=selectedFinancialMonth();
   const payMonthDays=payMonth?new Date(Number(payMonth.slice(0,4)),Number(payMonth.slice(5)),0).getDate():0;
-  const payCovered=payPeriods.reduce((n,p)=>n+Number(p.end.slice(8))-Number(p.start.slice(8))+1,0);
+  // A contract-fee period pays no additions: its dates keep the modelled incentive (incentive:false).
+  const payFor=key=>key==='incentiveCost'?payPeriods.filter(p=>p.incentive!==false):payPeriods;
+  const payCovered=key=>payFor(key).reduce((n,p)=>n+Number(p.end.slice(8))-Number(p.start.slice(8))+1,0);
   const payNote=key=>!payPeriods.length?'':key==='bonusCost'?(payPeriods.some(p=>p.bonus)?`<div class="sub cost-usage">Цалингийн хүснэгтийн бодит метрийн бонус (${payPeriods.filter(p=>p.bonus).map(p=>esc(p.file)).join(', ')}): сарын бүх ээлжид өрөмдсөн метрээр хуваарилсан</div>`:'')
-    :['laborCost','incentiveCost'].includes(key)?`<div class="sub cost-usage">${payPeriods.map(p=>`${p.start.slice(5)} – ${p.end.slice(5)}: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү)`).join('; ')}${payCovered<payMonthDays?'; бусад өдөр: ирц × тариф':''}</div>`:'';
+    :['laborCost','incentiveCost'].includes(key)&&payFor(key).length?`<div class="sub cost-usage">${payFor(key).map(p=>`${p.start.slice(5)} – ${p.end.slice(5)}: цалингийн хүснэгт (бодит, өдөр бүр 4 ээлжид тэнцүү)`).join('; ')}${payCovered(key)<payMonthDays?'; бусад өдөр: ирц × тариф':''}</div>`:'';
   const costRows=breakdown.map(item=>{
     if(item.current==null){
       const status='Эх сурвалж синк хийгдээгүй';

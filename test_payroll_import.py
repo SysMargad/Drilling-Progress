@@ -106,7 +106,7 @@ class ApplyPayrollTests(unittest.TestCase):
         self.assertEqual(sum(r['bonusCost'] for r in finance['rigShifts']), 1130000.0)
         self.assertAlmostEqual(sum(r['laborCost'] for r in finance['rigShifts']) - 4000, 560000 * 1.13, places=2)
         self.assertEqual(finance['payPeriods'], [{'file': 'Pay 2026.10.16-19.xlsx', 'start': '2026-10-16',
-                                                  'end': '2026-10-19', 'source': 'drive', 'bonus': True}])
+                                                  'end': '2026-10-19', 'source': 'drive', 'bonus': True, 'incentive': True}])
         validate_finance(finance)
         self.assertEqual(apply_payroll(finance, [self.payroll], SHIFTS), finance, 'idempotent')
 
@@ -224,6 +224,7 @@ class ContractFeeTests(unittest.TestCase):
         self.assertEqual(rows[('2026-10-15', 'C-1800', 'Шөнө')]['incentiveCost'], 70.0)
         self.assertEqual(rows[('2026-10-15', 'C-1800', 'Өдөр')]['bonusCost'], 300.0)
         self.assertEqual(rows[('2026-10-16', 'C-1800', 'Шөнө')]['laborCost'], 1000.0)
+        self.assertEqual((applied['payPeriods'][0]['bonus'], applied['payPeriods'][0]['incentive']), (False, False))
         validate_finance(applied)
 
 

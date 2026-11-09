@@ -302,4 +302,6 @@ def apply_payroll(finance, payrolls, shifts):
             day[amount] = round(day[amount] + row[amount], 2)
     return {**finance, 'daily': [daily[key] for key in sorted(daily)], 'rigShifts': [rows[key] for key in sorted(rows)],
             'payPeriods': [{'file': p['name'], 'start': p['start'], 'end': p['end'], 'source': p['source'],
-                            'bonus': p['bonus']['amount'] > 0} for p in mine]}
+                            'bonus': p['bonus']['amount'] > 0,
+                            # Whether the period's actual pay holds the additions; a contract-fee period does not.
+                            'incentive': all('incentive' in day for day in p['daily'])} for p in mine]}

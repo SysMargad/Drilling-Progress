@@ -112,7 +112,8 @@ def validate_finance(finance):
         raise ValueError('Invalid finance period')
     # Which dates the actual pay-period workbooks cover (payroll_import.py): file name and dates, no amounts.
     for item in finance.get('payPeriods', []):
-        if (set(item) != {'file', 'start', 'end', 'source', 'bonus'} or not isinstance(item['file'], str)
+        if (set(item) - {'incentive'} != {'file', 'start', 'end', 'source', 'bonus'} or not isinstance(item['file'], str)
+                or not isinstance(item.get('incentive', True), bool)
                 or item['source'] not in {'drive', 'snapshot'} or not isinstance(item['bonus'], bool)
                 or not item['start'].startswith(finance['period'] + '-') or not item['end'].startswith(finance['period'] + '-')
                 or date.fromisoformat(item['end']) < date.fromisoformat(item['start'])):
