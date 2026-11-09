@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       chat_date:
-        description: 'Дахин илгээх огноо (YYYY-MM-DD). Хоосон бол илгээгдээгүй бүх ээлжийг илгээнэ.'
+        description: 'Дахин илгээх огноо (YYYY-MM-DD). Хоосон бол хоёр өрмийн хамгийн сүүлийн өдрийг илгээнэ.'
         required: false
       evening:
         description: '20:00 (UTC+8) хүртэл хүлээгээд илгээх'
@@ -36,13 +36,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Post unreported shifts
+      - name: Post the rigs' latest dates
         env:
           GOOGLE_CHAT_WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
           CHAT_DATE: ${{ inputs.chat_date }}
           EVENING: ${{ inputs.evening }}
-          # Evening posts paused by the owner on these dates (UTC+8); the next post includes the skipped shifts.
-          PAUSED_DATES: '2026-11-08'
+          # Evening posts paused by the owner on these dates (UTC+8, space-separated, e.g. '2026-11-08').
+          PAUSED_DATES: ''
         shell: bash
         run: |
           today=$(TZ=Asia/Ulaanbaatar date +%F)

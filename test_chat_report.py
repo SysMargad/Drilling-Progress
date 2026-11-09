@@ -52,25 +52,30 @@ class ChatReportTests(unittest.TestCase):
         posted = json.loads(ledger.read_text(encoding='utf-8'))['posted'] if ledger.exists() else None
         return sent, posted
 
-    def test_every_unposted_shift_is_posted_once_however_it_arrived(self):
+    def test_the_evening_card_shows_each_rigs_latest_date(self):
         with tempfile.TemporaryDirectory() as folder:
             sent, posted = self.run_report(folder)
             sent.assert_not_called()  # First run records history instead of flooding the space.
             self.assertEqual(len(posted), 4)
             ledger = Path(folder) / 'chat-posted.json'
             ledger.write_text(json.dumps({'posted': [list(shift_key(row)) for row in self.old]}), encoding='utf-8')
-            self.data['shifts'][1] = {**self.old[1], 'to': 161.0}  # A corrected shift is not news.
             sent, posted = self.run_report(folder, fail=True)
-            self.assertEqual(len(posted), 2, 'a failed post must be retried next run')
+            self.assertEqual(len(posted), 2, 'a failed post records nothing')
+            # C-1800's latest date is 29 Oct, CSD-1300's 28 Oct. The 28 Oct night of C-1800 came in late: it is in
+            # the totals but not on the card, and no longer waits to be posted.
             sent, posted = self.run_report(folder)
-            self.assertIn('2 шинэ ээлж', sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'])
-            self.assertEqual(posted[-2:], [['C-1800', '2026-10-28', 'Шөнө', 'ZHDH2604'],
-                                           ['C-1800', '2026-10-29', 'Өдөр', 'ZHDH2604']])
+            card = sent.call_args.args[1]['cardsV2'][0]['card']
+            self.assertEqual(card['header']['subtitle'], 'Нэргүй Өндөр · C-1800 10-29 · CSD-1300 10-28 · 1 шинэ ээлж')
+            text = '\n'.join(card_text(sent.call_args.args[1]))
+            self.assertIn('10-29 Өдөр : 365 – 395 м', text)
+            self.assertIn('10-28 Өдөр : 134.4 – 161.4 м', text)
+            self.assertNotIn('10-28 Шөнө', text)
+            self.assertIn('C-1800 : 102 м · 3 ээлж', text)
+            self.assertEqual(len(posted), 4)
+            # Nothing new: the card still goes out with the same latest dates.
             sent, unchanged = self.run_report(folder)
-            quiet = sent.call_args.args[1]
-            self.assertEqual(quiet['cardsV2'][0]['card']['header']['subtitle'], 'Нэргүй Өндөр · шинэ ээлж ороогүй')
-            self.assertEqual(card_text(quiet)[0].splitlines()[1:], ['C-1800 сүүлийн ээлж : 2026-10-29 Өдөр · ZHDH2604',
-                                                                    'CSD-1300 сүүлийн ээлж : 2026-10-28 Өдөр · ZHDH2606'])
+            self.assertEqual(sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'],
+                             'Нэргүй Өндөр · C-1800 10-29 · CSD-1300 10-28 · шинэ ээлж ороогүй')
             self.assertEqual(unchanged, posted)
             sent, _ = self.run_report(folder, '--date', '2026-10-30')
             sent.assert_not_called()
@@ -86,7 +91,7 @@ class ChatReportTests(unittest.TestCase):
             ledger = Path(folder) / 'chat-posted.json'
             self.data['shifts'][0] = {**self.old[0], 'hole': 'ZHDH2602', 'correction': {'hole': 'ZHDH2604'}}
             sent, posted = self.run_report(folder)
-            self.assertEqual(sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'], 'Нэргүй Өндөр · шинэ ээлж ороогүй')
+            self.assertTrue(sent.call_args.args[1]['cardsV2'][0]['card']['header']['subtitle'].endswith('шинэ ээлж ороогүй'))
             self.assertIn(['C-1800', '2026-10-28', 'Өдөр', 'ZHDH2604'], posted, 'the key under the old hole is kept')
             self.assertTrue(ledger.exists())
 

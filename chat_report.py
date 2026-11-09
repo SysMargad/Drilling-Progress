@@ -1,10 +1,12 @@
-"""Post drilling shifts not yet reported to a Google Chat space.
+"""Post the two rigs' latest drilling to a Google Chat space.
 
-The card starts from the hole numbers, then shows daily totals against the
+The evening card shows each rig's latest reported date (both its shifts), whether or not the date is new, so
+the space always sees where each rig stands; a report filed late for an earlier date shows only in the totals
+(owner 2026-11-09). The card starts from the hole numbers, then shows daily totals against the
 dashboard norm, hole progress and rig performance. Financial figures are left
 out on purpose. GOOGLE_CHAT_WEBHOOK_URL holds the space's incoming webhook URL.
-chat-posted.json records every posted shift, so shifts are reported once
-whether they arrived through the Drive sync or a local data commit.
+chat-posted.json records the shifts already reported, so the card can say how
+many of the shifts are new, whether they arrived through the Drive sync or a local data commit.
 """
 from __future__ import annotations
 
@@ -62,10 +64,6 @@ def shift_keys(row):
         keys.update({(old, row["date"], row["shift"], hole) for hole in
                      {row["hole"], *([row["correction"]["hole"]] if row.get("correction") else [])}})
     return keys
-
-
-def unposted(posted, data):
-    return [row for row in data["shifts"] if not shift_keys(row) & posted]
 
 
 def load_ledger(path):
@@ -202,35 +200,38 @@ def performance_section(data):
     return {"widgets": [{"textParagraph": {"text": "<br>".join(lines)}}]}
 
 
-def build_message(data, rows):
+def latest_rows(data):
+    """Each rig's shifts on its latest reported date."""
+    latest = {}
+    for row in data["shifts"]:
+        if row["rig"] in RIGS:
+            latest[row["rig"]] = max(latest.get(row["rig"], ""), row["date"])
+    return [row for row in data["shifts"] if latest.get(row["rig"]) == row["date"]]
+
+
+def latest_label(rows):
+    dates = {rig: max(row["date"] for row in rows if row["rig"] == rig) for rig in RIGS if any(r["rig"] == rig for r in rows)}
+    return " · ".join(f"{rig} {date[5:]}" for rig, date in dates.items())
+
+
+def build_message(data, rows, new=None, period=None):
+    """new: how many of the rows are not yet posted (all of them when not given); period: the subtitle's dates."""
     shifts, rows = data["shifts"], sorted(rows, key=shift_order)
     collar = {hole["id"]: hole for hole in data["collar"]}
     by_hole = {}
     for row in rows:
         by_hole.setdefault(row["hole"], []).append(row)
     dates = sorted({row["date"] for row in rows})
-    period = dates[0] if len(dates) == 1 else f"{dates[0]} – {dates[-1]}"
+    period = period or (dates[0] if len(dates) == 1 else f"{dates[0]} – {dates[-1]}")
+    new = len(rows) if new is None else new
+    news = f"{new} шинэ ээлж" if new else "шинэ ээлж ороогүй"
     sections = [hole_section(collar.get(hole_id, {"id": hole_id}), hole_rows, shifts)
                 for hole_id, hole_rows in sorted(by_hole.items(), key=lambda item: (
                     RIGS.index(item[1][-1]["rig"]) if item[1][-1]["rig"] in RIGS else len(RIGS), item[0]))]
     sections += [daily_section(dates, shifts), progress_section(data), performance_section(data), DASHBOARD_BUTTON]
     return {"cardsV2": [{"cardId": "drilling-progress", "card": {
-        "header": {"title": "Өрөмдлөгийн явц", "subtitle": f"{SITE} · {period} · {len(rows)} шинэ ээлж"},
+        "header": {"title": "Өрөмдлөгийн явц", "subtitle": f"{SITE} · {period} · {news}"},
         "sections": sections}}]}
-
-
-def quiet_message(data):
-    """Evening card when no shift report has arrived since the last one."""
-    lines = ["Сүүлийн мэдээнээс хойш шинэ ээлжийн тайлан бүртгэгдээгүй."]
-    for rig in RIGS:
-        latest = max((row for row in data["shifts"] if row["rig"] == rig), key=shift_order, default=None)
-        if not latest:
-            continue
-        last = f"{latest['date']} {latest['shift']} · {html.escape(latest['hole'])}"
-        lines.append(f"{label(rig + ' сүүлийн ээлж')} : <b>{last}</b>")
-    return {"cardsV2": [{"cardId": "drilling-progress", "card": {
-        "header": {"title": "Өрөмдлөгийн явц", "subtitle": f"{SITE} · шинэ ээлж ороогүй"},
-        "sections": [{"widgets": [{"textParagraph": {"text": "<br>".join(lines)}}]}, DASHBOARD_BUTTON]}}]}
 
 
 def post(url, message):
@@ -258,13 +259,21 @@ def main():
             save_ledger(args.ledger, {shift_key(row) for row in data["shifts"]}, data)
         print(f"No {args.ledger.name}; recorded {len(data['shifts'])} existing shifts without posting.")
         return
-    rows = ([row for row in data["shifts"] if row["date"] == args.date] if args.date
-            else unposted(posted, data))
-    if not rows and args.date:
-        print(f"No shifts recorded on {args.date}; nothing posted.")
-        return
-    # The scheduled evening post still goes out, so a quiet day is not mistaken for a broken bot.
-    message = build_message(data, rows) if rows else quiet_message(data)
+    if args.date:
+        rows = [row for row in data["shifts"] if row["date"] == args.date]
+        if not rows:
+            print(f"No shifts recorded on {args.date}; nothing posted.")
+            return
+        message = build_message(data, rows)
+    else:
+        rows = latest_rows(data)
+        if not rows:
+            print("No shifts of the two rigs; nothing posted.")
+            return
+        # The evening post goes out every day with the rigs' latest dates, so a quiet day is not mistaken for a
+        # broken bot, and a late report for an earlier date does not take over the card.
+        fresh = [row for row in rows if not shift_keys(row) & posted]
+        message = build_message(data, rows, new=len(fresh), period=latest_label(rows))
     if args.dry_run:
         sys.stdout.reconfigure(encoding="utf-8")
         print(json.dumps(message, ensure_ascii=False, indent=2))
@@ -273,9 +282,10 @@ def main():
     if not url:
         parser.error("Set GOOGLE_CHAT_WEBHOOK_URL to the space's incoming webhook URL")
     post(url, message)
-    if rows:
-        save_ledger(args.ledger, (posted or set()) | {shift_key(row) for row in rows}, data)
-    print(f"Posted {len(rows)} shifts to Google Chat." if rows else "Posted a no-new-shifts notice to Google Chat.")
+    # Every shift now in the data counts as reported: the totals in the card include the late ones.
+    save_ledger(args.ledger, (posted or set()) | (set() if args.date else {shift_key(row) for row in data["shifts"]})
+                | {shift_key(row) for row in rows}, data)
+    print(f"Posted {len(rows)} shifts of the rigs' latest dates to Google Chat.")
 
 
 if __name__ == "__main__":
