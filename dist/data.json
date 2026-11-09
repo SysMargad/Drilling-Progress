@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-09",
-  "updatedAt": "2026-11-09T17:31:01+08:00",
+  "updatedAt": "2026-11-09T18:44:38+08:00",
   "period": "2026-10-01 – 2026-11-08",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -4747,14 +4747,14 @@
       "shift": "Шөнө",
       "driller": "",
       "hole": "STDH2601",
-      "from": 65.0,
-      "to": 65.0,
+      "from": 63.0,
+      "to": 63.0,
       "meters": 0.0,
       "st": null,
       "rt": null,
       "dt": 12.0,
       "hours": 12.0,
-      "notes": "2026-11-08 шөнө 20:00–08:00. HQ 65→65 м; эх маягтын Drilled талбар хоосон, 0 м нь From–To-оос тооцоолсон (эх дээр баталгаажуулаагүй). PQ casing 30→48 м = 18 м; casing-г өрөмдсөн метрт нэмээгүй. Activity time тайланд бөглөгдөөгүй; 12 цаг нь зөвхөн Reported Total. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 11/07 шөнө To=60 м, энэ ээлж From=65 м: 5 м тайлангүй завсар; 11/08 өдрийн ээлжийг хайх шаардлагатай. | User default 2026-10-27: DT=12 h (source blank; estimated).",
+      "notes": "2026-11-08 шөнө 20:00–08:00. HQ 63→63 м; эх маягтын Drilled талбар хоосон, 0 м нь From–To-оос тооцоолсон (эх дээр баталгаажуулаагүй). PQ casing 30→48 м = 18 м; casing-г өрөмдсөн метрт нэмээгүй. Activity time тайланд бөглөгдөөгүй; 12 цаг нь зөвхөн Reported Total. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 11/07 шөнө To=60 м, энэ ээлж From=63 м: 3 м тайлангүй завсар; 11/08 өдрийн ээлжийг хайх шаардлагатай. Засвар 2026-11-09: эх PDF дээр Start/Finish = 63/63 (SysMargad баталсан); өмнө 65 гэж буруу хуулсан. Файлын нэрэнд 65-65 хэвээр. | User default 2026-10-27: DT=12 h (source blank; estimated).",
       "waterUsageM3": null,
       "sheet": {
         "name": "STDH2601 - Drilling Shift Report Table",
@@ -4768,7 +4768,7 @@
           "rig": "C-1800",
           "date": "2026-11-08",
           "shift": "Шөнө",
-          "name": "20261108_n_STDH2601_C-1800_65-65_casing30-48.pdf",
+          "name": "20261108_n_STDH2601_C-1800_63-63_casing30-48.pdf",
           "url": "https://drive.google.com/file/d/1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN/view?usp=drivesdk",
           "fileId": "1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN",
           "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
@@ -6331,8 +6331,8 @@
       },
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1-kuluzYW94DA89tI7bLoC_zyDHIoh7fB",
-        "count": 2,
-        "latest": "2026-11-09T03:37:34.328Z",
+        "count": 3,
+        "latest": "2026-11-09T09:54:05.353Z",
         "files": [
           {
             "name": "KHDH2601-(1.4m-50.4m).xlsx",
@@ -6343,6 +6343,11 @@
             "name": "KHDH2601-(51.4-90.4).xlsx",
             "modified": "2026-11-09T03:37:34.328Z",
             "url": "https://docs.google.com/spreadsheets/d/1pV-7ZfsPuyapv4levmlQFoq3XSUx8eqO/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
+            "name": "KHDH2601-(91.4-161.4).xlsx",
+            "modified": "2026-11-09T09:54:05.353Z",
+            "url": "https://docs.google.com/spreadsheets/d/1YqgoRIHaZOgbfFhrpGF54rqorg6DEiA_/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           }
         ]
       },
@@ -7446,16 +7451,16 @@
   ],
   "sources": [
     {
-      "name": "KHDH2601 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 4
-    },
-    {
       "name": "STDH2601 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 6
+    },
+    {
+      "name": "KHDH2601 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 4
     },
     {
       "name": "ZHDH2604 - Drilling Shift Report Table",
@@ -10977,8 +10982,8 @@
           "SOURCE_CONFLICT": 0.0,
           "UNVERIFIED": 0.0
         },
-        "missingMeters": 114.4,
-        "inferredMeters": 50.0,
+        "missingMeters": 112.4,
+        "inferredMeters": 48.0,
         "unallocated": [
           {
             "rig": "CSD-1300",
@@ -15887,7 +15892,7 @@
         "issues": [
           {
             "kind": "gap",
-            "text": "STDH2601: 60–65 м (5 м) тайлангүй"
+            "text": "STDH2601: 60–63 м (3 м) тайлангүй"
           }
         ],
         "driveReports": [],
@@ -15895,8 +15900,8 @@
           {
             "hole": "STDH2601",
             "from": 60.0,
-            "to": 65.0,
-            "meters": 5.0,
+            "to": 63.0,
+            "meters": 3.0,
             "exact": true,
             "shifts": 1,
             "note": ""
@@ -15940,8 +15945,8 @@
         "records": [
           {
             "hole": "STDH2601",
-            "from": 65.0,
-            "to": 65.0,
+            "from": 63.0,
+            "to": 63.0,
             "meters": 0.0,
             "source": "20261108_n_STDH2601_C-1800_65-65_casing30-48.pdf",
             "evidence": "report",
@@ -15953,7 +15958,7 @@
             },
             "reports": [
               {
-                "name": "20261108_n_STDH2601_C-1800_65-65_casing30-48.pdf",
+                "name": "20261108_n_STDH2601_C-1800_63-63_casing30-48.pdf",
                 "url": "https://drive.google.com/file/d/1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN/view?usp=drivesdk"
               }
             ]
@@ -15962,7 +15967,7 @@
         "issues": [
           {
             "kind": "nonDrilling",
-            "text": "0 м өрөмдсөн тайлан: 2026-11-08 шөнө 20:00–08:00. HQ 65→65 м; эх маягтын Drilled талбар хоосон, 0 м нь From–To-оос тооцоолсон (эх дээр баталгаажуулаагүй). PQ casing 30→48 м = 18 м; casing-г өрөмдсөн метрт нэмээгүй. Activity time тайланд бөглөгдөөгүй; 12 цаг нь зөвхөн Reported Total. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 11/07 шөнө To=60 м, энэ ээлж From=65 м: 5 м тайлангүй завсар; 11/08 өдрийн ээлжийг хайх шаардлагатай."
+            "text": "0 м өрөмдсөн тайлан: 2026-11-08 шөнө 20:00–08:00. HQ 63→63 м; эх маягтын Drilled талбар хоосон, 0 м нь From–To-оос тооцоолсон (эх дээр баталгаажуулаагүй). PQ casing 30→48 м = 18 м; casing-г өрөмдсөн метрт нэмээгүй. Activity time тайланд бөглөгдөөгүй; 12 цаг нь зөвхөн Reported Total. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 11/07 шөнө To=60 м, энэ ээлж From=63 м: 3 м тайлангүй завсар; 11/08 өдрийн ээлжийг хайх шаардлагатай. Засвар 2026-11-09: эх PDF дээр Start/Finish = 63/63 (SysMargad баталсан); өмнө 65 гэж буруу хуулсан. Файлын нэрэнд 65-65 хэвээр."
           }
         ],
         "driveReports": [],

@@ -1060,6 +1060,32 @@
         "UNVERIFIED": 7
       },
       "note": "4 rows rejected by validation; Pay-period workbook refresh failed; verified snapshot used: Даалгаварын гэрээгээр ажиллагсадын хөлс-2026.10.15 (HTTPError), Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx (HTTPError)"
+    },
+    {
+      "id": "9eb5f73f-5756-45c0-a5ad-0a30c1ac133f",
+      "source": "drive",
+      "startedAt": "2026-11-09T18:43:03+08:00",
+      "status": "updated",
+      "completedAt": "2026-11-09T18:44:50+08:00",
+      "files": 16,
+      "holes": 17,
+      "shifts": 125,
+      "meters": 3513.7,
+      "changes": {
+        "changed": [
+          "C-1800 / 2026-11-08 / Шөнө / STDH2601"
+        ]
+      },
+      "audit": {
+        "month": "2026-11",
+        "expected": 36,
+        "VERIFIED_DRILLING": 13,
+        "VERIFIED_NON_DRILLING": 3,
+        "MISSING_REPORT": 13,
+        "SOURCE_CONFLICT": 0,
+        "UNVERIFIED": 7
+      },
+      "note": "4 rows rejected by validation; Pay-period workbook refresh failed; verified snapshot used: Даалгаварын гэрээгээр ажиллагсадын хөлс-2026.10.15 (HTTPError), Өрмийн багийн цалин 2026.10.16-2026.10.31.xlsx (HTTPError)"
     }
   ]
 }
