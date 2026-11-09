@@ -17,7 +17,11 @@ function areaOptions(){const select=$('#area'),value=select.value,areas=areaList
 function holes(){return D.collar.filter(h=>(h.site||SITE)===$('#site').value&&(!$('#area').value||areaOf(h)===$('#area').value)&&(!$('#rig').value||D.shifts.some(s=>s.hole===h.id&&s.rig===$('#rig').value)));}
 function shifts(){const ids=new Set(holes().map(h=>h.id));return D.shifts.filter(s=>ids.has(s.hole)&&(!$('#rig').value||s.rig===$('#rig').value));}
 function depth(id){const rows=D.shifts.filter(s=>s.hole===id);return rows.length?Math.max(...rows.map(s=>s.to)):null;}
-function status(h){if(h.finish)return ['Дууссан',''];if(D.shifts.some(s=>s.hole===h.id))return ['Өрөмдөж байна','active'];return ['Төлөвлөсөн','planned'];}
+// Owner rule 2026-11-09: a hole whose reports stopped while its rig went on to another hole is finished,
+// even before the collar sheet gives its finish date.
+const shiftOrder=s=>s.date+(s.shift==='Өдөр'?'0':'1');
+function reportedEnd(id){const own=D.shifts.filter(s=>s.hole===id);if(!own.length)return '';const last=own.reduce((a,s)=>shiftOrder(s)>shiftOrder(a)?s:a);return D.shifts.some(s=>s.rig===last.rig&&s.hole!==id&&shiftOrder(s)>shiftOrder(last))?last.date:'';}
+function status(h){if(h.finish||reportedEnd(h.id))return ['Дууссан',''];if(D.shifts.some(s=>s.hole===h.id))return ['Өрөмдөж байна','active'];return ['Төлөвлөсөн','planned'];}
 let financialGrain='shift',financialMonth='';
 function financialMonths(){return [...new Set([...D.shifts.map(row=>row.date.slice(0,7)),D.finance?.period].filter(Boolean))].sort().reverse();}
 // The latest month opens first, as on the overview chart.
@@ -467,7 +471,7 @@ function dataTable(){
     const geology=logStatus(g.done)+(g.done?'<small>'+logFileNote(g)+'</small>':g.state==='handwritten'?'<small>'+dataLink(g.url,'Гар бичмэл')+' · '+g.handwritten+' зураг/PDF</small>':g.state==='other'?'<small>'+dataLink(g.url,g.files.length+' файл')+'</small>':'');
     const geotech=logStatus(t.done)+(t.done?'<small>'+logFileNote(t)+'</small>':t.state==='technical'?'<small>'+dataLink(t.file.url,'Technical Data')+' · загварт хөрвүүлэх</small>':'');
     return '<tr><td><button class="hole-link" data-data-hole="'+esc(r.id)+'">'+esc(r.id)+'</button></td><td>'+esc(areaOf(h))+'</td>'
-      +'<td><span class="badge '+state[1]+'">'+state[0]+'</span><small>'+esc(h.start||'—')+' – '+esc(h.finish||'…')+'</small></td>'
+      +'<td><span class="badge '+state[1]+'">'+state[0]+'</span><small>'+esc(h.start||'—')+' – '+esc(h.finish||(reportedEnd(h.id)?reportedEnd(h.id)+' (тайлангаар)':'…'))+'</small></td>'
       +'<td>'+(r.collar.depth==null?'—':fmt(r.collar.depth)+' м')+'<small>'+(r.collar.registered?'E/N '+(r.collar.coordinates?'✓':'—')+' · Z '+(r.collar.elevation?'✓':'—'):'Collar-д мөргүй · Drive хавтаснаас бүртгэсэн')+'</small></td>'
       +'<td>'+(p.count?dataCell(p.count+' зураг',esc(formats)+(p.boxes==null?'':' · '+fmt(p.boxes,0)+' хайрцаг'),p.url):dataCell('—',p.boxes==null?'':fmt(p.boxes,0)+' хайрцаг'))+'</td>'
       +'<td>'+(r.pxrf.count?dataCell(r.pxrf.count+' файл','',r.pxrf.url):'—')+'</td>'
@@ -622,7 +626,7 @@ function render(){
   if(tab==='mapping')initMapping();
   $('.search')?.addEventListener('input',e=>{query=e.target.value;$('#table').innerHTML=tab==='holes'?holeTable():tab==='drilling-data'?dataTable():shiftTable();});
 }
-function openHole(id){const h=D.collar.find(x=>x.id===id),folder=D.folderMap?.[id],state=status(h);$('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(h.id)}</h2><p>${SITE} · ${esc(areaOf(h))} · <span class="badge ${state[1]}">${state[0]}</span></p><div class="detail-grid">${[['Төлөвлөсөн гүн',fmt(h.plan)+' м'],['Ээлжийн сүүлийн гүн',fmt(depth(id))+' м'],['Collar эцсийн гүн',fmt(h.collarDepth)+' м'],['Эхэлсэн / дууссан',`${h.start||'—'} / ${h.finish||'—'}`],['E / N / Z',`${fmt(h.e,3)} / ${fmt(h.n,3)} / ${fmt(h.z,3)}`],['Азимут / хазайлт',`${fmt(h.az)}° / ${fmt(h.dip)}°`],['Керний гарц',h.recovery==null?'—':fmt(h.recovery)+'%'],['Керний хайрцаг',fmt(h.boxes,0)]].map(([label,value])=>`<div><small>${label}</small><strong>${esc(value)}</strong></div>`).join('')}</div><h3>Эх баримтууд</h3><div class="folder-links">${folder?folder.folders.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)} ↗</a>`).join(''):'Энэ цооногийн хавтас олдоогүй.'}</div>`;$('#detail').showModal();}
+function openHole(id){const h=D.collar.find(x=>x.id===id),folder=D.folderMap?.[id],state=status(h);$('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(h.id)}</h2><p>${SITE} · ${esc(areaOf(h))} · <span class="badge ${state[1]}">${state[0]}</span></p><div class="detail-grid">${[['Төлөвлөсөн гүн',fmt(h.plan)+' м'],['Ээлжийн сүүлийн гүн',fmt(depth(id))+' м'],['Collar эцсийн гүн',fmt(h.collarDepth)+' м'],['Эхэлсэн / дууссан',`${h.start||'—'} / ${h.finish||(reportedEnd(id)?reportedEnd(id)+' (тайлангаар)':'—')}`],['E / N / Z',`${fmt(h.e,3)} / ${fmt(h.n,3)} / ${fmt(h.z,3)}`],['Азимут / хазайлт',`${fmt(h.az)}° / ${fmt(h.dip)}°`],['Керний гарц',h.recovery==null?'—':fmt(h.recovery)+'%'],['Керний хайрцаг',fmt(h.boxes,0)]].map(([label,value])=>`<div><small>${label}</small><strong>${esc(value)}</strong></div>`).join('')}</div><h3>Эх баримтууд</h3><div class="folder-links">${folder?folder.folders.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)} ↗</a>`).join(''):'Энэ цооногийн хавтас олдоогүй.'}</div>`;$('#detail').showModal();}
 function savedTheme(){try{const theme=localStorage.getItem('drilling-theme');return theme==='light'||theme==='dark'?theme:null;}catch{return null;}}
 function setTheme(theme,save){document.documentElement.dataset.theme=theme;$('#dark-theme').media=theme==='dark'?'all':'not all';document.querySelectorAll('[data-theme-choice]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.themeChoice===theme));if(save)try{localStorage.setItem('drilling-theme',theme);}catch{}}
 document.addEventListener('click',e=>{

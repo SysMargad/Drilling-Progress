@@ -372,14 +372,19 @@ def build_audit(data, rigs, through, confirmations=None, foreman=()):
                 continue
             hole = collar.get(previous['hole'], {})
             deepest = max((r['to'] for r in records if r['hole'] == previous['hole']), default=previous['to'])
-            finished = bool(hole.get('finish')) and previous['to'] >= deepest - TOLERANCE
+            # Owner rule 2026-11-09: a hole whose reports stop while its rig goes on reporting another hole, and
+            # which no later report names, is finished, even before the collar sheet gives its finish date.
+            superseded = (following is not None and following['hole'] != previous['hole']
+                          and not any(r['hole'] == previous['hole'] and r['t'] > slot['t'] for r in records))
+            finished = (bool(hole.get('finish')) or superseded) and previous['to'] >= deepest - TOLERANCE
             if not finished and (following is not None or slot['date'] < (through_day - timedelta(days=1)).isoformat()):
                 slot['status'] = 'MISSING_REPORT'
                 issue(slot, 'gap', f'{previous["hole"]} {m(previous["to"])} м-т дуусаагүй байхад тайлангүй ээлж')
             elif following is None:
                 issue(slot, 'noReport', 'Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй')
             elif finished and following['hole'] != previous['hole']:
-                issue(slot, 'noReport', f'{previous["hole"]} дууссан, {following["hole"]} эхлэхээс өмнө — нүүлт байж болзошгүй, тайлангаар баталгаажаагүй')
+                how = '' if hole.get('finish') else ' (дараагийн тайлангуудад дурдагдаагүй тул дууссан гэж үзсэн; collar-д дууссан огноо алга)'
+                issue(slot, 'noReport', f'{previous["hole"]} дууссан{how}, {following["hole"]} эхлэхээс өмнө — нүүлт байж болзошгүй, тайлангаар баталгаажаагүй')
             else:
                 issue(slot, 'noReport', 'Тайлан алга; гүн тасралтгүй тул өрөмдөөгүй байж болзошгүй — баталгаажаагүй')
 

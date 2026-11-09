@@ -207,5 +207,26 @@ class FindingTests(unittest.TestCase):
         self.assertEqual(slot(result, 'C-1800', '2026-11-05', 'Шөнө')['inferred'][0]['shifts'], 3)
 
 
+class FinishedHoleTests(unittest.TestCase):
+    # Owner rule 2026-11-09: reports of a hole stop and the rig's later reports name another hole -> it is finished.
+    def test_20_a_hole_no_later_report_names_is_finished_without_a_collar_date(self):
+        shifts = parse(row('C-1800', '2026-11-01', 'Өдөр', 'ZHDH2611', 0, 30, 30),
+                       row('C-1800', '2026-11-03', 'Өдөр', 'ZHDH2613', 0, 20, 20))[0]
+        move = slot(audit(shifts, ['ZHDH2611', 'ZHDH2613']), 'C-1800', '2026-11-02', 'Өдөр')
+        self.assertEqual(move['status'], 'UNVERIFIED', 'a rig move, not a missing report')
+        self.assertTrue(any('дурдагдаагүй тул дууссан' in i['text'] for i in move['issues']))
+
+    def test_21_a_hole_named_again_later_is_not_finished(self):
+        shifts = parse(row('C-1800', '2026-11-01', 'Өдөр', 'ZHDH2611', 0, 30, 30),
+                       row('C-1800', '2026-11-03', 'Өдөр', 'ZHDH2613', 0, 20, 20),
+                       row('C-1800', '2026-11-04', 'Өдөр', 'ZHDH2611', 30, 40, 10))[0]
+        gap = slot(audit(shifts, ['ZHDH2611', 'ZHDH2613']), 'C-1800', '2026-11-02', 'Өдөр')
+        self.assertEqual(gap['status'], 'MISSING_REPORT')
+
+    def test_22_the_rigs_latest_hole_is_still_being_drilled(self):
+        latest = slot(audit(parse(*STDH)[0], ['STDH2601'], through='2026-11-12'), 'C-1800', '2026-11-10', 'Өдөр')
+        self.assertEqual(latest['status'], 'MISSING_REPORT', 'no later report of another hole: not finished')
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
