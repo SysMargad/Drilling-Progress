@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-11",
-  "updatedAt": "2026-11-11T00:51:54+08:00",
-  "period": "2026-10-01 – 2026-11-08",
+  "updatedAt": "2026-11-11T13:07:43+08:00",
+  "period": "2026-10-01 – 2026-11-09",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -26,7 +26,7 @@
       "geotechLog": "Completed",
       "pxrfLog": "Completed",
       "corePhoto": "Completed",
-      "sampling": "in progress"
+      "sampling": "Sampled"
     },
     {
       "id": "DTDH2603",
@@ -68,7 +68,7 @@
       "geotechLog": "Completed",
       "pxrfLog": "Bruker complete",
       "corePhoto": "Completed",
-      "sampling": ""
+      "sampling": "Sampled in 1st priority"
     },
     {
       "id": "DTDH2605",
@@ -89,7 +89,7 @@
       "geotechLog": "Completed",
       "pxrfLog": "Completed",
       "corePhoto": "Completed",
-      "sampling": ""
+      "sampling": "Sampled in 1st priority"
     },
     {
       "id": "DTDH2606",
@@ -110,7 +110,7 @@
       "geotechLog": "Completed",
       "pxrfLog": "completed",
       "corePhoto": "completed",
-      "sampling": ""
+      "sampling": "Sampled in 1st priority"
     },
     {
       "id": "ZHDH2601",
@@ -131,7 +131,7 @@
       "geotechLog": "Completed",
       "pxrfLog": "Completed",
       "corePhoto": "Completed",
-      "sampling": ""
+      "sampling": "Sampled in 1st priority"
     },
     {
       "id": "ZHDH2602",
@@ -4742,19 +4742,19 @@
     },
     {
       "rig": "C-1800",
-      "source": "20261108_n_STDH2601_C-1800_65-65_casing30-48.pdf",
+      "source": "20261108_n_STDH2601_C-1800_63-69_casing48-66.pdf",
       "date": "2026-11-08",
       "shift": "Шөнө",
       "driller": "",
       "hole": "STDH2601",
       "from": 63.0,
-      "to": 63.0,
-      "meters": 0.0,
+      "to": 69.0,
+      "meters": 6.0,
       "st": null,
       "rt": null,
       "dt": 12.0,
       "hours": 12.0,
-      "notes": "2026-11-08 шөнө 20:00–08:00. HQ 63→63 м; эх маягтын Drilled талбар хоосон, 0 м нь From–To-оос тооцоолсон (эх дээр баталгаажуулаагүй). PQ casing 30→48 м = 18 м; casing-г өрөмдсөн метрт нэмээгүй. Activity time тайланд бөглөгдөөгүй; 12 цаг нь зөвхөн Reported Total. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 11/07 шөнө To=60 м, энэ ээлж From=63 м: 3 м тайлангүй завсар; 11/08 өдрийн ээлжийг хайх шаардлагатай. Засвар 2026-11-09: эх PDF дээр Start/Finish = 63/63 (SysMargad баталсан); өмнө 65 гэж буруу хуулсан. Файлын нэрэнд 65-65 хэвээр. | User default 2026-10-27: DT=12 h (source blank; estimated).",
+      "notes": "2026-11-08 ШӨНӨ 20:00–11/09 08:00 (эзэмшигч 2026-11-11-нд өдөр/шөнийн тайлангууд солигдон бичигдсэнийг баталсан; эх PDF дээрх ээлжийн тэмдэглэгээ буруу). HQ 63→69 м, өрөмдсөн 6 м — эх PDF-д Drilled 6 м гэж бичсэн; өмнөх өдрийн 63 м-тэй залгамж OK. PQ casing 48→66 м = 18 м тусдаа, өрөмдсөн метрт нэмээгүй. Эх маягтын нийт 12 цаг, PT/MM/RT/DT ажлын цагийн задаргааг дахин нягтална; DT-г таамгаар нөхөөгүй. Эх PDF-ийн агуулгыг өөрчлөөгүй, файлын нэрийг n ээлжээр шинэчилсэн. SOURCE CONFLICT шийдэгдсэн: ээлжүүдийн нэршил солигдсон байсан. | User default 2026-10-27: DT=12 h (source blank; estimated).",
       "waterUsageM3": null,
       "sheet": {
         "name": "STDH2601 - Drilling Shift Report Table",
@@ -4768,7 +4768,42 @@
           "rig": "C-1800",
           "date": "2026-11-08",
           "shift": "Шөнө",
-          "name": "20261108_n_STDH2601_C-1800_63-63_casing30-48.pdf",
+          "name": "20261108_n_STDH2601_C-1800_63-69_casing48-66.pdf",
+          "url": "https://drive.google.com/file/d/1rANDm2C2ipj7elSnfbYujOmHPeK7nWTB/view?usp=drivesdk",
+          "fileId": "1rANDm2C2ipj7elSnfbYujOmHPeK7nWTB",
+          "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+        }
+      ]
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261108_d_STDH2601_C-1800_63-63_casing30-48.pdf",
+      "date": "2026-11-08",
+      "shift": "Өдөр",
+      "driller": "",
+      "hole": "STDH2601",
+      "from": 63.0,
+      "to": 63.0,
+      "meters": 0.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "2026-11-08 ӨДӨР 08:00–20:00 (эзэмшигч 2026-11-11-нд өдөр/шөнийн тайлангууд солигдон бичигдсэнийг баталсан; эх PDF дээрх ээлжийн тэмдэглэгээ буруу). HQ 63→63 м, өрөмдлөг хийгээгүй: Drilled=0 м (эзэмшигчийн баталгаа). PQ casing 30→48 м = 18 м суулгасан; casing-ийг өрөмдсөн метрт нэмээгүй. Нийт ээлжийн цаг 12, үйл ажиллагааны цагийн задаргаа бөглөгдөөгүй тул DT-г нөхөөгүй. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 2026-11-07 шөнийн Finish=60 м-ээс энэ өдрийн Start=63 м хүртэл 3 м-ийн өмнөх тайлангийн завсар хэвээр. Эх маягтын Drilled нүд хоосон; 0 м-ийг эзэмшигч баталсан. Start/Finish=63/63 м-г 2026-11-09-нд баталж, анхны 65/65 алдааг зассан. Эх PDF агуулгыг өөрчлөөгүй, Drive файлын нэрийг зөв d ээлжээр шинэчилсэн. | User default 2026-10-27: DT=12 h (source blank; estimated).",
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "STDH2601 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 11,
+        "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "STDH2601",
+          "rig": "C-1800",
+          "date": "2026-11-08",
+          "shift": "Өдөр",
+          "name": "20261108_d_STDH2601_C-1800_60-63_casing30-48.pdf",
           "url": "https://drive.google.com/file/d/1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN/view?usp=drivesdk",
           "fileId": "1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN",
           "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
@@ -4806,6 +4841,76 @@
           "name": "20261108_n_KHDH2601_CSD-1300_143.4-164.4.pdf",
           "url": "https://drive.google.com/file/d/1xfnUCSX3vHl5RZpHKEYp8h-zoZINEf3v/view?usp=drivesdk",
           "fileId": "1xfnUCSX3vHl5RZpHKEYp8h-zoZINEf3v",
+          "folderUrl": "https://drive.google.com/drive/folders/1efJFtaqYHov0neF-MorNuXlrYXtpbQhG"
+        }
+      ]
+    },
+    {
+      "rig": "C-1800",
+      "source": "20261109_n_STDH2601_C-1800_69-72_casing66-69.pdf",
+      "date": "2026-11-09",
+      "shift": "Шөнө",
+      "driller": "",
+      "hole": "STDH2601",
+      "from": 69.0,
+      "to": 72.0,
+      "meters": 3.0,
+      "st": null,
+      "rt": null,
+      "dt": 12.0,
+      "hours": 12.0,
+      "notes": "2026-11-09 шөнө 20:00–08:00; эх PDF Document 12_1 хуудас 2: HQ 69→72 м, Drilled 3 м. PQ casing 66→69 м, 3 м тусдаа (шинэ өрөмдсөн метрт оруулахгүй). Consumables: polymer, AUS-gel (тоо/нэгж гар бичмэл бүдэг). Work-time ба Total Hours талбарыг найдвартай унших боломжгүй тул цагийг таамгаар нөхөөгүй. QA/QC шинэчлэл 2026-11-11: эзэмшигчийн баталгаагаар 11/08 өдрийн ба шөнийн тайлангийн тэмдэглэгээ солигдсон байсныг засав. Одоо 11/08 шөнө HQ 63→69 м, дараагийн энэ ээлж From=69 м; хоорондох баталгаажсан тайлангуудын гүний зааг 69 м-тэй таарч байна. 11/09 өдрийн ээлжийн тайлан байгаа эсэхийг тусад нь нягтална. | User default 2026-10-27: DT, TOTAL=12 h (source blank; estimated).",
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "STDH2601 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 13,
+        "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "STDH2601",
+          "rig": "C-1800",
+          "date": "2026-11-09",
+          "shift": "Шөнө",
+          "name": "20261109_n_STDH2601_C-1800_69-72_casing66-69.pdf",
+          "url": "https://drive.google.com/file/d/1VpUGHELmiuxT6UzW_7SWEDfxDPXdZZSj/view?usp=drivesdk",
+          "fileId": "1VpUGHELmiuxT6UzW_7SWEDfxDPXdZZSj",
+          "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+        }
+      ]
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261109_n_KHDH2601_CSD-1300_206.4-251.4.pdf",
+      "date": "2026-11-09",
+      "shift": "Шөнө",
+      "driller": "",
+      "hole": "KHDH2601",
+      "from": 206.4,
+      "to": 251.4,
+      "meters": 45.0,
+      "st": null,
+      "rt": null,
+      "dt": 10.0,
+      "hours": 12.0,
+      "notes": "2026-11-09 шөнө 20:00–08:00; Document 12_1 хуудас 1: HQ Start=206.4 м, Finish=251.4 м, Reported Drilled=45 м. Өмнөх 11/09 өдрийн To=206.4 м-тэй гүний залгамж OK. Ажлын цаг: PT 30 мин, MM 30 мин, DT 10 цаг, OT 1 цаг, нийлбэр 12 цаг (MM багана байхгүй тул Work notes-д хадгалав). Polymer 1 (нэгж тодорхойгүй). Rig=CSD-1300 эх маягт дээр. 11/08 өдрийн өмнөх 18 м тайлангийн завсар тусдаа хэвээр.",
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "KHDH2601 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 9,
+        "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "KHDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-11-09",
+          "shift": "Шөнө",
+          "name": "20261109_n_KHDH2601_CSD-1300_206.4-251.4.pdf",
+          "url": "https://drive.google.com/file/d/1RlwqHgQ5zoGBItVSsAXemoRL9jCjuzDW/view?usp=drivesdk",
+          "fileId": "1RlwqHgQ5zoGBItVSsAXemoRL9jCjuzDW",
           "folderUrl": "https://drive.google.com/drive/folders/1efJFtaqYHov0neF-MorNuXlrYXtpbQhG"
         }
       ]
@@ -6331,8 +6436,8 @@
       },
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1-kuluzYW94DA89tI7bLoC_zyDHIoh7fB",
-        "count": 5,
-        "latest": "2026-11-10T07:14:11.538Z",
+        "count": 7,
+        "latest": "2026-11-11T01:43:41.828Z",
         "files": [
           {
             "name": "KHDH2601-(1.4m-50.4m).xlsx",
@@ -6348,6 +6453,16 @@
             "name": "KHDH2601-(162.4-240.4).csv",
             "modified": "2026-11-10T07:10:45.402Z",
             "url": "https://drive.google.com/file/d/1x7jILqq5UeZufk67lywiTXiaXfLkOS7C/view?usp=drivesdk"
+          },
+          {
+            "name": "KHDH2601-(241.4-300.4)",
+            "modified": "2026-11-11T01:43:41.828Z",
+            "url": "https://docs.google.com/spreadsheets/d/1TRhLxSJKPNmeSweLv4-zz-0RJ59RGujqaXrmE6tHKC4/edit?usp=drivesdk"
+          },
+          {
+            "name": "KHDH2601-(241.4-300.4).csv",
+            "modified": "2026-11-11T01:43:37.455Z",
+            "url": "https://drive.google.com/file/d/10Ej6OnppjhX5E9-UUWkfIO9nfJsJ_Xg0/view?usp=drivesdk"
           },
           {
             "name": "KHDH2601-(51.4-90.4).xlsx",
@@ -6415,15 +6530,37 @@
     "UGDH2601": {
       "geological": {
         "url": "https://drive.google.com/drive/folders/17GUfovL90Y1S1aWwo0QTDm36Ukz9A69J",
-        "count": 0,
-        "latest": "",
-        "files": []
+        "count": 2,
+        "latest": "2026-11-11T02:04:09.813Z",
+        "files": [
+          {
+            "name": "UGDH2601_Geological_Log.pdf",
+            "modified": "2026-11-11T02:04:09.813Z",
+            "url": "https://drive.google.com/file/d/13h4dsFTUyBydUd1TJKFLurKj9sy5omUX/view?usp=drivesdk"
+          },
+          {
+            "name": "UGDH2601_Geological_Log.xlsx",
+            "modified": "2026-11-11T02:03:13.655Z",
+            "url": "https://docs.google.com/spreadsheets/d/13B8Z0xJgiaTNeH9E9RqtkKm3QN2_DzCh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          }
+        ]
       },
       "geotechnical": {
         "url": "https://drive.google.com/drive/folders/1KuHrPhdfbRBWVSMz22FTeKEeMxi5jroG",
-        "count": 0,
-        "latest": "",
-        "files": []
+        "count": 2,
+        "latest": "2026-11-11T02:04:18.835Z",
+        "files": [
+          {
+            "name": "UGDH2601_Geotechnical_Log.pdf",
+            "modified": "2026-11-11T02:04:18.835Z",
+            "url": "https://drive.google.com/file/d/18qM05DiHixWELnIbfck0S2rDbpBVwY_J/view?usp=drivesdk"
+          },
+          {
+            "name": "UGDH2601_Geotechnical_Log.xlsx",
+            "modified": "2026-11-11T01:46:48.627Z",
+            "url": "https://docs.google.com/spreadsheets/d/1nVhYQl2WyzTepBy7TBa0ncSIyDktezjc/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          }
+        ]
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/1MzeTQHvtYI-B5ky4lIR0qVxcVIHEh2sC",
@@ -7366,6 +7503,8 @@
     "Estimated time: STDH2601 / 2026-11-07 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: STDH2601 / 2026-11-07 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: STDH2601 / 2026-11-08 / Шөнө; blank DT/total uses owner-approved 12 h",
+    "Estimated time: STDH2601 / 2026-11-08 / Өдөр; blank DT/total uses owner-approved 12 h",
+    "Estimated time: STDH2601 / 2026-11-09 / Шөнө; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2602 / 2026-10-15 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2602 / 2026-10-16 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: ZHDH2602 / 2026-10-18 / Өдөр; blank DT/total uses owner-approved 12 h",
@@ -7396,12 +7535,15 @@
     "Unreported time codes: KHDH2601 / 2026-11-07 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: KHDH2601 / 2026-11-07 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: KHDH2601 / 2026-11-08 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: KHDH2601 / 2026-11-09 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-03 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-04 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-04 / Өдөр / RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-07 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-07 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-08 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: STDH2601 / 2026-11-08 / Өдөр / ST, RT; preserved as null",
+    "Unreported time codes: STDH2601 / 2026-11-09 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-10-31 / Шөнө / RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-10-31 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: UGDH2601 / 2026-11-02 / Шөнө / ST, RT; preserved as null",
@@ -7461,16 +7603,22 @@
   ],
   "sources": [
     {
-      "name": "KHDH2601 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 4
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 20,
+      "shiftRows": 0
     },
     {
       "name": "STDH2601 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
       "collarRows": 0,
-      "shiftRows": 6
+      "shiftRows": 8
+    },
+    {
+      "name": "KHDH2601 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 5
     },
     {
       "name": "ZHDH2604 - Drilling Shift Report Table",
@@ -7501,12 +7649,6 @@
       "url": "https://docs.google.com/spreadsheets/d/1HhbN20M98ZbL4YQEGkhiUk0dLO9s1GvVSv2wr0QeRnU/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 4
-    },
-    {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 20,
-      "shiftRows": 0
     },
     {
       "name": "ZHDH2606 - Drilling Shift Report Table",
@@ -7620,19 +7762,6 @@
       "from": 48.0,
       "row": 8,
       "reason": "Missing/invalid to for STDH2601 on 2026-11-06",
-      "sheet": "STDH2601 - Drilling Shift Report Table",
-      "tab": "2_Ээлжийн_бүртгэл",
-      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
-    },
-    {
-      "rig": "C-1800",
-      "date": "2026-11-08",
-      "shift": "Өдөр",
-      "hole": "STDH2601",
-      "from": 63.0,
-      "to": 69.0,
-      "row": 11,
-      "reason": "Missing/invalid meters for STDH2601 on 2026-11-08",
       "sheet": "STDH2601 - Drilling Shift Report Table",
       "tab": "2_Ээлжийн_бүртгэл",
       "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
@@ -7997,15 +8126,6 @@
       "shift": "Шөнө",
       "name": "20261106_n_STDH2601_C-1800_48-unknown.jpg",
       "url": "https://drive.google.com/file/d/1s52C3sLCyeQx8Ar6i-8qbaJClWNcRLSz/view?usp=drivesdk",
-      "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
-    },
-    {
-      "hole": "STDH2601",
-      "rig": "C-1800",
-      "date": "2026-11-08",
-      "shift": "Өдөр",
-      "name": "20261108_d_STDH2601_C-1800_63-69_casing48-66.pdf",
-      "url": "https://drive.google.com/file/d/1rANDm2C2ipj7elSnfbYujOmHPeK7nWTB/view?usp=drivesdk",
       "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
     },
     {
@@ -11025,21 +11145,21 @@
         "month": "2026-11",
         "expected": 44,
         "counts": {
-          "VERIFIED_DRILLING": 13,
+          "VERIFIED_DRILLING": 16,
           "VERIFIED_NON_DRILLING": 2,
-          "MISSING_REPORT": 16,
-          "SOURCE_CONFLICT": 2,
+          "MISSING_REPORT": 14,
+          "SOURCE_CONFLICT": 1,
           "UNVERIFIED": 11
         },
         "meters": {
-          "VERIFIED_DRILLING": 276.0,
+          "VERIFIED_DRILLING": 330.0,
           "VERIFIED_NON_DRILLING": 0.0,
           "MISSING_REPORT": 0.0,
           "SOURCE_CONFLICT": 0.0,
           "UNVERIFIED": 0.0
         },
-        "missingMeters": 109.4,
-        "inferredMeters": 45.0,
+        "missingMeters": 151.4,
+        "inferredMeters": 87.0,
         "unallocated": [
           {
             "rig": "CSD-1300",
@@ -15943,24 +16063,40 @@
         "date": "2026-11-08",
         "shift": "Өдөр",
         "status": "SOURCE_CONFLICT",
-        "meters": null,
-        "records": [],
+        "meters": 0.0,
+        "records": [
+          {
+            "hole": "STDH2601",
+            "from": 63.0,
+            "to": 63.0,
+            "meters": 0.0,
+            "source": "20261108_d_STDH2601_C-1800_63-63_casing30-48.pdf",
+            "evidence": "report",
+            "sheet": {
+              "name": "STDH2601 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 11,
+              "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261108_d_STDH2601_C-1800_60-63_casing30-48.pdf",
+                "url": "https://drive.google.com/file/d/1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN/view?usp=drivesdk"
+              }
+            ]
+          }
+        ],
         "issues": [
           {
-            "kind": "rejected",
-            "text": "Хүснэгтийн мөр татгалзсан (STDH2601 - Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 11): Missing/invalid meters for STDH2601 on 2026-11-08"
+            "kind": "gap",
+            "text": "STDH2601: 60–63 м (3 м) тайлангүй — тайлан оногдох хоосон ээлж алга"
           },
           {
-            "kind": "unlinked",
-            "text": "Drive-д STDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261108_d_STDH2601_C-1800_63-69_casing48-66.pdf"
+            "kind": "nonDrilling",
+            "text": "0 м өрөмдсөн тайлан: 2026-11-08 ӨДӨР 08:00–20:00 (эзэмшигч 2026-11-11-нд өдөр/шөнийн тайлангууд солигдон бичигдсэнийг баталсан; эх PDF дээрх ээлжийн тэмдэглэгээ буруу). HQ 63→63 м, өрөмдлөг хийгээгүй: Drilled=0 м (эзэмшигчийн баталгаа). PQ casing 30→48 м = 18 м суулгасан; casing-ийг өрөмдсөн метрт нэмээгүй. Нийт ээлжийн цаг 12, үйл ажиллагааны цагийн задаргаа бөглөгдөөгүй тул DT-г нөхөөгүй. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 2026-11-07 шөнийн Finish=60 м-ээс энэ өдрийн Start=63 м хүртэл 3 м-ийн өмнөх тайлангийн завсар хэвээр. Эх маягтын Drilled нүд хоосон; 0 м-ийг эзэмшигч баталсан. Start/Finish=63/63 м-г 2026-11-09-нд баталж, анхны 65/65 алдааг зассан. Эх PDF агуулгыг өөрчлөөгүй, Drive файлын нэрийг зөв d ээлжээр шинэчилсэн."
           }
         ],
-        "driveReports": [
-          {
-            "name": "20261108_d_STDH2601_C-1800_63-69_casing48-66.pdf",
-            "url": "https://drive.google.com/file/d/1rANDm2C2ipj7elSnfbYujOmHPeK7nWTB/view?usp=drivesdk"
-          }
-        ],
+        "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
       },
@@ -15995,15 +16131,15 @@
         "rig": "C-1800",
         "date": "2026-11-08",
         "shift": "Шөнө",
-        "status": "SOURCE_CONFLICT",
-        "meters": 0.0,
+        "status": "VERIFIED_DRILLING",
+        "meters": 6.0,
         "records": [
           {
             "hole": "STDH2601",
             "from": 63.0,
-            "to": 63.0,
-            "meters": 0.0,
-            "source": "20261108_n_STDH2601_C-1800_65-65_casing30-48.pdf",
+            "to": 69.0,
+            "meters": 6.0,
+            "source": "20261108_n_STDH2601_C-1800_63-69_casing48-66.pdf",
             "evidence": "report",
             "sheet": {
               "name": "STDH2601 - Drilling Shift Report Table",
@@ -16013,22 +16149,13 @@
             },
             "reports": [
               {
-                "name": "20261108_n_STDH2601_C-1800_63-63_casing30-48.pdf",
-                "url": "https://drive.google.com/file/d/1Ob-0iuto2JvO1GXwSh7gG2pBFpHKeWeN/view?usp=drivesdk"
+                "name": "20261108_n_STDH2601_C-1800_63-69_casing48-66.pdf",
+                "url": "https://drive.google.com/file/d/1rANDm2C2ipj7elSnfbYujOmHPeK7nWTB/view?usp=drivesdk"
               }
             ]
           }
         ],
-        "issues": [
-          {
-            "kind": "gap",
-            "text": "STDH2601: 60–63 м (3 м) тайлангүй — тайлан оногдох хоосон ээлж алга"
-          },
-          {
-            "kind": "nonDrilling",
-            "text": "0 м өрөмдсөн тайлан: 2026-11-08 шөнө 20:00–08:00. HQ 63→63 м; эх маягтын Drilled талбар хоосон, 0 м нь From–To-оос тооцоолсон (эх дээр баталгаажуулаагүй). PQ casing 30→48 м = 18 м; casing-г өрөмдсөн метрт нэмээгүй. Activity time тайланд бөглөгдөөгүй; 12 цаг нь зөвхөн Reported Total. Polymer 1, AUS-gel 4 (нэгж тодорхойгүй). QA/QC: 11/07 шөнө To=60 м, энэ ээлж From=63 м: 3 м тайлангүй завсар; 11/08 өдрийн ээлжийг хайх шаардлагатай. Засвар 2026-11-09: эх PDF дээр Start/Finish = 63/63 (SysMargad баталсан); өмнө 65 гэж буруу хуулсан. Файлын нэрэнд 65-65 хэвээр."
-          }
-        ],
+        "issues": [],
         "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
@@ -16080,7 +16207,7 @@
           },
           {
             "kind": "gap",
-            "text": "STDH2601 63 м-т дуусаагүй байхад тайлангүй ээлж"
+            "text": "STDH2601 69 м-т дуусаагүй байхад тайлангүй ээлж"
           }
         ],
         "driveReports": [],
@@ -16096,16 +16223,16 @@
         "records": [],
         "issues": [
           {
+            "kind": "gap",
+            "text": "KHDH2601: 164.4–206.4 м (42 м) тайлангүй"
+          },
+          {
             "kind": "unassigned",
             "text": "Өрөм нь «C-1300» мөр: KHDH2601 164.4–206.4 м (20261109_d_KHDH2601_C-1300_164.4-206.4.pdf) — аль өрөмд хамаарахыг баталгаажуулах"
           },
           {
             "kind": "unlinked",
             "text": "Drive-д KHDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261109_d_KHDH2601_C-1300_164.4-206.4.pdf"
-          },
-          {
-            "kind": "gap",
-            "text": "KHDH2601 164.4 м-т дуусаагүй байхад тайлангүй ээлж"
           }
         ],
         "driveReports": [
@@ -16114,22 +16241,48 @@
             "url": "https://drive.google.com/file/d/1XU4nL5xxR-PnSYrckgWFPc8VBdCelFti/view?usp=drivesdk"
           }
         ],
-        "inferred": [],
+        "inferred": [
+          {
+            "hole": "KHDH2601",
+            "from": 164.4,
+            "to": 206.4,
+            "meters": 42.0,
+            "exact": true,
+            "shifts": 1,
+            "note": ""
+          }
+        ],
         "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
       },
       {
         "rig": "C-1800",
         "date": "2026-11-09",
         "shift": "Шөнө",
-        "status": "MISSING_REPORT",
-        "meters": null,
-        "records": [],
-        "issues": [
+        "status": "VERIFIED_DRILLING",
+        "meters": 3.0,
+        "records": [
           {
-            "kind": "gap",
-            "text": "STDH2601 63 м-т дуусаагүй байхад тайлангүй ээлж"
+            "hole": "STDH2601",
+            "from": 69.0,
+            "to": 72.0,
+            "meters": 3.0,
+            "source": "20261109_n_STDH2601_C-1800_69-72_casing66-69.pdf",
+            "evidence": "report",
+            "sheet": {
+              "name": "STDH2601 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 13,
+              "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261109_n_STDH2601_C-1800_69-72_casing66-69.pdf",
+                "url": "https://drive.google.com/file/d/1VpUGHELmiuxT6UzW_7SWEDfxDPXdZZSj/view?usp=drivesdk"
+              }
+            ]
           }
         ],
+        "issues": [],
         "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
@@ -16138,15 +16291,31 @@
         "rig": "CSD-1300",
         "date": "2026-11-09",
         "shift": "Шөнө",
-        "status": "MISSING_REPORT",
-        "meters": null,
-        "records": [],
-        "issues": [
+        "status": "VERIFIED_DRILLING",
+        "meters": 45.0,
+        "records": [
           {
-            "kind": "gap",
-            "text": "KHDH2601 164.4 м-т дуусаагүй байхад тайлангүй ээлж"
+            "hole": "KHDH2601",
+            "from": 206.4,
+            "to": 251.4,
+            "meters": 45.0,
+            "source": "20261109_n_KHDH2601_CSD-1300_206.4-251.4.pdf",
+            "evidence": "report",
+            "sheet": {
+              "name": "KHDH2601 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 9,
+              "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261109_n_KHDH2601_CSD-1300_206.4-251.4.pdf",
+                "url": "https://drive.google.com/file/d/1RlwqHgQ5zoGBItVSsAXemoRL9jCjuzDW/view?usp=drivesdk"
+              }
+            ]
           }
         ],
+        "issues": [],
         "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
