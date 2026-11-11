@@ -459,17 +459,19 @@ const readinessClass=state=>({dual:'',ai:'',geologist:'',missing:'warn',drilling
 const loggedClass=(r)=>({done:'',partial:'active',none:r.hole.finish?'warn':'planned'}[r.logged.state]??'planned');
 const registerText=value=>!value?'—':/complete/i.test(value)?'✓':esc(value);
 // Geological / geotechnical logging is done once a file named as a log is in the hole's 04 / 07 folder.
-const logStatus=done=>`<strong class="log-${done?'done':'missing'}">${done?'Хийгдсэн':'Хийгдээгүй'}</strong>`;
+// A provisional log (registered with a reason, e.g. made without the geologist's log) reads Хийгдсэн in yellow.
+const logStatus=(done,provisional='')=>provisional&&done?`<strong class="log-provisional" title="${esc(provisional)}">Хийгдсэн</strong>`
+  :`<strong class="log-${done?'done':'missing'}">${done?'Хийгдсэн':'Хийгдээгүй'}</strong>`;
 const logFileNote=log=>dataLink(log.file.url,'✓ '+esc(log.format))+(log.files.length>1?' · + '+(log.files.length-1)+' файл':'')
-  +(log.registered?' · бүртгэсэн '+esc(log.registered.date):'');
+  +(log.registered?' · бүртгэсэн '+esc(log.registered.date):'')+(log.provisional?'<br><span class="log-provisional">'+esc(log.provisional)+'</span>':'');
 function dataTable(){
   if(!D.dataInventory)return '<div class="empty">Drive дээрх файлын жагсаалт хараахан уншигдаагүй. Дараагийн Drive синкээр орно.</div>';
   const list=dataRows();
   return '<div class="table-scroll"><table class="data-table"><thead><tr><th>Цооног</th><th>Участик</th><th>Өрөмдлөг</th><th>Collar</th><th>Кернийн зураг</th><th>pXRF</th><th>Хазайлтын хэмжилт</th><th>Геологийн лог</th><th>Геотехникийн лог</th></tr></thead><tbody>'+list.map(r=>{
     const h=r.hole,state=status(h),g=r.geology,t=r.geotech,p=r.photos;
     const formats=Object.entries(p.formats).map(([format,count])=>format+' '+count).join(' · ');
-    const geology=logStatus(g.done)+(g.done?'<small>'+logFileNote(g)+'</small>':g.state==='handwritten'?'<small>'+dataLink(g.url,'Гар бичмэл')+' · '+g.handwritten+' зураг/PDF</small>':g.state==='other'?'<small>'+dataLink(g.url,g.files.length+' файл')+'</small>':'');
-    const geotech=logStatus(t.done)+(t.done?'<small>'+logFileNote(t)+'</small>':t.state==='technical'?'<small>'+dataLink(t.file.url,'Technical Data')+' · загварт хөрвүүлэх</small>':'');
+    const geology=logStatus(g.done,g.provisional)+(g.done?'<small>'+logFileNote(g)+'</small>':g.state==='handwritten'?'<small>'+dataLink(g.url,'Гар бичмэл')+' · '+g.handwritten+' зураг/PDF</small>':g.state==='other'?'<small>'+dataLink(g.url,g.files.length+' файл')+'</small>':'');
+    const geotech=logStatus(t.done,t.provisional)+(t.done?'<small>'+logFileNote(t)+'</small>':t.state==='technical'?'<small>'+dataLink(t.file.url,'Technical Data')+' · загварт хөрвүүлэх</small>':'');
     return '<tr><td><button class="hole-link" data-data-hole="'+esc(r.id)+'">'+esc(r.id)+'</button></td><td>'+esc(areaOf(h))+'</td>'
       +'<td><span class="badge '+state[1]+'">'+state[0]+'</span><small>'+esc(h.start||'—')+' – '+esc(h.finish||(reportedEnd(h.id)?reportedEnd(h.id)+' (тайлангаар)':'…'))+'</small></td>'
       +'<td>'+(r.collar.depth==null?'—':fmt(r.collar.depth)+' м')+'<small>'+(r.collar.registered?'E/N '+(r.collar.coordinates?'✓':'—')+' · Z '+(r.collar.elevation?'✓':'—'):'Collar-д мөргүй · Drive хавтаснаас бүртгэсэн')+'</small></td>'
@@ -492,7 +494,7 @@ function openHoleData(id){
     const items=key==='photos'?(entry?.count?`<p>${entry.count} зураг · ${esc(Object.entries(entry.formats||{}).map(([f,n])=>f+' '+n).join(' · '))}${entry.latest?' · сүүлд '+esc(entry.latest.slice(0,10)):''}</p>`:'<p class="sub">Зураг алга.</p>')
       :files.length?`<ul>${files.map(f=>`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>${f.modified?` <small>${esc(f.modified.slice(0,10))}</small>`:''}</li>`).join('')}</ul>${entry.count>files.length?`<p class="sub">… бусад ${entry.count-files.length} файл</p>`:''}`:'<p class="sub">Файл алга.</p>';
     return `<section class="data-files"><h3>${entry?.url?dataLink(entry.url,esc(title)+' ↗'):esc(title)}</h3>${items}</section>`;};
-  $('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(id)}</h2><p>${esc(areaOf(h))} · <span class="badge ${readinessClass(r.readiness.state)}">${esc(r.readiness.label)}</span>${r.readiness.missing.length?' · Дутуу: '+r.readiness.missing.map(esc).join(', '):''}</p><p>Лог: <span class="badge ${loggedClass(r)}">${esc(r.logged.label)}</span>${r.logged.state==='unknown'?'':` · Геологи ${registerText(r.logged.geology)} · Геотехник ${registerText(r.logged.geotech)} · XRF ${registerText(r.logged.pxrf)}`}</p><p>Геологи (04 хавтас): ${logStatus(r.geology.done)} · Геотехник (07 хавтас): ${logStatus(r.geotech.done)}</p>${r.folderUrl?`<p>${dataLink(r.folderUrl,'Цооногийн Drive хавтас ↗')}</p>`:''}`
+  $('#detail-body').innerHTML=`<h2 style="font-size:25px">${esc(id)}</h2><p>${esc(areaOf(h))} · <span class="badge ${readinessClass(r.readiness.state)}">${esc(r.readiness.label)}</span>${r.readiness.missing.length?' · Дутуу: '+r.readiness.missing.map(esc).join(', '):''}</p><p>Лог: <span class="badge ${loggedClass(r)}">${esc(r.logged.label)}</span>${r.logged.state==='unknown'?'':` · Геологи ${registerText(r.logged.geology)} · Геотехник ${registerText(r.logged.geotech)} · XRF ${registerText(r.logged.pxrf)}`}</p><p>Геологи (04 хавтас): ${logStatus(r.geology.done,r.geology.provisional)} · Геотехник (07 хавтас): ${logStatus(r.geotech.done,r.geotech.provisional)}</p>${r.folderUrl?`<p>${dataLink(r.folderUrl,'Цооногийн Drive хавтас ↗')}</p>`:''}`
     +list('photos','05 · Кернийн зураг')+list('geological','04 · Геологийн лог')+list('geotechnical','07 · Геотехникийн лог')+list('pxrf','10 · pXRF')+list('surveys','03 · Хазайлтын хэмжилт');
   $('#detail').showModal();
 }

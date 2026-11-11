@@ -33,7 +33,7 @@
   function registered(entry,files){
     if(!entry)return null;
     const file={name:entry.name||'',url:entry.url||'',modified:entry.date||''};
-    return {file,date:entry.date||'',by:entry.by||'',files:files.some(f=>f.url===file.url)?files:[file,...files]};
+    return {file,date:entry.date||'',by:entry.by||'',provisional:entry.provisional||'',files:files.some(f=>f.url===file.url)?files:[file,...files]};
   }
   function row(hole,inventory,shiftCount=0,folders={},register={}){
     const own=inventory?.[hole.id]||null,section=key=>own?.[key]||null,entry=register?.[hole.id]||{};
@@ -46,9 +46,11 @@
     const geologyDone=geologyLog||geoReg?.file,geotechDone=geotechLog||techReg?.file;
     const geology={url:section('geological')?.url||'',files:geoReg?.files||geologyFiles,file:geologyDone,format:geologyDone?format(geologyDone):'',
       state:geologyDone?'log':handwritten.length?'handwritten':geologyFiles.length?'other':'none',handwritten:handwritten.length,
-      done:!!geologyDone,registered:geoReg?{date:geoReg.date,by:geoReg.by}:null};
+      done:!!geologyDone,registered:geoReg?{date:geoReg.date,by:geoReg.by}:null,
+      provisional:!geologyLog&&geoReg?.provisional||''};
     const geotech={url:section('geotechnical')?.url||'',files:techReg?.files||geotechFiles,file:geotechDone||technical,format:geotechDone?format(geotechDone):'',
-      state:geotechDone?'log':technical?'technical':'none',done:!!geotechDone,registered:techReg?{date:techReg.date,by:techReg.by}:null};
+      state:geotechDone?'log':technical?'technical':'none',done:!!geotechDone,registered:techReg?{date:techReg.date,by:techReg.by}:null,
+      provisional:!geotechLog&&techReg?.provisional||''};
     const photos={url:section('photos')?.url||'',count:section('photos')?.count||0,formats:section('photos')?.formats||{},
       latest:section('photos')?.latest||'',boxes:Number.isFinite(hole.boxes)?hole.boxes:null};
     const pxrfFiles=files(own,'pxrf').filter(f=>DATA_FILE.test(f.name)||SHEET.test(f.name.trim()));

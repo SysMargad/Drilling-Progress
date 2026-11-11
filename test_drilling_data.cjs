@@ -155,3 +155,15 @@ console.log('Drilling Data verified: readiness per hole, file classification, fi
   assert.equal(model.rows([hole],[],inv,{},reg)[0].geotech.done,true);
 }
 console.log('Log register verified: registered logs count as done before the Drive sync.');
+
+// A provisional registration (no geologist's log) is done, carrying its reason, until a real log appears on Drive.
+{
+  const hole={id:'UGDH2601',finish:'2026-11-03',collarDepth:196.4,e:1,n:2,z:3};
+  const reg={UGDH2601:{geological:{name:'UGDH2601_Geological_Log.pdf',url:'https://drive.google.com/file/d/g/view',date:'2026-11-11',provisional:'Геологичийн логгүй'},
+                       geotechnical:{name:'UGDH2601_Geotechnical_Log.pdf',url:'https://drive.google.com/file/d/t/view',date:'2026-11-11'}}};
+  const r=model.row(hole,{UGDH2601:{}},0,{},reg);
+  assert.equal(r.geology.done,true); assert.equal(r.geology.provisional,'Геологичийн логгүй'); assert.equal(r.geotech.provisional,'');
+  const real=model.row(hole,{UGDH2601:{geological:section([file('UGDH2601_Geological_Log.xlsx')],'g')}},0,{},reg);
+  assert.equal(real.geology.provisional,'');
+}
+console.log('Provisional logs verified.');
