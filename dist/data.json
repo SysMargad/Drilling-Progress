@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-11",
-  "updatedAt": "2026-11-11T13:07:43+08:00",
+  "updatedAt": "2026-11-11T21:45:06+08:00",
   "period": "2026-10-01 – 2026-11-09",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
@@ -6530,9 +6530,14 @@
     "UGDH2601": {
       "geological": {
         "url": "https://drive.google.com/drive/folders/17GUfovL90Y1S1aWwo0QTDm36Ukz9A69J",
-        "count": 2,
-        "latest": "2026-11-11T02:04:09.813Z",
+        "count": 3,
+        "latest": "2026-11-11T10:20:04.987Z",
         "files": [
+          {
+            "name": "UGDH2601_Geolog20261111_GD.pdf",
+            "modified": "2026-11-11T10:20:04.987Z",
+            "url": "https://drive.google.com/file/d/1iqgZvu1P6O4rZm_aTdhGSPmMVuB3XQCq/view?usp=drivesdk"
+          },
           {
             "name": "UGDH2601_Geological_Log.pdf",
             "modified": "2026-11-11T02:04:09.813Z",
