@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-12",
-  "updatedAt": "2026-11-12T05:48:03+08:00",
-  "period": "2026-10-01 – 2026-11-09",
+  "updatedAt": "2026-11-12T14:11:40+08:00",
+  "period": "2026-10-01 – 2026-11-11",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-  "shiftUrl": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
+  "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
   "driveUrl": "https://drive.google.com/drive/folders/1b3n84juCY9UbrCMz7D6aITuV3lhgbvVI",
   "collar": [
     {
@@ -342,6 +342,23 @@
       "pxrfLog": "",
       "corePhoto": "",
       "sampling": ""
+    },
+    {
+      "id": "KHDH2602",
+      "site": "Нэргүй Өндөр",
+      "targetArea": "Харгант",
+      "e": null,
+      "n": null,
+      "z": null,
+      "az": null,
+      "dip": null,
+      "plan": null,
+      "collarDepth": null,
+      "start": "",
+      "finish": "",
+      "recovery": null,
+      "boxes": null,
+      "registered": "drive"
     },
     {
       "id": "UGDH2602",
@@ -4914,6 +4931,76 @@
           "folderUrl": "https://drive.google.com/drive/folders/1efJFtaqYHov0neF-MorNuXlrYXtpbQhG"
         }
       ]
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261110_n_KHDH2601_CSD-1300_278.4-300.4.pdf",
+      "date": "2026-11-10",
+      "shift": "Шөнө",
+      "driller": "",
+      "hole": "KHDH2601",
+      "from": 278.4,
+      "to": 300.4,
+      "meters": 22.0,
+      "st": 3.5,
+      "rt": null,
+      "dt": 7.0,
+      "hours": 12.0,
+      "notes": "2026-11-10 шөнө 20:00–11/11 08:00, Document 13 хуудас 3. HQ 278.4→300.4 м, тайланд Drilled 22 м. Өмнөх өдрийн Finish=278.4 м-тэй залгамж OK. PT=0.5 цаг, ST=3.5 цаг, DT=7 цаг, OT=1 цаг; нийлбэр 12 цаг. Эх маягтын Rig=CSD-1300.",
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "KHDH2601 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 11,
+        "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "KHDH2601",
+          "rig": "CSD-1300",
+          "date": "2026-11-10",
+          "shift": "Шөнө",
+          "name": "20261110_n_KHDH2601_CSD-1300_278.4-300.4.pdf",
+          "url": "https://drive.google.com/file/d/1M3fsH64ghxgr8bpdE2qbc-y5o-ytZ5zp/view?usp=drivesdk",
+          "fileId": "1M3fsH64ghxgr8bpdE2qbc-y5o-ytZ5zp",
+          "folderUrl": "https://drive.google.com/drive/folders/1efJFtaqYHov0neF-MorNuXlrYXtpbQhG"
+        }
+      ]
+    },
+    {
+      "rig": "CSD-1300",
+      "source": "20261111_n_KHDH2602_CSD-1300_11.4-29.4_casing0-12.pdf",
+      "date": "2026-11-11",
+      "shift": "Шөнө",
+      "driller": "",
+      "hole": "KHDH2602",
+      "from": 11.4,
+      "to": 29.4,
+      "meters": 18.0,
+      "st": null,
+      "rt": null,
+      "dt": 7.0,
+      "hours": 12.0,
+      "notes": "2026-11-11 шөнө 20:00–2026-11-12 08:00, эх Document 15 хуудас 1. HQ Start=11.4 м, Finish=29.4 м, Reported Drilled=18 м. PQ casing 0–12 м = 12 м, өрөмдсөн метрт нэмээгүй. PT=30 мин, RP=2ц30м, MM=30 мин, DT=7 цаг, OT=1ц30м; нийт 12 цагтай нийлнэ. Ус: sump water 1 рейс, м³ болгон хөрвүүлээгүй. Consumables: Polymer 1, bit 1 (маягтын нэгж тодорхойгүй). QA/QC: 2026-11-11 өдрийн 0–11.4 м гэж өмнө KHDH2601-д бүртгэсэн эх PDF (Document 14 p2)-тэй гүн залгаж байгаа бөгөөд уг өдрийн тайлан KHDH2602 байх магадлалтай. Цооногийн ID-г дахин баталгаажуулж, баталгаажих хүртэл тэр 11.4 м-ийг энд автоматаар нэмж болохгүй.",
+      "waterUsageM3": null,
+      "sheet": {
+        "name": "KHDH2602 - Drilling Shift Report Table",
+        "tab": "2_Ээлжийн_бүртгэл",
+        "row": 5,
+        "url": "https://docs.google.com/spreadsheets/d/1Bl6JclQvRa-8t6k0n7JIHI9AtjdeuIohRYHX4G7cOjE/edit?usp=drivesdk"
+      },
+      "reports": [
+        {
+          "hole": "KHDH2602",
+          "rig": "CSD-1300",
+          "date": "2026-11-11",
+          "shift": "Шөнө",
+          "name": "20261111_n_KHDH2602_CSD-1300_11.4-29.4_casing0-12.pdf",
+          "url": "https://drive.google.com/file/d/1DUR4ONEv-YD5HZD6MxeGNzaQiZhm4R40/view?usp=drivesdk",
+          "fileId": "1DUR4ONEv-YD5HZD6MxeGNzaQiZhm4R40",
+          "folderUrl": "https://drive.google.com/drive/folders/17Z6-9QpsArcLxPec1cCMeTy-ldhiaYGM"
+        }
+      ]
     }
   ],
   "folderMap": {
@@ -5702,6 +5789,16 @@
         {
           "name": "00. Pre-Drill Planning & Readiness",
           "url": "https://drive.google.com/drive/folders/12f90_0NqBGGrW8T25s0v2ZEIcsc1_hVr"
+        }
+      ]
+    },
+    "KHDH2602": {
+      "url": "https://drive.google.com/drive/folders/1WCo0QkpBxvhav4w0FE7iaU9l78Vcx66w",
+      "area": "Харгант",
+      "folders": [
+        {
+          "name": "02. Daily Drilling & Shift Reports",
+          "url": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
         }
       ]
     }
@@ -7500,6 +7597,7 @@
   },
   "syncWarnings": [
     "Collar conflict: DTDH2602 / collarDepth; newer file/first row retained",
+    "Collar missing: KHDH2602; registered from its Drive folder",
     "Collar missing: UGDH2602; registered from its Drive folder",
     "Estimated time: DTDH2605 / 2026-10-15 / Өдөр; blank DT/total uses owner-approved 12 h",
     "Estimated time: DTDH2605 / 2026-10-16 / Өдөр; blank DT/total uses owner-approved 12 h",
@@ -7541,6 +7639,8 @@
     "Unreported time codes: KHDH2601 / 2026-11-07 / Өдөр / ST, RT; preserved as null",
     "Unreported time codes: KHDH2601 / 2026-11-08 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: KHDH2601 / 2026-11-09 / Шөнө / ST, RT; preserved as null",
+    "Unreported time codes: KHDH2601 / 2026-11-10 / Шөнө / RT; preserved as null",
+    "Unreported time codes: KHDH2602 / 2026-11-11 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-03 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-04 / Шөнө / ST, RT; preserved as null",
     "Unreported time codes: STDH2601 / 2026-11-04 / Өдөр / RT; preserved as null",
@@ -7608,10 +7708,16 @@
   ],
   "sources": [
     {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 20,
-      "shiftRows": 0
+      "name": "KHDH2601 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 6
+    },
+    {
+      "name": "KHDH2602 - Drilling Shift Report Table",
+      "url": "https://docs.google.com/spreadsheets/d/1Bl6JclQvRa-8t6k0n7JIHI9AtjdeuIohRYHX4G7cOjE/edit?usp=drivesdk",
+      "collarRows": 0,
+      "shiftRows": 1
     },
     {
       "name": "STDH2601 - Drilling Shift Report Table",
@@ -7620,10 +7726,10 @@
       "shiftRows": 8
     },
     {
-      "name": "KHDH2601 - Drilling Shift Report Table",
-      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
-      "collarRows": 0,
-      "shiftRows": 5
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 20,
+      "shiftRows": 0
     },
     {
       "name": "ZHDH2604 - Drilling Shift Report Table",
@@ -7719,6 +7825,34 @@
       "sheet": "KHDH2601 - Drilling Shift Report Table",
       "tab": "2_Ээлжийн_бүртгэл",
       "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk"
+    },
+    {
+      "rigText": "C-1300",
+      "date": "2026-11-10",
+      "shift": "Өдөр",
+      "hole": "KHDH2601",
+      "from": 251.4,
+      "to": 278.4,
+      "meters": 27.0,
+      "source": "20261110_d_KHDH2601_C-1300_251.4-278.4.pdf",
+      "row": 10,
+      "sheet": "KHDH2601 - Drilling Shift Report Table",
+      "tab": "2_Ээлжийн_бүртгэл",
+      "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk"
+    },
+    {
+      "rigText": "C-1300",
+      "date": "2026-11-11",
+      "shift": "Өдөр",
+      "hole": "KHDH2602",
+      "from": 0.0,
+      "to": 11.4,
+      "meters": 11.4,
+      "source": "20261111_d_KHDH2602_C-1300_0-11.4_owner_corrected.pdf",
+      "row": 4,
+      "sheet": "KHDH2602 - Drilling Shift Report Table",
+      "tab": "2_Ээлжийн_бүртгэл",
+      "url": "https://docs.google.com/spreadsheets/d/1Bl6JclQvRa-8t6k0n7JIHI9AtjdeuIohRYHX4G7cOjE/edit?usp=drivesdk"
     }
   ],
   "rejectedShifts": [
@@ -7767,6 +7901,28 @@
       "from": 48.0,
       "row": 8,
       "reason": "Missing/invalid to for STDH2601 on 2026-11-06",
+      "sheet": "STDH2601 - Drilling Shift Report Table",
+      "tab": "2_Ээлжийн_бүртгэл",
+      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+    },
+    {
+      "rig": "C-1800",
+      "date": "2026-11-10",
+      "shift": "Шөнө",
+      "hole": "STDH2601",
+      "row": 14,
+      "reason": "Missing/invalid from for STDH2601 on 2026-11-10",
+      "sheet": "STDH2601 - Drilling Shift Report Table",
+      "tab": "2_Ээлжийн_бүртгэл",
+      "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
+    },
+    {
+      "rig": "C-1800",
+      "date": "2026-11-11",
+      "shift": "Өдөр",
+      "hole": "STDH2601",
+      "row": 15,
+      "reason": "Missing/invalid from for STDH2601 on 2026-11-11",
       "sheet": "STDH2601 - Drilling Shift Report Table",
       "tab": "2_Ээлжийн_бүртгэл",
       "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk"
@@ -8116,6 +8272,24 @@
       "folderUrl": "https://drive.google.com/drive/folders/1efJFtaqYHov0neF-MorNuXlrYXtpbQhG"
     },
     {
+      "hole": "KHDH2601",
+      "rig": "CSD-1300",
+      "date": "2026-11-10",
+      "shift": "Өдөр",
+      "name": "20261110_d_KHDH2601_C-1300_251.4-278.4.pdf",
+      "url": "https://drive.google.com/file/d/1Ag-Nl77uNN5OLHJtymS8YkK2zBlGAvmm/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1efJFtaqYHov0neF-MorNuXlrYXtpbQhG"
+    },
+    {
+      "hole": "KHDH2602",
+      "rig": "CSD-1300",
+      "date": "2026-11-11",
+      "shift": "Өдөр",
+      "name": "20261111_d_KHDH2602_C-1300_0-11.4_owner_corrected.pdf",
+      "url": "https://drive.google.com/file/d/1pWxztkqF9y8cs4zqDIbAM_LfYIu9zYtG/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/17Z6-9QpsArcLxPec1cCMeTy-ldhiaYGM"
+    },
+    {
       "hole": "STDH2601",
       "rig": "C-1800",
       "date": "2026-11-05",
@@ -8131,6 +8305,33 @@
       "shift": "Шөнө",
       "name": "20261106_n_STDH2601_C-1800_48-unknown.jpg",
       "url": "https://drive.google.com/file/d/1s52C3sLCyeQx8Ar6i-8qbaJClWNcRLSz/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+    },
+    {
+      "hole": "STDH2601",
+      "rig": "C-1800",
+      "date": "2026-11-10",
+      "shift": "Шөнө",
+      "name": "20261110_n_STDH2601_C-1800_no_depth.pdf",
+      "url": "https://drive.google.com/file/d/1-NzWhlb1FPtL4AlSQNWlRgDIGH96eWq8/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+    },
+    {
+      "hole": "STDH2601",
+      "rig": "C-1800",
+      "date": "2026-11-11",
+      "shift": "Өдөр",
+      "name": "20261111_d_STDH2601_C-1800_standby.pdf",
+      "url": "https://drive.google.com/file/d/1aW5UFCP82wq-qrwOMstoU6PUROuUtww7/view?usp=drivesdk",
+      "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
+    },
+    {
+      "hole": "STDH2601",
+      "rig": "C-1800",
+      "date": "2026-11-11",
+      "shift": "Шөнө",
+      "name": "20261111_n_STDH2601_C-1800_standby_source_Document13_p4.pdf",
+      "url": "https://drive.google.com/file/d/1dWtDQmg5Z7zuH8VZFsrCk--m2lcbVaFy/view?usp=drivesdk",
       "folderUrl": "https://drive.google.com/drive/folders/1VQDwaIHhC4u8nJzMxtrJZJDmUAJVNDGa"
     },
     {
@@ -11150,21 +11351,21 @@
         "month": "2026-11",
         "expected": 48,
         "counts": {
-          "VERIFIED_DRILLING": 16,
+          "VERIFIED_DRILLING": 17,
           "VERIFIED_NON_DRILLING": 2,
-          "MISSING_REPORT": 18,
-          "SOURCE_CONFLICT": 1,
-          "UNVERIFIED": 11
+          "MISSING_REPORT": 17,
+          "SOURCE_CONFLICT": 4,
+          "UNVERIFIED": 8
         },
         "meters": {
-          "VERIFIED_DRILLING": 330.0,
+          "VERIFIED_DRILLING": 352.0,
           "VERIFIED_NON_DRILLING": 0.0,
           "MISSING_REPORT": 0.0,
-          "SOURCE_CONFLICT": 0.0,
+          "SOURCE_CONFLICT": 18.0,
           "UNVERIFIED": 0.0
         },
-        "missingMeters": 151.4,
-        "inferredMeters": 87.0,
+        "missingMeters": 189.8,
+        "inferredMeters": 125.4,
         "unallocated": [
           {
             "rig": "CSD-1300",
@@ -16334,39 +16535,9 @@
         "records": [],
         "issues": [
           {
-            "kind": "gap",
-            "text": "STDH2601 72 м-т дуусаагүй байхад тайлангүй ээлж"
-          }
-        ],
-        "driveReports": [],
-        "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
-      },
-      {
-        "rig": "CSD-1300",
-        "date": "2026-11-10",
-        "shift": "Өдөр",
-        "status": "MISSING_REPORT",
-        "meters": null,
-        "records": [],
-        "issues": [
-          {
-            "kind": "gap",
-            "text": "KHDH2601 251.4 м-т дуусаагүй байхад тайлангүй ээлж"
-          }
-        ],
-        "driveReports": [],
-        "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
-      },
-      {
-        "rig": "C-1800",
-        "date": "2026-11-10",
-        "shift": "Шөнө",
-        "status": "MISSING_REPORT",
-        "meters": null,
-        "records": [],
-        "issues": [
+            "kind": "unassigned",
+            "text": "Өрөм нь «C-1300» мөр: KHDH2601 251.4–278.4 м (20261110_d_KHDH2601_C-1300_251.4-278.4.pdf) — аль өрөмд хамаарахыг баталгаажуулах"
+          },
           {
             "kind": "gap",
             "text": "STDH2601 72 м-т дуусаагүй байхад тайлангүй ээлж"
@@ -16379,16 +16550,98 @@
       {
         "rig": "CSD-1300",
         "date": "2026-11-10",
-        "shift": "Шөнө",
+        "shift": "Өдөр",
         "status": "MISSING_REPORT",
         "meters": null,
         "records": [],
         "issues": [
           {
             "kind": "gap",
-            "text": "KHDH2601 251.4 м-т дуусаагүй байхад тайлангүй ээлж"
+            "text": "KHDH2601: 251.4–278.4 м (27 м) тайлангүй"
+          },
+          {
+            "kind": "unassigned",
+            "text": "Өрөм нь «C-1300» мөр: KHDH2601 251.4–278.4 м (20261110_d_KHDH2601_C-1300_251.4-278.4.pdf) — аль өрөмд хамаарахыг баталгаажуулах"
+          },
+          {
+            "kind": "unlinked",
+            "text": "Drive-д KHDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261110_d_KHDH2601_C-1300_251.4-278.4.pdf"
           }
         ],
+        "driveReports": [
+          {
+            "name": "20261110_d_KHDH2601_C-1300_251.4-278.4.pdf",
+            "url": "https://drive.google.com/file/d/1Ag-Nl77uNN5OLHJtymS8YkK2zBlGAvmm/view?usp=drivesdk"
+          }
+        ],
+        "inferred": [
+          {
+            "hole": "KHDH2601",
+            "from": 251.4,
+            "to": 278.4,
+            "meters": 27.0,
+            "exact": true,
+            "shifts": 1,
+            "note": ""
+          }
+        ],
+        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-10",
+        "shift": "Шөнө",
+        "status": "SOURCE_CONFLICT",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "rejected",
+            "text": "Хүснэгтийн мөр татгалзсан (STDH2601 - Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 14): Missing/invalid from for STDH2601 on 2026-11-10"
+          },
+          {
+            "kind": "unlinked",
+            "text": "Drive-д STDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261110_n_STDH2601_C-1800_no_depth.pdf"
+          }
+        ],
+        "driveReports": [
+          {
+            "name": "20261110_n_STDH2601_C-1800_no_depth.pdf",
+            "url": "https://drive.google.com/file/d/1-NzWhlb1FPtL4AlSQNWlRgDIGH96eWq8/view?usp=drivesdk"
+          }
+        ],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-10",
+        "shift": "Шөнө",
+        "status": "VERIFIED_DRILLING",
+        "meters": 22.0,
+        "records": [
+          {
+            "hole": "KHDH2601",
+            "from": 278.4,
+            "to": 300.4,
+            "meters": 22.0,
+            "source": "20261110_n_KHDH2601_CSD-1300_278.4-300.4.pdf",
+            "evidence": "report",
+            "sheet": {
+              "name": "KHDH2601 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 11,
+              "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261110_n_KHDH2601_CSD-1300_278.4-300.4.pdf",
+                "url": "https://drive.google.com/file/d/1M3fsH64ghxgr8bpdE2qbc-y5o-ytZ5zp/view?usp=drivesdk"
+              }
+            ]
+          }
+        ],
+        "issues": [],
         "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
@@ -16397,16 +16650,29 @@
         "rig": "C-1800",
         "date": "2026-11-11",
         "shift": "Өдөр",
-        "status": "UNVERIFIED",
+        "status": "SOURCE_CONFLICT",
         "meters": null,
         "records": [],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+            "kind": "unassigned",
+            "text": "Өрөм нь «C-1300» мөр: KHDH2602 0–11.4 м (20261111_d_KHDH2602_C-1300_0-11.4_owner_corrected.pdf) — аль өрөмд хамаарахыг баталгаажуулах"
+          },
+          {
+            "kind": "rejected",
+            "text": "Хүснэгтийн мөр татгалзсан (STDH2601 - Drilling Shift Report Table / 2_Ээлжийн_бүртгэл мөр 15): Missing/invalid from for STDH2601 on 2026-11-11"
+          },
+          {
+            "kind": "unlinked",
+            "text": "Drive-д STDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261111_d_STDH2601_C-1800_standby.pdf"
           }
         ],
-        "driveReports": [],
+        "driveReports": [
+          {
+            "name": "20261111_d_STDH2601_C-1800_standby.pdf",
+            "url": "https://drive.google.com/file/d/1aW5UFCP82wq-qrwOMstoU6PUROuUtww7/view?usp=drivesdk"
+          }
+        ],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
       },
@@ -16414,18 +16680,41 @@
         "rig": "CSD-1300",
         "date": "2026-11-11",
         "shift": "Өдөр",
-        "status": "UNVERIFIED",
+        "status": "MISSING_REPORT",
         "meters": null,
         "records": [],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+            "kind": "gap",
+            "text": "KHDH2602: 0–11.4 м (11.4 м) тайлангүй"
+          },
+          {
+            "kind": "unassigned",
+            "text": "Өрөм нь «C-1300» мөр: KHDH2602 0–11.4 м (20261111_d_KHDH2602_C-1300_0-11.4_owner_corrected.pdf) — аль өрөмд хамаарахыг баталгаажуулах"
+          },
+          {
+            "kind": "unlinked",
+            "text": "Drive-д KHDH2602-ийн тайлан бий, хүснэгтэд ороогүй: 20261111_d_KHDH2602_C-1300_0-11.4_owner_corrected.pdf"
           }
         ],
-        "driveReports": [],
-        "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+        "driveReports": [
+          {
+            "name": "20261111_d_KHDH2602_C-1300_0-11.4_owner_corrected.pdf",
+            "url": "https://drive.google.com/file/d/1pWxztkqF9y8cs4zqDIbAM_LfYIu9zYtG/view?usp=drivesdk"
+          }
+        ],
+        "inferred": [
+          {
+            "hole": "KHDH2602",
+            "from": 0,
+            "to": 11.4,
+            "meters": 11.4,
+            "exact": true,
+            "shifts": 1,
+            "note": ""
+          }
+        ],
+        "folderUrl": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
       },
       {
         "rig": "C-1800",
@@ -16436,11 +16725,20 @@
         "records": [],
         "issues": [
           {
+            "kind": "unlinked",
+            "text": "Drive-д STDH2601-ийн тайлан бий, хүснэгтэд ороогүй: 20261111_n_STDH2601_C-1800_standby_source_Document13_p4.pdf"
+          },
+          {
             "kind": "noReport",
             "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
           }
         ],
-        "driveReports": [],
+        "driveReports": [
+          {
+            "name": "20261111_n_STDH2601_C-1800_standby_source_Document13_p4.pdf",
+            "url": "https://drive.google.com/file/d/1dWtDQmg5Z7zuH8VZFsrCk--m2lcbVaFy/view?usp=drivesdk"
+          }
+        ],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
       },
@@ -16448,18 +16746,39 @@
         "rig": "CSD-1300",
         "date": "2026-11-11",
         "shift": "Шөнө",
-        "status": "UNVERIFIED",
-        "meters": null,
-        "records": [],
+        "status": "SOURCE_CONFLICT",
+        "meters": 18.0,
+        "records": [
+          {
+            "hole": "KHDH2602",
+            "from": 11.4,
+            "to": 29.4,
+            "meters": 18.0,
+            "source": "20261111_n_KHDH2602_CSD-1300_11.4-29.4_casing0-12.pdf",
+            "evidence": "report",
+            "sheet": {
+              "name": "KHDH2602 - Drilling Shift Report Table",
+              "tab": "2_Ээлжийн_бүртгэл",
+              "row": 5,
+              "url": "https://docs.google.com/spreadsheets/d/1Bl6JclQvRa-8t6k0n7JIHI9AtjdeuIohRYHX4G7cOjE/edit?usp=drivesdk"
+            },
+            "reports": [
+              {
+                "name": "20261111_n_KHDH2602_CSD-1300_11.4-29.4_casing0-12.pdf",
+                "url": "https://drive.google.com/file/d/1DUR4ONEv-YD5HZD6MxeGNzaQiZhm4R40/view?usp=drivesdk"
+              }
+            ]
+          }
+        ],
         "issues": [
           {
-            "kind": "noReport",
-            "text": "Сүүлийн тайлангаас хойш — тайлан хараахан ирээгүй байж болзошгүй"
+            "kind": "hole",
+            "text": "KHDH2602: collar-д төлөвлөгөө, эхэлсэн огноо бүртгэгдээгүй цооног — цооногийн дугаарыг эх тайлантай тулгах"
           }
         ],
         "driveReports": [],
         "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+        "folderUrl": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
       },
       {
         "rig": "C-1800",
@@ -16493,7 +16812,7 @@
         ],
         "driveReports": [],
         "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+        "folderUrl": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
       },
       {
         "rig": "C-1800",
@@ -16527,7 +16846,7 @@
         ],
         "driveReports": [],
         "inferred": [],
-        "folderUrl": "https://drive.google.com/drive/folders/1bHWFA1M_MqiV71VKj2h__kn1LjCSKL3f"
+        "folderUrl": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
       }
     ],
     "foreman": [
