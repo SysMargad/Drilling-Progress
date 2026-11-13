@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-11-13",
-  "updatedAt": "2026-11-13T22:06:44+08:00",
+  "asOf": "2026-11-14",
+  "updatedAt": "2026-11-14T05:16:07+08:00",
   "period": "2026-10-01 – 2026-11-11",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
@@ -11234,7 +11234,7 @@
     }
   },
   "shiftAudit": {
-    "through": "2026-11-13",
+    "through": "2026-11-14",
     "rigs": [
       "C-1800",
       "CSD-1300"
@@ -11273,11 +11273,11 @@
       },
       {
         "month": "2026-11",
-        "expected": 52,
+        "expected": 56,
         "counts": {
           "VERIFIED_DRILLING": 17,
           "VERIFIED_NON_DRILLING": 2,
-          "MISSING_REPORT": 18,
+          "MISSING_REPORT": 22,
           "SOURCE_CONFLICT": 4,
           "UNVERIFIED": 11
         },
@@ -16700,6 +16700,74 @@
         "rig": "C-1800",
         "date": "2026-11-12",
         "shift": "Өдөр",
+        "status": "MISSING_REPORT",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "gap",
+            "text": "STDH2601 72 м-т дуусаагүй байхад тайлангүй ээлж"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-12",
+        "shift": "Өдөр",
+        "status": "MISSING_REPORT",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "gap",
+            "text": "KHDH2602 29.4 м-т дуусаагүй байхад тайлангүй ээлж"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-12",
+        "shift": "Шөнө",
+        "status": "MISSING_REPORT",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "gap",
+            "text": "STDH2601 72 м-т дуусаагүй байхад тайлангүй ээлж"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1gawyByI3ecghURz_W65Snvyw8FR1nQ3R"
+      },
+      {
+        "rig": "CSD-1300",
+        "date": "2026-11-12",
+        "shift": "Шөнө",
+        "status": "MISSING_REPORT",
+        "meters": null,
+        "records": [],
+        "issues": [
+          {
+            "kind": "gap",
+            "text": "KHDH2602 29.4 м-т дуусаагүй байхад тайлангүй ээлж"
+          }
+        ],
+        "driveReports": [],
+        "inferred": [],
+        "folderUrl": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
+      },
+      {
+        "rig": "C-1800",
+        "date": "2026-11-13",
+        "shift": "Өдөр",
         "status": "UNVERIFIED",
         "meters": null,
         "records": [],
@@ -16715,7 +16783,7 @@
       },
       {
         "rig": "CSD-1300",
-        "date": "2026-11-12",
+        "date": "2026-11-13",
         "shift": "Өдөр",
         "status": "UNVERIFIED",
         "meters": null,
@@ -16732,7 +16800,7 @@
       },
       {
         "rig": "C-1800",
-        "date": "2026-11-12",
+        "date": "2026-11-13",
         "shift": "Шөнө",
         "status": "UNVERIFIED",
         "meters": null,
@@ -16749,7 +16817,7 @@
       },
       {
         "rig": "CSD-1300",
-        "date": "2026-11-12",
+        "date": "2026-11-13",
         "shift": "Шөнө",
         "status": "UNVERIFIED",
         "meters": null,
@@ -16766,7 +16834,7 @@
       },
       {
         "rig": "C-1800",
-        "date": "2026-11-13",
+        "date": "2026-11-14",
         "shift": "Өдөр",
         "status": "UNVERIFIED",
         "meters": null,
@@ -16783,7 +16851,7 @@
       },
       {
         "rig": "CSD-1300",
-        "date": "2026-11-13",
+        "date": "2026-11-14",
         "shift": "Өдөр",
         "status": "UNVERIFIED",
         "meters": null,
@@ -16800,7 +16868,7 @@
       },
       {
         "rig": "C-1800",
-        "date": "2026-11-13",
+        "date": "2026-11-14",
         "shift": "Шөнө",
         "status": "UNVERIFIED",
         "meters": null,
@@ -16817,7 +16885,7 @@
       },
       {
         "rig": "CSD-1300",
-        "date": "2026-11-13",
+        "date": "2026-11-14",
         "shift": "Шөнө",
         "status": "UNVERIFIED",
         "meters": null,
