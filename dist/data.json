@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-13",
-  "updatedAt": "2026-11-13T10:55:03+08:00",
+  "updatedAt": "2026-11-13T13:33:27+08:00",
   "period": "2026-10-01 – 2026-11-11",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
@@ -5734,6 +5734,10 @@
       "area": "Харгант",
       "folders": [
         {
+          "name": "10. pXRF",
+          "url": "https://drive.google.com/drive/folders/1GAEqSP33VKBdSXqJyY8Xm9DIJfAG_MO8"
+        },
+        {
           "name": "02. Daily Drilling & Shift Reports",
           "url": "https://drive.google.com/drive/folders/1f0wFBCwQnzpsokQOhq4KUj-c6zCbnEWN"
         }
@@ -6515,6 +6519,20 @@
         "count": 0,
         "latest": "",
         "files": []
+      }
+    },
+    "KHDH2602": {
+      "pxrf": {
+        "url": "https://drive.google.com/drive/folders/1GAEqSP33VKBdSXqJyY8Xm9DIJfAG_MO8",
+        "count": 1,
+        "latest": "2026-11-13T05:04:30.763Z",
+        "files": [
+          {
+            "name": "KHDH2602_Vanta_pXRF_10.4-65.4.xlsx",
+            "modified": "2026-11-13T05:04:30.763Z",
+            "url": "https://docs.google.com/spreadsheets/d/1zkxcUuuEOAPCyuDzWSLiIh8xjAChHeCP/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          }
+        ]
       }
     },
     "STDH2601": {
