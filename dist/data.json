@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-13",
-  "updatedAt": "2026-11-13T01:25:54+08:00",
+  "updatedAt": "2026-11-13T10:09:08+08:00",
   "period": "2026-10-01 – 2026-11-11",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
@@ -305,27 +305,6 @@
       "id": "DTDH2609",
       "site": "Нэргүй Өндөр",
       "targetArea": "Дорнын Төмөр",
-      "e": null,
-      "n": null,
-      "z": null,
-      "az": null,
-      "dip": null,
-      "plan": null,
-      "collarDepth": null,
-      "start": "",
-      "finish": "",
-      "recovery": null,
-      "boxes": null,
-      "geologyLog": "",
-      "geotechLog": "",
-      "pxrfLog": "",
-      "corePhoto": "",
-      "sampling": ""
-    },
-    {
-      "id": "ZHDH2612",
-      "site": "Нэргүй Өндөр",
-      "targetArea": "Замт Хөндий",
       "e": null,
       "n": null,
       "z": null,
@@ -2130,7 +2109,18 @@
         "row": 56,
         "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk"
       },
-      "reports": []
+      "reports": [
+        {
+          "hole": "ZHDH2602",
+          "rig": "C-1800",
+          "date": "2026-10-15",
+          "shift": "Өдөр",
+          "name": "2026-10-15_ZHDH2612_d.jpg",
+          "url": "https://drive.google.com/file/d/1LTYzrUEmh8QojRQ2YIz0NIi7RzsJfX8J/view?usp=drivesdk",
+          "fileId": "1LTYzrUEmh8QojRQ2YIz0NIi7RzsJfX8J",
+          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb"
+        }
+      ]
     },
     {
       "rig": "CSD-1300",
@@ -2250,8 +2240,7 @@
           "name": "2026-10-16_ZHDH2612_n.jpg",
           "url": "https://drive.google.com/file/d/1VIhG1EgLPO2CTTt6QQqEgD0k2Pmuh6Yp/view?usp=drivesdk",
           "fileId": "1VIhG1EgLPO2CTTt6QQqEgD0k2Pmuh6Yp",
-          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb",
-          "match": "source"
+          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb"
         }
       ]
     },
@@ -2398,8 +2387,7 @@
           "name": "2026-10-17_ZHDH2612_n.jpg",
           "url": "https://drive.google.com/file/d/1t-SmhmM4I9xCIYmloNu5z5cE8krbnFIP/view?usp=drivesdk",
           "fileId": "1t-SmhmM4I9xCIYmloNu5z5cE8krbnFIP",
-          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb",
-          "match": "source"
+          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb"
         }
       ]
     },
@@ -2441,8 +2429,7 @@
           "name": "2026-10-17_ZHDH2612_d.jpg",
           "url": "https://drive.google.com/file/d/1_og8yfu-iAcAeKXMJC66dcDQiIcsQOFs/view?usp=drivesdk",
           "fileId": "1_og8yfu-iAcAeKXMJC66dcDQiIcsQOFs",
-          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb",
-          "match": "source"
+          "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb"
         }
       ]
     },
@@ -5058,56 +5045,6 @@
         }
       ]
     },
-    "ZHDH2612": {
-      "url": "https://drive.google.com/drive/folders/1DJUceHvbJ5eFk498MNPalUT6KOJr92OE",
-      "area": "Замт Хөндий",
-      "folders": [
-        {
-          "name": "10. pXRF",
-          "url": "https://drive.google.com/drive/folders/1S7nGBMlYWlLZyimU3onnBKMBfKtAHebO"
-        },
-        {
-          "name": "09. Site Rehabilitation & Closure Records",
-          "url": "https://drive.google.com/drive/folders/1nqRcInlWiW9sde24j8nN6d-armQQyJP3"
-        },
-        {
-          "name": "08. Field Working Products",
-          "url": "https://drive.google.com/drive/folders/1uIUqZ7oilxzsx_XKGt3qMNR9vcahNQl6"
-        },
-        {
-          "name": "07. Geotechnical Data",
-          "url": "https://drive.google.com/drive/folders/1WW00zRMYufmZXSqqIplt8XFZUoZrOjsp"
-        },
-        {
-          "name": "06. Sampling & Dispatch",
-          "url": "https://drive.google.com/drive/folders/1j3OC8vG0tpIpP5QtBspRuIEfdoXKobyI"
-        },
-        {
-          "name": "05. Core & RC Photography",
-          "url": "https://drive.google.com/drive/folders/1r3_rcrx42u8hHgYf3UL_PAzlTpIqyScK"
-        },
-        {
-          "name": "04. Geological Logging",
-          "url": "https://drive.google.com/drive/folders/14dpNmHW_oAc3M5uLDXMbpBKLXdJ0iSN5"
-        },
-        {
-          "name": "03. Downhole Surveys",
-          "url": "https://drive.google.com/drive/folders/1l2yNS8O9dWf81qrfYly5frUePMHTc4WV"
-        },
-        {
-          "name": "02. Daily Drilling & Shift Reports",
-          "url": "https://drive.google.com/drive/folders/1WQC46DqyXLUmDcV-GYOvO4G6by7ROzud"
-        },
-        {
-          "name": "01. Collar Survey & Site Setup",
-          "url": "https://drive.google.com/drive/folders/19XWdRG3XoSiMZjIJifsoTyf2t8d4lYW6"
-        },
-        {
-          "name": "00. Pre-Drill Planning & Readiness",
-          "url": "https://drive.google.com/drive/folders/1w8heKRUETRHytWMiaRzxds2YCTJLnSTF"
-        }
-      ]
-    },
     "ZHDH2602": {
       "url": "https://drive.google.com/drive/folders/1d77IaqiRy492K7339X2ct45ueXV1ismp",
       "area": "Замт Хөндий",
@@ -7561,38 +7498,6 @@
         "latest": "",
         "files": []
       }
-    },
-    "ZHDH2612": {
-      "geological": {
-        "url": "https://drive.google.com/drive/folders/14dpNmHW_oAc3M5uLDXMbpBKLXdJ0iSN5",
-        "count": 0,
-        "latest": "",
-        "files": []
-      },
-      "geotechnical": {
-        "url": "https://drive.google.com/drive/folders/1WW00zRMYufmZXSqqIplt8XFZUoZrOjsp",
-        "count": 0,
-        "latest": "",
-        "files": []
-      },
-      "photos": {
-        "url": "https://drive.google.com/drive/folders/1r3_rcrx42u8hHgYf3UL_PAzlTpIqyScK",
-        "count": 0,
-        "latest": "",
-        "formats": {}
-      },
-      "pxrf": {
-        "url": "https://drive.google.com/drive/folders/1S7nGBMlYWlLZyimU3onnBKMBfKtAHebO",
-        "count": 0,
-        "latest": "",
-        "files": []
-      },
-      "surveys": {
-        "url": "https://drive.google.com/drive/folders/1l2yNS8O9dWf81qrfYly5frUePMHTc4WV",
-        "count": 0,
-        "latest": "",
-        "files": []
-      }
     }
   },
   "syncWarnings": [
@@ -7806,7 +7711,7 @@
     {
       "name": "NUDH_COLLAR.xlsx",
       "url": "https://docs.google.com/spreadsheets/d/1vVCBsNbNyYBXrwmRtudeRQz7x7L-EbHV/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 9,
+      "collarRows": 8,
       "shiftRows": 0
     }
   ],
@@ -8360,15 +8265,6 @@
       "name": "20261101_n_ZHDH2604_C-1800_500-503.jpg",
       "url": "https://drive.google.com/file/d/191b0mQNkTtkTdRDFyoMFPx12l1ATpF3-/view?usp=drivesdk",
       "folderUrl": "https://drive.google.com/drive/folders/1tS0ITcWUdp1PEL4VK7_PtpqnKxq8YPKu"
-    },
-    {
-      "hole": "ZHDH2612",
-      "rig": "C-1800",
-      "date": "2026-10-15",
-      "shift": "Өдөр",
-      "name": "2026-10-15_ZHDH2612_d.jpg",
-      "url": "https://drive.google.com/file/d/1LTYzrUEmh8QojRQ2YIz0NIi7RzsJfX8J/view?usp=drivesdk",
-      "folderUrl": "https://drive.google.com/drive/folders/1s1_Eyaiclhyhp5jvPWRalZR9o6PAfZdb"
     }
   ],
   "finance": {
@@ -11320,17 +11216,17 @@
         "month": "2026-10",
         "expected": 124,
         "counts": {
-          "VERIFIED_DRILLING": 96,
+          "VERIFIED_DRILLING": 97,
           "VERIFIED_NON_DRILLING": 5,
           "MISSING_REPORT": 3,
-          "SOURCE_CONFLICT": 8,
+          "SOURCE_CONFLICT": 7,
           "UNVERIFIED": 12
         },
         "meters": {
-          "VERIFIED_DRILLING": 2930.7,
+          "VERIFIED_DRILLING": 3006.1,
           "VERIFIED_NON_DRILLING": 0.0,
           "MISSING_REPORT": 0.0,
-          "SOURCE_CONFLICT": 274.0,
+          "SOURCE_CONFLICT": 198.6,
           "UNVERIFIED": 33.0
         },
         "missingMeters": 74.4,
@@ -13153,7 +13049,7 @@
         "rig": "C-1800",
         "date": "2026-10-15",
         "shift": "Өдөр",
-        "status": "SOURCE_CONFLICT",
+        "status": "VERIFIED_DRILLING",
         "meters": 75.4,
         "records": [
           {
@@ -13162,14 +13058,19 @@
             "to": 74.0,
             "meters": 74.0,
             "source": "2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg",
-            "evidence": "sheet",
+            "evidence": "report",
             "sheet": {
               "name": "Drilling Shift Report Table",
               "tab": "2_Ээлжийн_бүртгэл",
               "row": 56,
               "url": "https://docs.google.com/spreadsheets/d/16SASJ2pPOxSUSjdMW6WorYn1VrAGAIbnRYRl2aC9_BI/edit?usp=drivesdk"
             },
-            "reports": []
+            "reports": [
+              {
+                "name": "2026-10-15_ZHDH2612_d.jpg",
+                "url": "https://drive.google.com/file/d/1LTYzrUEmh8QojRQ2YIz0NIi7RzsJfX8J/view?usp=drivesdk"
+              }
+            ]
           },
           {
             "hole": "DTDH2603",
@@ -13202,24 +13103,11 @@
             "text": "Өрөм засагдсан: эх хүснэгтэд «Баталгаажаагүй» → C-1800 — ZHDH2602-ийн эхний 0–74 м-ийг C-1800 өрөмдсөн (эзэмшигч баталсан) (SysMargad, 2026-11-06)"
           },
           {
-            "kind": "unlinked",
-            "text": "Drive-д ZHDH2612-ийн тайлан бий, хүснэгтэд ороогүй: 2026-10-15_ZHDH2612_d.jpg"
-          },
-          {
-            "kind": "evidence",
-            "text": "ZHDH2602: эх тайлан Drive-д холбогдоогүй (2026-10-15_ZHDH2612_Daily_Drilling_Report.jpg)"
-          },
-          {
             "kind": "transition",
             "text": "Ээлжийн дотор цооног солигдсон: DTDH2603 → ZHDH2602"
           }
         ],
-        "driveReports": [
-          {
-            "name": "2026-10-15_ZHDH2612_d.jpg",
-            "url": "https://drive.google.com/file/d/1LTYzrUEmh8QojRQ2YIz0NIi7RzsJfX8J/view?usp=drivesdk"
-          }
-        ],
+        "driveReports": [],
         "inferred": [],
         "folderUrl": "https://drive.google.com/drive/folders/1wsWYat5mRpp_CX0RjRvD70N905e8OvwN"
       },
