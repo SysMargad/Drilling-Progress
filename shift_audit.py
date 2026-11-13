@@ -38,10 +38,10 @@ def load_confirmations(path=CONFIG):
     """Owner confirmations, each with its evidence: `confirmed` slots without a report (rig move, standby)
     and `reports` that reached the owner but not the hole's Drive folder, with the depths they state."""
     if not Path(path).exists():
-        return {'confirmed': [], 'reports': [], 'holes': [], 'rigs': []}
+        return {'confirmed': [], 'reports': [], 'holes': [], 'rigs': [], 'aliases': []}
     config = json.loads(Path(path).read_text(encoding='utf-8'))
     confirmed, reports, holes = config.get('confirmed', []), config.get('reports', []), config.get('holes', [])
-    rigs = config.get('rigs', [])
+    rigs, aliases = config.get('rigs', []), config.get('aliases', [])
     for row in confirmed:
         if row.get('status') != 'VERIFIED_NON_DRILLING' or row.get('shift') not in SHIFTS:
             raise ValueError('Shift audit confirmations may only record verified non-drilling shifts')
@@ -77,7 +77,13 @@ def load_confirmations(path=CONFIG):
         if row['rig'] == row['correctRig']:
             raise ValueError('A rig correction must change the rig')
         Date.fromisoformat(row['date'])
-    return {'confirmed': confirmed, 'reports': reports, 'holes': holes, 'rigs': rigs}
+    for row in aliases:
+        # A second number of one hole: every sheet row, collar row, Drive folder and report filed under it.
+        if not all(str(row.get(key, '')).strip() for key in ('hole', 'correctHole', 'reason', 'evidence', 'confirmedBy', 'confirmedAt')):
+            raise ValueError('A hole alias needs hole, correctHole, reason, evidence, confirmedBy and confirmedAt')
+        if row['hole'] == row['correctHole'] or row['correctHole'] in {a['hole'] for a in aliases}:
+            raise ValueError('A hole alias must name another hole that is not itself an alias')
+    return {'confirmed': confirmed, 'reports': reports, 'holes': holes, 'rigs': rigs, 'aliases': aliases}
 
 
 def daily_folder(data, hole):

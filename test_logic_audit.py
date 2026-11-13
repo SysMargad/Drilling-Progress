@@ -40,7 +40,7 @@ def collar(*ids):
 def audit(shifts, holes, rejected=(), through='2026-11-08', confirmed=()):
     for s in shifts:
         s.setdefault('reports', REPORT)
-    confirmations = {'confirmed': list(confirmed), 'reports': [], 'holes': [], 'rigs': []}
+    confirmations = {'confirmed': list(confirmed), 'reports': [], 'holes': [], 'rigs': [], 'aliases': []}
     return build_audit({'shifts': shifts, 'collar': collar(*holes), 'rejectedShifts': list(rejected)}, RIGS, through, confirmations)
 
 
@@ -226,6 +226,32 @@ class FinishedHoleTests(unittest.TestCase):
     def test_22_the_rigs_latest_hole_is_still_being_drilled(self):
         latest = slot(audit(parse(*STDH)[0], ['STDH2601'], through='2026-11-12'), 'C-1800', '2026-11-10', 'Өдөр')
         self.assertEqual(latest['status'], 'MISSING_REPORT', 'no later report of another hole: not finished')
+
+
+class HoleAliasTests(unittest.TestCase):
+    # Owner 2026-11-13: ZHDH2612 is ZHDH2602 under a wrong number (Drive folder, report names, sheet rows, collar row).
+    ALIAS = {'hole': 'ZHDH2612', 'correctHole': 'ZHDH2602', 'reason': 'ZHDH2602-ийн буруу дугаар', 'evidence': 'ахлахын мэдээ',
+             'confirmedBy': 'owner', 'confirmedAt': '2026-11-13'}
+
+    def test_23_an_alias_is_never_a_hole_of_its_own(self):
+        csv = lambda rows: '\n'.join(','.join(map(str, r)) for r in rows).encode('utf-8')
+        collar = {'name': 'collar', 'url': 'https://docs.google.com/spreadsheets/d/c', 'modified': '1', 'suffix': '.csv',
+                  'content': csv([['Hole ID', 'Plan Depth (m)', 'Drilled Depth (m)', 'Started Date', 'Finished Date'],
+                                  ['ZHDH2602', 420, 489.3, '2026-10-15', '2026-10-23'], ['ZHDH2612', '', '', '', '']])}
+        shifts = {'name': 'shifts', 'url': 'https://docs.google.com/spreadsheets/d/s', 'modified': '2', 'suffix': '.csv',
+                  'content': csv([HEADER, row('C-1800', '2026-10-16', 'Өдөр', 'ZHDH2612', 74, 110, 36)])}
+        folder = lambda h: {'url': f'https://drive.google.com/drive/folders/{h}', 'area': 'Замт Хөндий', 'folders': []}
+        report = {'hole': 'ZHDH2612', 'rig': 'C-1800', 'date': '2026-10-16', 'shift': 'Өдөр', 'name': '2026-10-16_ZHDH2612_d.jpg',
+                  'url': 'https://drive.google.com/file/d/x/view', 'folderUrl': 'https://drive.google.com/drive/folders/r'}
+        data = assemble([collar, shifts], {'driveUrl': 'https://drive.google.com/drive/folders/x', 'shifts': [], 'collar': []},
+                        {'ZHDH2602': folder('ZHDH2602'), 'ZHDH2612': folder('ZHDH2612')}, [report], None,
+                        {'ZHDH2602': {}, 'ZHDH2612': {}}, aliases=[self.ALIAS])
+        self.assertEqual([h['id'] for h in data['collar']], ['ZHDH2602'])
+        self.assertEqual((list(data['folderMap']), list(data['dataInventory'])), (['ZHDH2602'], ['ZHDH2602']))
+        shift = data['shifts'][0]
+        self.assertEqual((shift['hole'], shift['correction']['hole']), ('ZHDH2602', 'ZHDH2612'))
+        self.assertEqual([r['name'] for r in shift['reports']], ['2026-10-16_ZHDH2612_d.jpg'], 'the alias report is the shift report')
+        self.assertEqual(data['unlinkedReports'], [])
 
 
 if __name__ == '__main__':

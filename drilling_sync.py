@@ -1103,6 +1103,18 @@ def correct_holes(rows, corrections):
     return rows
 
 
+def alias_holes(rows, aliases):
+    """Owner-confirmed second numbers of a hole (input/shift-audit.json 'aliases'): every row filed under the
+    alias moves to the hole, keeping its values, its source and the number its sheet gave."""
+    for row in rows:
+        c = aliases.get(row['hole'])
+        if c and not row.get('correction'):
+            row['correction'] = {'hole': row['hole'], 'reason': c['reason'], 'evidence': c['evidence'],
+                                 'confirmedBy': c['confirmedBy'], 'confirmedAt': c['confirmedAt']}
+            row['hole'] = c['correctHole']
+    return rows
+
+
 # A shift's measured values; two sources that differ only in notes or file names do not conflict.
 SHIFT_VALUES = ("from", "to", "meters", "st", "rt", "dt", "hours")
 # The note _parse_shift_row leaves when the owner's 12 h default (2026-10-27) filled a blank DT or total.
@@ -1201,7 +1213,10 @@ def _merge_parts(parts):
     return record
 
 
-def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None, corrections=(), rig_fixes=()):
+def assemble(records, seed, folders=None, report_index=None, finance=None, inventory=None, corrections=(), rig_fixes=(),
+             aliases=()):
+    # An alias is never a hole of its own: no collar row, folder or inventory entry; its reports are the hole's.
+    alias = {a['hole']: a for a in aliases}
     collar, shifts, warnings, provenance = {}, {}, [], []
     conflicts, unassigned, rejected = {}, {}, {}
     parts = {}  # (rig, date, shift, hole) -> the sheet rows read for it: copies and parts of one shift report
@@ -1209,10 +1224,11 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
     for source in records:
         c, s = [], []
         for tab, rows in workbook_rows(source["content"], source["suffix"]):
-            c.extend(parse_collar(rows))
+            c.extend(h for h in parse_collar(rows) if h['id'] not in alias)
             aside, invalid = [], []
             parsed = parse_shifts(rows, aside, invalid, rig_fixes)
             correct_holes(parsed + aside, corrections)
+            alias_holes(parsed + aside, alias)
             for item in parsed:
                 # The structured record keeps the sheet row it came from; its raw report is linked below.
                 item["sheet"] = {"name": source["name"], "tab": tab, "row": item.pop("sheetRow"), "url": source["url"]}
@@ -1264,7 +1280,13 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
                 conflict["others"].append(f"{item['sheet']['name']} / {item['sheet']['tab']} мөр {item['sheet']['row']}")
     if not collar or not shifts:
         raise ValueError("No recognized collar and shift records; previous dashboard data preserved")
-    folder_map = folders if folders is not None else seed.get("folderMap", {})
+    folder_map = {h: v for h, v in (folders if folders is not None else seed.get("folderMap", {})).items() if h not in alias}
+    if folders is not None:
+        folders = {h: v for h, v in folders.items() if h not in alias}
+    if inventory is not None:
+        inventory = {h: v for h, v in inventory.items() if h not in alias}
+    if report_index is not None:
+        report_index = [{**r, "hole": alias[r["hole"]]["correctHole"]} if r["hole"] in alias else r for r in report_index]
     # A hole folder found on Drive registers its hole before the collar sheet has a row for it;
     # the collar row takes its place once added. Local runs keep the collar of their sources.
     for h in sorted(set(folders or {}) - set(collar)):
@@ -1286,7 +1308,8 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
         raise ValueError("Shift holes missing from collar: " + ", ".join(sorted(unknown)))
     if report_index is None:
         report_index = [report for row in seed.get("shifts", []) for report in row.get("reports", [])]
-        unlinked = seed.get("unlinkedReports", [])
+        unlinked = [{**r, "hole": alias[r["hole"]]["correctHole"]} if r["hole"] in alias else r
+                    for r in seed.get("unlinkedReports", [])]
         attach_reports(list(shifts.values()), report_index)
     else:
         unlinked = attach_reports(list(shifts.values()), report_index)
@@ -1303,7 +1326,8 @@ def assemble(records, seed, folders=None, report_index=None, finance=None, inven
             "driveUrl": seed["driveUrl"], "collar": list(collar.values()),
             "shifts": sorted(shifts.values(), key=lambda x: (x["date"], x["rig"], x["shift"])),
             "folderMap": folder_map,
-            "dataInventory": inventory if inventory is not None else seed.get("dataInventory", {}),
+            "dataInventory": inventory if inventory is not None else
+                {h: v for h, v in seed.get("dataInventory", {}).items() if h not in alias},
             "syncWarnings": sorted(set(warnings)), "sources": provenance,
             # Audit evidence: numeric disagreements between sheets, rows with no known rig, rows that
             # failed validation (the rest of the sheet still loads) and Drive reports no shift cites.
@@ -1432,10 +1456,10 @@ def main():
                 finance_note = ""
                 from shift_audit import load_confirmations
                 confirmations = load_confirmations()
-                corrections, rig_fixes = confirmations["holes"], confirmations["rigs"]
+                corrections, rig_fixes, aliases = confirmations["holes"], confirmations["rigs"], confirmations["aliases"]
                 if args.source == "drive":
                     records, folders, report_index, inventory = drive_sources(args.folder_id, args.credentials)
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory, corrections, rig_fixes)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), inventory, corrections, rig_fixes, aliases)
                     from photo_import import apply_photos
                     data = apply_photos(data)
                     try:
@@ -1452,7 +1476,8 @@ def main():
                     records, folders = local_sources(args.input), None
                     report_file = args.input / "report-index.json"
                     report_index = load_json(report_file) if report_file.exists() else None
-                    data = assemble(records, seed, folders, report_index, seed.get("finance"), corrections=corrections, rig_fixes=rig_fixes)
+                    data = assemble(records, seed, folders, report_index, seed.get("finance"), corrections=corrections, rig_fixes=rig_fixes,
+                                    aliases=aliases)
                 from photo_import import apply_photos, apply_daily_water
                 data = apply_photos(data)
                 if data.get('finance') is not None:
