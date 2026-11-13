@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-13",
-  "updatedAt": "2026-11-13T13:33:27+08:00",
+  "updatedAt": "2026-11-13T22:06:44+08:00",
   "period": "2026-10-01 – 2026-11-11",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
@@ -192,8 +192,8 @@
       "boxes": 135.0,
       "geologyLog": "completed",
       "geotechLog": "Completed",
-      "pxrfLog": "",
-      "corePhoto": "",
+      "pxrfLog": "completed",
+      "corePhoto": "completed",
       "sampling": ""
     },
     {
@@ -235,7 +235,7 @@
       "geologyLog": "completed",
       "geotechLog": "Completed",
       "pxrfLog": "completed",
-      "corePhoto": "",
+      "corePhoto": "completed",
       "sampling": ""
     },
     {
@@ -251,12 +251,12 @@
       "collarDepth": 196.4,
       "start": "2026-10-31",
       "finish": "2026-11-03",
-      "recovery": null,
-      "boxes": null,
-      "geologyLog": "",
-      "geotechLog": "",
-      "pxrfLog": "",
-      "corePhoto": "",
+      "recovery": 99.68,
+      "boxes": 53.0,
+      "geologyLog": "completed",
+      "geotechLog": "Completed",
+      "pxrfLog": "completed",
+      "corePhoto": "Completed",
       "sampling": ""
     },
     {
@@ -290,35 +290,14 @@
       "az": 270.0,
       "dip": 60.0,
       "plan": 300.0,
-      "collarDepth": null,
+      "collarDepth": 300.4,
       "start": "2026-11-04",
-      "finish": "",
-      "recovery": null,
-      "boxes": null,
-      "geologyLog": "",
-      "geotechLog": "",
-      "pxrfLog": "",
-      "corePhoto": "",
-      "sampling": ""
-    },
-    {
-      "id": "DTDH2609",
-      "site": "Нэргүй Өндөр",
-      "targetArea": "Дорнын Төмөр",
-      "e": null,
-      "n": null,
-      "z": null,
-      "az": null,
-      "dip": null,
-      "plan": null,
-      "collarDepth": null,
-      "start": "",
-      "finish": "",
-      "recovery": null,
-      "boxes": null,
-      "geologyLog": "",
-      "geotechLog": "",
-      "pxrfLog": "",
+      "finish": "2026-11-11",
+      "recovery": 98.24,
+      "boxes": 86.0,
+      "geologyLog": "Completed",
+      "geotechLog": "Completed",
+      "pxrfLog": "Completed",
       "corePhoto": "",
       "sampling": ""
     },
@@ -6456,15 +6435,47 @@
     "KHDH2601": {
       "geological": {
         "url": "https://drive.google.com/drive/folders/1c2N4vjPJXDMYMwB0j0NpHJB2ZoB2723Y",
-        "count": 0,
-        "latest": "",
-        "files": []
+        "count": 5,
+        "latest": "2026-11-13T10:57:04.000Z",
+        "files": [
+          {
+            "name": "img20261113_18481065.jpg",
+            "modified": "2026-11-13T10:48:10.000Z",
+            "url": "https://drive.google.com/file/d/1wG5vZcLbr4QegfsXQ3r9IomWAR4rplDS/view?usp=drivesdk"
+          },
+          {
+            "name": "img20261113_18501571.jpg",
+            "modified": "2026-11-13T10:50:14.000Z",
+            "url": "https://drive.google.com/file/d/1w86ILJk9L32d5RuDCJwBo_QgDWwT6J5N/view?usp=drivesdk"
+          },
+          {
+            "name": "img20261113_18522856.jpg",
+            "modified": "2026-11-13T10:52:28.000Z",
+            "url": "https://drive.google.com/file/d/12yOVsNHUUF4CKkNXabvMWstOl0DCfirV/view?usp=drivesdk"
+          },
+          {
+            "name": "img20261113_18543710.jpg",
+            "modified": "2026-11-13T10:54:36.000Z",
+            "url": "https://drive.google.com/file/d/1HfXdueJ-rBnsMzg7GEIiL16mTZGGlFus/view?usp=drivesdk"
+          },
+          {
+            "name": "img20261113_18570497.jpg",
+            "modified": "2026-11-13T10:57:04.000Z",
+            "url": "https://drive.google.com/file/d/11uw5N2sa-hYmZbJPgs-Nj6Ik_6_lQBAt/view?usp=drivesdk"
+          }
+        ]
       },
       "geotechnical": {
         "url": "https://drive.google.com/drive/folders/1Sl3cXU8_0-rZIJuo40MHlrr9CvWm97jC",
-        "count": 0,
-        "latest": "",
-        "files": []
+        "count": 1,
+        "latest": "2026-11-13T13:02:44.451Z",
+        "files": [
+          {
+            "name": "KHDH2601_GeoTechnical_Log.xlsx",
+            "modified": "2026-11-13T13:02:44.451Z",
+            "url": "https://docs.google.com/spreadsheets/d/14E0ykGBX8riPyXo_gTKvIChKVS9DRU89/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          }
+        ]
       },
       "photos": {
         "url": "https://drive.google.com/drive/folders/1dpOqvxoNdZakmu-oH_Oe7B40OnThhMZs",
@@ -6604,9 +6615,14 @@
       },
       "geotechnical": {
         "url": "https://drive.google.com/drive/folders/1KuHrPhdfbRBWVSMz22FTeKEeMxi5jroG",
-        "count": 2,
-        "latest": "2026-11-11T02:04:18.835Z",
+        "count": 3,
+        "latest": "2026-11-13T13:21:15.399Z",
         "files": [
+          {
+            "name": "UGDH2601_GeoTechnical Data.xlsx",
+            "modified": "2026-11-13T13:21:15.399Z",
+            "url": "https://docs.google.com/spreadsheets/d/1X-6bcW3U_QOcCRSJyw8dpNCqTu5CMrzF/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
           {
             "name": "UGDH2601_Geotechnical_Log.pdf",
             "modified": "2026-11-11T02:04:18.835Z",
@@ -6614,7 +6630,7 @@
           },
           {
             "name": "UGDH2601_Geotechnical_Log.xlsx",
-            "modified": "2026-11-11T01:46:48.627Z",
+            "modified": "2026-11-13T13:19:27.587Z",
             "url": "https://docs.google.com/spreadsheets/d/1nVhYQl2WyzTepBy7TBa0ncSIyDktezjc/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
           }
         ]
@@ -7631,6 +7647,12 @@
   ],
   "sources": [
     {
+      "name": "NUDH_COLLAR.xlsx",
+      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
+      "collarRows": 19,
+      "shiftRows": 0
+    },
+    {
       "name": "KHDH2601 - Drilling Shift Report Table",
       "url": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
       "collarRows": 0,
@@ -7647,12 +7669,6 @@
       "url": "https://docs.google.com/spreadsheets/d/1eXieoQHV7Ym38xj61f2-kdskvt8JfzT2y2I4lHVp0tk/edit?usp=drivesdk",
       "collarRows": 0,
       "shiftRows": 8
-    },
-    {
-      "name": "NUDH_COLLAR.xlsx",
-      "url": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
-      "collarRows": 20,
-      "shiftRows": 0
     },
     {
       "name": "ZHDH2604 - Drilling Shift Report Table",
