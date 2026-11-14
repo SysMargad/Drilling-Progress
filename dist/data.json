@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-11-14",
-  "updatedAt": "2026-11-14T05:16:07+08:00",
+  "updatedAt": "2026-11-14T13:24:18+08:00",
   "period": "2026-10-01 – 2026-11-11",
   "collarUrl": "https://docs.google.com/spreadsheets/d/1OtOkEUCmcvQ_MgchVC-53J5ZS52TTvLh/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true",
   "shiftUrl": "https://docs.google.com/spreadsheets/d/1Ye6sn0uTDs94zliuqoD_jHgkXe3X0fG1HzbSFYXJPLk/edit?usp=drivesdk",
@@ -5968,7 +5968,7 @@
           {
             "name": "DTDH2602_Core_pXRF_Bruker-(244-264.5)",
             "modified": "2026-10-11T07:17:43.261Z",
-            "url": "https://docs.google.com/spreadsheets/d/1E7ldFQyUS1rkj5L01OcG6kAN1TffhR5Z/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+            "url": "https://docs.google.com/spreadsheets/d/1E7ldFQyUS1rkj5L01OcG6kAN1TffhR5Z/edit?usp=drivesdk&rtpof=true&sd=true"
           },
           {
             "name": "DTDH2602_Core_pXRF_Vanta-(121-165.5)",
@@ -5978,7 +5978,7 @@
           {
             "name": "DTDH2602_Core_pXRF_Vanta-(170-196m).xlsx",
             "modified": "2026-10-11T13:17:34.160Z",
-            "url": "https://docs.google.com/spreadsheets/d/1StYNhvNuqnavvAaTik3LQ26pS3A7g6kB/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+            "url": "https://docs.google.com/spreadsheets/d/1StYNhvNuqnavvAaTik3LQ26pS3A7g6kB/edit?usp=drivesdk&rtpof=true&sd=true"
           },
           {
             "name": "DTDH2602_Core_pXRF_Vanta-(196.5-264.5), (95-111.5).xlsx",
@@ -6003,12 +6003,12 @@
           {
             "name": "DTDH2602_Core_pXRF_Vanta-(244-247m), (112-120.5m).xlsx",
             "modified": "2026-10-10T13:03:29.976Z",
-            "url": "https://docs.google.com/spreadsheets/d/1wbbdPBn5JE8-EiAEc80knBr97c6q6P00/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+            "url": "https://docs.google.com/spreadsheets/d/1wbbdPBn5JE8-EiAEc80knBr97c6q6P00/edit?usp=drivesdk&rtpof=true&sd=true"
           },
           {
             "name": "DTDH2602_Core_pXRF_Vanta-(264.5-305.4m).xlsx.xlsx",
             "modified": "2026-10-16T10:29:27.204Z",
-            "url": "https://docs.google.com/spreadsheets/d/1_-GAnhCTYWKEdSGWHL-ZYFpex_VLd5oe/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+            "url": "https://docs.google.com/spreadsheets/d/1_-GAnhCTYWKEdSGWHL-ZYFpex_VLd5oe/edit?usp=drivesdk&rtpof=true&sd=true"
           },
           {
             "name": "DTDH2602_Core_pXRF_Vanta_(0m-23.4m)",
@@ -6023,7 +6023,7 @@
           {
             "name": "DTDH2602_Vanta_Integrated_0-305_4m.xlsx",
             "modified": "2026-10-18T02:54:51.318Z",
-            "url": "https://docs.google.com/spreadsheets/d/1wC2fER_njauJiAHtS1CENVI99EQMOdH1/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+            "url": "https://docs.google.com/spreadsheets/d/1wC2fER_njauJiAHtS1CENVI99EQMOdH1/edit?usp=drivesdk&rtpof=true&sd=true"
           }
         ]
       },
@@ -6535,13 +6535,23 @@
     "KHDH2602": {
       "pxrf": {
         "url": "https://drive.google.com/drive/folders/1GAEqSP33VKBdSXqJyY8Xm9DIJfAG_MO8",
-        "count": 1,
-        "latest": "2026-11-13T05:04:30.763Z",
+        "count": 3,
+        "latest": "2026-11-14T05:21:33.366Z",
         "files": [
+          {
+            "name": "delete.csv",
+            "modified": "2026-11-14T05:21:33.366Z",
+            "url": "https://drive.google.com/file/d/1UbkjxmKFFKiWOg9L_Z5PfKN2d9HgowI9/view?usp=drivesdk"
+          },
           {
             "name": "KHDH2602_Vanta_pXRF_10.4-65.4.xlsx",
             "modified": "2026-11-13T05:04:30.763Z",
             "url": "https://docs.google.com/spreadsheets/d/1zkxcUuuEOAPCyuDzWSLiIh8xjAChHeCP/edit?usp=drivesdk&ouid=110842759483802106134&rtpof=true&sd=true"
+          },
+          {
+            "name": "KHDH2602_Vanta_pXRF_66.4-95.4",
+            "modified": "2026-11-14T05:21:18.890Z",
+            "url": "https://docs.google.com/spreadsheets/d/1V_bZk_FR6ru9-mOeYpSwI4oTrDS5F91qFDzDRfXolV8/edit?usp=drivesdk"
           }
         ]
       }
